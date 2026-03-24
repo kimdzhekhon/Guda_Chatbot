@@ -120,8 +120,8 @@ class AuthScreen extends ConsumerWidget {
                           onPressed: isLoading
                               ? null
                               : () => ref
-                                  .read(authViewModelProvider.notifier)
-                                  .signInWithGoogle(),
+                                    .read(authViewModelProvider.notifier)
+                                    .signInWithGoogle(),
                           isLoading: isLoading,
                           iconPath: 'assets/images/google_logo.png',
                           label: 'Google로 계속하기',
@@ -140,8 +140,8 @@ class AuthScreen extends ConsumerWidget {
                           onPressed: isLoading
                               ? null
                               : () => ref
-                                  .read(authViewModelProvider.notifier)
-                                  .signInWithApple(),
+                                    .read(authViewModelProvider.notifier)
+                                    .signInWithApple(),
                           isLoading: isLoading,
                           iconPath: 'assets/images/apple_logo.png',
                           label: 'Apple로 계속하기',
@@ -203,9 +203,7 @@ class _SocialLoginButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,
         elevation: backgroundColor == Colors.white ? 2 : 0,
-        shadowColor: GudaColors.primary.withValues(
-          alpha: 0.15,
-        ),
+        shadowColor: GudaColors.primary.withValues(alpha: 0.15),
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: GudaRadius.mdAll,
@@ -229,13 +227,10 @@ class _SocialLoginButton extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
-                    child: Image.asset(
-                      iconPath,
-                      width: 32,
-                      height: 32,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: GudaSpacing.md,
                     ),
+                    child: Image.asset(iconPath, width: 32, height: 32),
                   ),
                 ),
                 Text(

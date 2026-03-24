@@ -26,8 +26,9 @@ class SupabaseChatDataSource {
 
       return (response as List)
           .map(
-            (json) =>
-                ConversationDto.fromJson(json as Map<String, dynamic>).toDomain(),
+            (json) => ConversationDto.fromJson(
+              json as Map<String, dynamic>,
+            ).toDomain(),
           )
           .toList();
     } catch (e) {
@@ -81,7 +82,9 @@ class SupabaseChatDataSource {
       return Conversation(
         id: 'mock-conv-${DateTime.now().millisecondsSinceEpoch}',
         title: title,
-        classicType: ClassicType.values.firstWhere((e) => e.name == classicType),
+        classicType: ClassicType.values.firstWhere(
+          (e) => e.name == classicType,
+        ),
         userId: userId,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),

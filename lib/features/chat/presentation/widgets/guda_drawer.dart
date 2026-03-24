@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
@@ -22,7 +21,9 @@ class GudaDrawer extends ConsumerWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.75, // 너비를 좀 더 좁게 조정
       child: Drawer(
-        backgroundColor: isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
+        backgroundColor: isDark
+            ? GudaColors.backgroundDark
+            : GudaColors.backgroundLight,
         child: Column(
           children: [
             _buildHeader(context, isDark),
@@ -30,10 +31,16 @@ class GudaDrawer extends ConsumerWidget {
               child: switch (state) {
                 UiLoading() => const GudaLoadingWidget(message: '목록 로딩 중...'),
                 UiError(message: final msg) => GudaErrorWidget(
-                    message: msg,
-                    onRetry: () => ref.read(chatListViewModelProvider.notifier).refresh(),
-                  ),
-                UiSuccess(data: final conversations) => _buildList(context, ref, conversations, isDark),
+                  message: msg,
+                  onRetry: () =>
+                      ref.read(chatListViewModelProvider.notifier).refresh(),
+                ),
+                UiSuccess(data: final conversations) => _buildList(
+                  context,
+                  ref,
+                  conversations,
+                  isDark,
+                ),
               },
             ),
             _buildFooter(context, ref),
@@ -54,7 +61,8 @@ class GudaDrawer extends ConsumerWidget {
         color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
         border: Border(
           bottom: BorderSide(
-            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight).withValues(alpha: 0.5),
+            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+                .withValues(alpha: 0.5),
             width: 0.5,
           ),
         ),
@@ -71,7 +79,9 @@ class GudaDrawer extends ConsumerWidget {
           Text(
             '대화 기록',
             style: GudaTypography.heading3(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+              color: isDark
+                  ? GudaColors.onSurfaceDark
+                  : GudaColors.onSurfaceLight,
             ).copyWith(fontSize: 16),
           ),
         ],
@@ -79,41 +89,52 @@ class GudaDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _buildList(BuildContext context, WidgetRef ref, List<Conversation> conversations, bool isDark) {
+  Widget _buildList(
+    BuildContext context,
+    WidgetRef ref,
+    List<Conversation> conversations,
+    bool isDark,
+  ) {
     if (conversations.isEmpty) {
       return Center(
         child: Text(
           '아직 대화가 없습니다',
           style: GudaTypography.body2(
-            color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+            color: isDark
+                ? GudaColors.onSurfaceVariantDark
+                : GudaColors.onSurfaceVariantLight,
           ),
         ),
       );
     }
 
-    final sorted = [...conversations]..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    final sorted = [...conversations]
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
       itemCount: sorted.length,
       separatorBuilder: (_, index) => Divider(
-        height: 1, 
+        height: 1,
         indent: GudaSpacing.md,
-        color: isDark 
-            ? GudaColors.dividerDark.withValues(alpha: 0.3) 
+        color: isDark
+            ? GudaColors.dividerDark.withValues(alpha: 0.3)
             : GudaColors.dividerLight.withValues(alpha: 0.5),
       ),
       itemBuilder: (context, index) {
         final conv = sorted[index];
-        final isActive = ref.watch(homeViewModelProvider).activeConversationId == conv.id;
-        
+        final isActive =
+            ref.watch(homeViewModelProvider).activeConversationId == conv.id;
+
         return ListTile(
           onTap: () {
             ref.read(homeViewModelProvider.notifier).selectConversation(conv);
             Navigator.pop(context);
           },
           selected: isActive,
-          selectedTileColor: (isDark ? GudaColors.primary : GudaColors.surfaceVariantLight).withValues(alpha: 0.1),
+          selectedTileColor:
+              (isDark ? GudaColors.primary : GudaColors.surfaceVariantLight)
+                  .withValues(alpha: 0.1),
           leading: ClipRRect(
             borderRadius: GudaRadius.smAll,
             child: Image.asset(
@@ -126,25 +147,38 @@ class GudaDrawer extends ConsumerWidget {
           horizontalTitleGap: GudaSpacing.md,
           title: Text(
             conv.title,
-            style: GudaTypography.body2(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
-            ).copyWith(
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              fontSize: 13,
-            ),
+            style:
+                GudaTypography.body2(
+                  color: isDark
+                      ? GudaColors.onSurfaceDark
+                      : GudaColors.onSurfaceLight,
+                ).copyWith(
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 13,
+                ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(
             DateFormat('MM.dd').format(conv.updatedAt.toLocal()),
             style: GudaTypography.caption(
-              color: (isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight).withValues(alpha: 0.6),
+              color:
+                  (isDark
+                          ? GudaColors.onSurfaceVariantDark
+                          : GudaColors.onSurfaceVariantLight)
+                      .withValues(alpha: 0.6),
             ),
           ),
           trailing: IconButton(
             icon: const Icon(Icons.delete_outline_rounded, size: 16),
-            onPressed: () => ref.read(chatListViewModelProvider.notifier).deleteConversation(conv.id),
-            color: (isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight).withValues(alpha: 0.4),
+            onPressed: () => ref
+                .read(chatListViewModelProvider.notifier)
+                .deleteConversation(conv.id),
+            color:
+                (isDark
+                        ? GudaColors.onSurfaceVariantDark
+                        : GudaColors.onSurfaceVariantLight)
+                    .withValues(alpha: 0.4),
           ),
         );
       },
@@ -153,7 +187,7 @@ class GudaDrawer extends ConsumerWidget {
 
   Widget _buildFooter(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       padding: EdgeInsets.only(
         left: GudaSpacing.md,
@@ -164,7 +198,8 @@ class GudaDrawer extends ConsumerWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight).withValues(alpha: 0.5),
+            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+                .withValues(alpha: 0.5),
             width: 0.5,
           ),
         ),
@@ -180,7 +215,9 @@ class GudaDrawer extends ConsumerWidget {
             padding: const EdgeInsets.all(GudaSpacing.md),
             style: IconButton.styleFrom(
               backgroundColor: Colors.transparent,
-              foregroundColor: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+              foregroundColor: isDark
+                  ? GudaColors.onSurfaceVariantDark
+                  : GudaColors.onSurfaceVariantLight,
               shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
             ),
           ),
@@ -188,15 +225,23 @@ class GudaDrawer extends ConsumerWidget {
           Expanded(
             child: OutlinedButton.icon(
               onPressed: () {
-                ref.read(homeViewModelProvider.notifier).clearActiveConversation();
+                ref
+                    .read(homeViewModelProvider.notifier)
+                    .clearActiveConversation();
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.add_rounded, size: 20),
               label: const Text('새 채팅'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+                foregroundColor: isDark
+                    ? GudaColors.onSurfaceDark
+                    : GudaColors.onSurfaceLight,
                 side: BorderSide(
-                  color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight).withValues(alpha: 0.8),
+                  color:
+                      (isDark
+                              ? GudaColors.dividerDark
+                              : GudaColors.dividerLight)
+                          .withValues(alpha: 0.8),
                 ),
                 shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
                 padding: const EdgeInsets.symmetric(vertical: GudaSpacing.md),
@@ -209,7 +254,7 @@ class GudaDrawer extends ConsumerWidget {
   }
 
   String _typeIcon(ClassicType type) => switch (type) {
-        ClassicType.tripitaka => 'assets/images/Tripitakakoreana.png',
-        ClassicType.iching => 'assets/images/I Ching.png',
-      };
+    ClassicType.tripitaka => 'assets/images/Tripitakakoreana.png',
+    ClassicType.iching => 'assets/images/I Ching.png',
+  };
 }

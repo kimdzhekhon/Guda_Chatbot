@@ -60,7 +60,11 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
     );
   }
 
-  Widget _buildSlider(AppResponsiveLayoutData data, double viewportFraction, double height) {
+  Widget _buildSlider(
+    AppResponsiveLayoutData data,
+    double viewportFraction,
+    double height,
+  ) {
     // 컨트롤러 뷰포트가 다르면 새로 생성하되, 빌드 중 직접 할당하지 않고 리턴값으로 사용하거나 관리 개선
     // 여기서는 기존 컨트롤러를 최대한 활용
 
@@ -104,52 +108,57 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
 
         // ── 새 대화 시작 버튼 ────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
-          child: ElevatedButton(
-            onPressed: _isLoading ? null : () async {
-              setState(() => _isLoading = true);
-              // Mock 모드: 즉시 상태 업데이트
-              await Future.delayed(const Duration(milliseconds: 500));
-              if (mounted) {
-                ref.read(homeViewModelProvider.notifier).startNewChat();
-                setState(() => _isLoading = false);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: GudaColors.primary,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                borderRadius: GudaRadius.lgAll,
-              ),
-              elevation: 4,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_isLoading)
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                else
-                  const Icon(Icons.chat_bubble_outline),
-                const SizedBox(width: GudaSpacing.sm),
-                Text(
-                  _isLoading ? '대화 생성 중...' : '새 대화 시작',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
+              child: ElevatedButton(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        setState(() => _isLoading = true);
+                        // Mock 모드: 즉시 상태 업데이트
+                        await Future.delayed(const Duration(milliseconds: 500));
+                        if (mounted) {
+                          ref
+                              .read(homeViewModelProvider.notifier)
+                              .startNewChat();
+                          setState(() => _isLoading = false);
+                        }
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: GudaColors.primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 56),
+                  shape: RoundedRectangleBorder(borderRadius: GudaRadius.lgAll),
+                  elevation: 4,
                 ),
-              ],
-            ),
-          ),
-        ).animate().fadeIn(delay: 200.ms).scale(duration: 300.ms, curve: Curves.easeOutBack),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (_isLoading)
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    else
+                      const Icon(Icons.chat_bubble_outline),
+                    const SizedBox(width: GudaSpacing.sm),
+                    Text(
+                      _isLoading ? '대화 생성 중...' : '새 대화 시작',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .animate()
+            .fadeIn(delay: 200.ms)
+            .scale(duration: 300.ms, curve: Curves.easeOutBack),
       ],
     );
   }

@@ -33,7 +33,8 @@ abstract final class AppStrings {
   static const String ichingDomainDesc = '64괘와 384효를 통한 철학적 지혜';
 
   // ── 대화 가이드 (빈 화면 안내) ──────────────────────
-  static const String tripitakaGuidance = '고려대장경의 불교 경전에 대해 질문해보세요. 금강경, 반야심경, 법화경 등 다양한 경전에 대해 대화할 수 있습니다.\n\n무엇이 궁금하신가요?';
+  static const String tripitakaGuidance =
+      '고려대장경의 불교 경전에 대해 질문해보세요. 금강경, 반야심경, 법화경 등 다양한 경전에 대해 대화할 수 있습니다.\n\n무엇이 궁금하신가요?';
   static const String ichingGuidance = '점을 치기 전에 질문을 먼저 적어주세요.';
 
   // ── 초기 질문 카드 (주역 전용 또는 공통) ──────────────
@@ -44,7 +45,7 @@ abstract final class AppStrings {
   static const String initialQuestionSuffix = '길하겠습니까?';
   static const String startDivinationButton = '점 치러 가기';
   static const String skipQuestionButton = '질문 없이 점치기';
-  
+
   static const String selectHexagram = '궤 선택';
   static const String throwHexagram = '궤 던지기';
 
