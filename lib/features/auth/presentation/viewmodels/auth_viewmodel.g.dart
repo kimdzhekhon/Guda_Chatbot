@@ -245,6 +245,54 @@ final class SignOutUseCaseProvider
 
 String _$signOutUseCaseHash() => r'43b88dc732fc2ec257d73871891f04dcae657f24';
 
+@ProviderFor(deleteAccountUseCase)
+final deleteAccountUseCaseProvider = DeleteAccountUseCaseProvider._();
+
+final class DeleteAccountUseCaseProvider
+    extends
+        $FunctionalProvider<
+          DeleteAccountUseCase,
+          DeleteAccountUseCase,
+          DeleteAccountUseCase
+        >
+    with $Provider<DeleteAccountUseCase> {
+  DeleteAccountUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAccountUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAccountUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteAccountUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DeleteAccountUseCase create(Ref ref) {
+    return deleteAccountUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteAccountUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteAccountUseCase>(value),
+    );
+  }
+}
+
+String _$deleteAccountUseCaseHash() =>
+    r'5151c398edebe0bff7902d834da66a1ab99079c9';
+
 @ProviderFor(getCurrentUserUseCase)
 final getCurrentUserUseCaseProvider = GetCurrentUserUseCaseProvider._();
 
@@ -329,7 +377,7 @@ final class AuthViewModelProvider
   }
 }
 
-String _$authViewModelHash() => r'6b51451eb6193230db2f617afaa85688e6973b37';
+String _$authViewModelHash() => r'94277e7e64d09b378e9b60a09222e07602f07054';
 
 /// Auth ViewModel — Google 로그인/로그아웃 및 인증 상태 관리
 

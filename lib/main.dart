@@ -5,10 +5,14 @@ import 'package:guda_chatbot/app/config/app_config.dart';
 import 'package:guda_chatbot/app/router/app_router.dart';
 import 'package:guda_chatbot/app/theme/app_theme.dart';
 import 'package:guda_chatbot/core/network/dio_client.dart';
+import 'package:guda_chatbot/core/utils/license_registry_util.dart';
 
 /// 앱 부트스트랩 — Supabase, Dio 초기화 후 runApp 호출
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 0. 라이선스 등록
+  LicenseRegistryUtil.init();
 
   // 1. Supabase 초기화
   await Supabase.initialize(

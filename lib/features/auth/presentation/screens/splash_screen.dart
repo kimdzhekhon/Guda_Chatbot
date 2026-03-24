@@ -28,27 +28,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: GudaColors.backgroundLight,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 연꽃 아이콘 (임시 아이콘)
-            Image.asset(
-              'assets/images/app_logo_transparent.png',
-              width: 100,
-              height: 100,
-            ).gudaScaleIn(duration: const Duration(milliseconds: 600), curve: Curves.elasticOut),
-            const SizedBox(height: GudaSpacing.lg),
-            Text(
-              'G u d a',
-              style: GudaTypography.brand(color: colorScheme.primary),
-            ).gudaFadeIn(delay: const Duration(milliseconds: 300), duration: const Duration(milliseconds: 500)),
-            const SizedBox(height: GudaSpacing.sm),
-            Text(
-              '동양 고전의 지혜를 만나다',
-              style: GudaTypography.body2(color: colorScheme.onSurfaceVariant),
-            ).gudaFadeIn(delay: const Duration(milliseconds: 500), duration: const Duration(milliseconds: 500)),
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 연꽃 아이콘 (임시 아이콘)
+              Image.asset(
+                'assets/images/app_logo_transparent.png',
+                width: 100,
+                height: 100,
+              ).gudaScaleIn(duration: const Duration(milliseconds: 600), curve: Curves.elasticOut),
+              const SizedBox(height: GudaSpacing.lg),
+              Text(
+                'G u d a',
+                style: GudaTypography.brand(color: colorScheme.primary),
+              ).gudaFadeIn(delay: const Duration(milliseconds: 300), duration: const Duration(milliseconds: 500)),
+              const SizedBox(height: GudaSpacing.sm),
+              Text(
+                '동양 고전의 지혜를 만나다',
+                style: GudaTypography.body2(color: colorScheme.onSurfaceVariant),
+              ).gudaFadeIn(delay: const Duration(milliseconds: 500), duration: const Duration(milliseconds: 500)),
+            ],
+          ),
         ),
       ),
     );

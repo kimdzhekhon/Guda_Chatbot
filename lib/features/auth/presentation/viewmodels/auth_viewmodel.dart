@@ -29,6 +29,10 @@ SignOutUseCase signOutUseCase(Ref ref) =>
     SignOutUseCase(ref.watch(authRepositoryProvider));
 
 @riverpod
+DeleteAccountUseCase deleteAccountUseCase(Ref ref) =>
+    DeleteAccountUseCase(ref.watch(authRepositoryProvider));
+
+@riverpod
 GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) =>
     GetCurrentUserUseCase(ref.watch(authRepositoryProvider));
 
@@ -89,6 +93,17 @@ class AuthViewModel extends _$AuthViewModel {
       state = const UiSuccess(null);
     } catch (e) {
       state = UiError('로그아웃 중 오류가 발생했습니다: ${e.toString()}');
+    }
+  }
+
+  /// 계정 탈퇴
+  Future<void> deleteAccount() async {
+    state = const UiLoading();
+    try {
+      await ref.read(deleteAccountUseCaseProvider).call();
+      state = const UiSuccess(null);
+    } catch (e) {
+      state = UiError('계정 탈퇴 중 오류가 발생했습니다: ${e.toString()}');
     }
   }
 }

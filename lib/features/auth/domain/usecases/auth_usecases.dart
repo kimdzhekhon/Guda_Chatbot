@@ -28,6 +28,15 @@ class SignOutUseCase {
   Future<void> call() => _repository.signOut();
 }
 
+/// 계정 탈퇴 유즈케이스
+class DeleteAccountUseCase {
+  const DeleteAccountUseCase(this._repository);
+  final AuthRepository _repository;
+
+  /// 계정 탈퇴 실행
+  Future<void> call() => _repository.deleteAccount();
+}
+
 /// 현재 사용자 조회 유즈케이스
 class GetCurrentUserUseCase {
   const GetCurrentUserUseCase(this._repository);

@@ -14,6 +14,8 @@ class GudaButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.isFullWidth = false,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   /// 기본 채워진 버튼 (Primary)
@@ -24,6 +26,8 @@ class GudaButton extends StatelessWidget {
     IconData? icon,
     bool isLoading = false,
     bool isFullWidth = false,
+    Color? backgroundColor,
+    Color? foregroundColor,
   }) => GudaButton._(
     key: key,
     label: label,
@@ -32,6 +36,8 @@ class GudaButton extends StatelessWidget {
     icon: icon,
     isLoading: isLoading,
     isFullWidth: isFullWidth,
+    backgroundColor: backgroundColor,
+    foregroundColor: foregroundColor,
   );
 
   /// 외곽선 버튼 (Secondary)
@@ -72,6 +78,8 @@ class GudaButton extends StatelessWidget {
   final IconData? icon;
   final bool isLoading;
   final bool isFullWidth;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -115,8 +123,8 @@ class GudaButton extends StatelessWidget {
         return FilledButton(
           onPressed: isLoading ? null : onPressed,
           style: FilledButton.styleFrom(
-            backgroundColor: cs.primary,
-            foregroundColor: cs.onPrimary,
+            backgroundColor: backgroundColor ?? cs.primary,
+            foregroundColor: foregroundColor ?? cs.onPrimary,
             padding: const EdgeInsets.symmetric(
               horizontal: GudaSpacing.lg,
               vertical: GudaSpacing.md12,

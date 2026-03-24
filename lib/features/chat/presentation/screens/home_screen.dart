@@ -76,8 +76,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       drawer: const GudaDrawer(),
       body: AppResponsiveLayout(
+        useSafeArea: false,
         mobile: (context, data) => _buildBody(activeId, homeState, isDark),
       ),
+      bottomNavigationBar: activeId == null
+          ? null
+          : Consumer(
+              builder: (context, ref, child) {
+                final chatState = ref.watch(chatRoomViewModelProvider(activeId));
+                final isStreaming =
+                    chatState.dataOrNull?.any((m) => m.isStreaming) ?? false;
+                final messages = chatState.dataOrNull ?? [];
+
+                if (messages.isEmpty &&
+                    homeState.selectedClassicType != ClassicType.tripitaka) {
+                  return const SizedBox.shrink();
+                }
+
+                return ChatInputBar(
+                  isLoading: isStreaming,
+                  onSend: (text) => _handleSendMessage(text, homeState),
+                );
+              },
+            ),
     );
   }
 
@@ -95,9 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         : Consumer(
             builder: (context, ref, child) {
               final chatState = ref.watch(chatRoomViewModelProvider(activeId));
-              final isStreaming =
-                  chatState.dataOrNull?.any((m) => m.isStreaming) ?? false;
-              final messages = chatState.dataOrNull ?? [];
+              ref.watch(chatRoomViewModelProvider(activeId));
 
               return Column(
                 children: [
@@ -114,17 +133,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         isDark: isDark,
                         type: homeState.selectedClassicType,
                         scrollController: _scrollController,
-                        onSendMessage: (text) => _handleSendMessage(text, homeState),
+                        onSendMessage: (text) =>
+                            _handleSendMessage(text, homeState),
                         activeConversationId: activeId,
                       ),
                     },
                   ),
-                  if (messages.isNotEmpty ||
-                      homeState.selectedClassicType == ClassicType.tripitaka)
-                    ChatInputBar(
-                      isLoading: isStreaming,
-                      onSend: (text) => _handleSendMessage(text, homeState),
-                    ),
                 ],
               );
             },

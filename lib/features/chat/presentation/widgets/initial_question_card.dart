@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
@@ -58,7 +57,7 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
     });
 
     // 애니메이션 종료 후 입력 단계로 전환
-    Future.delayed(const Duration(milliseconds: 2500), () {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       if (mounted) {
         final random = Random();
         final pickedHexagram =
@@ -93,8 +92,6 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GudaCard(
-      constraints: const BoxConstraints(maxWidth: 400),
-      margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.lg),
       child: AnimatedSize(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,

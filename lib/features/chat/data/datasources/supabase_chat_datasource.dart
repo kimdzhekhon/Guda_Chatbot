@@ -39,12 +39,12 @@ class SupabaseChatDataSource {
   }
 
   /// 특정 대화의 메시지 목록 조회
-  Future<List<Message>> getMessages(String conversationId) async {
+  Future<List<Message>> getMessages(GetMessagesRequestDto request) async {
     try {
       final response = await _supabase
           .from('messages')
           .select()
-          .eq('conversation_id', conversationId)
+          .eq('conversation_id', request.conversationId)
           .order('created_at', ascending: true);
 
       return (response as List)
@@ -59,20 +59,9 @@ class SupabaseChatDataSource {
   }
 
   /// 새 대화 세션 생성
-  Future<Conversation> createConversation({
-    required String title,
-    required String classicType,
-  }) async {
-    final userId = _supabase.auth.currentUser?.id ?? 'mock-1234';
-
+  Future<Conversation> createConversation(CreateConversationRequestDto request) async {
     // 실제 Supabase 연결 시도
     try {
-      final request = CreateConversationRequestDto(
-        title: title,
-        classicType: classicType,
-        userId: userId,
-      );
-
       final response = await _supabase
           .from('conversations')
           .insert(request.toJson())
@@ -81,12 +70,13 @@ class SupabaseChatDataSource {
 
       return ConversationDto.fromJson(response).toDomain();
     } catch (e) {
+      final userId = _supabase.auth.currentUser?.id ?? 'mock-1234';
       // 실제 DB 연동 실패 시 Mock 데이터 반환 (UI 흐름 테스트용)
       return Conversation(
         id: 'mock-conv-${DateTime.now().millisecondsSinceEpoch}',
-        title: title,
+        title: request.title,
         classicType: ClassicType.values.firstWhere(
-          (e) => e.name == classicType,
+          (e) => e.name == request.classicType,
         ),
         userId: userId,
         createdAt: DateTime.now(),
@@ -96,21 +86,11 @@ class SupabaseChatDataSource {
   }
 
   /// 대화 삭제
-  Future<void> deleteConversation(String conversationId) async {
-    await _supabase.from('conversations').delete().eq('id', conversationId);
+  Future<void> deleteConversation(DeleteConversationRequestDto request) async {
+    await _supabase.from('conversations').delete().eq('id', request.conversationId);
   }
 
-  Future<Message> saveMessage({
-    required String conversationId,
-    required String content,
-    required String role,
-  }) async {
-    final request = SaveMessageRequestDto(
-      conversationId: conversationId,
-      content: content,
-      role: role,
-    );
-
+  Future<Message> saveMessage(SaveMessageRequestDto request) async {
     final response = await _supabase
         .from('messages')
         .insert(request.toJson())

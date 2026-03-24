@@ -60,6 +60,12 @@ class SupabaseAuthDataSource {
     return _mapSupabaseUserToEntity(user);
   }
 
+  /// 계정 탈퇴
+  Future<void> deleteAccount() async {
+    // TODO: 실제 백엔드 연동 전까지 로컬 로그아웃만 수행 (보통 Edge Function이나 RPC로 처리)
+    await signOut();
+  }
+
   /// 인증 상태 스트림
   Stream<GudaUser?> authStateChanges() {
     return _supabase.auth.onAuthStateChange.map((event) {

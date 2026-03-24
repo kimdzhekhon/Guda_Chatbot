@@ -50,6 +50,7 @@ class AppResponsiveLayout extends StatelessWidget {
     required this.mobile,
     this.tablet,
     this.desktop,
+    this.useSafeArea = true,
   });
 
   /// 모바일 레이아웃 빌더 (필수)
@@ -64,6 +65,9 @@ class AppResponsiveLayout extends StatelessWidget {
   final Widget Function(BuildContext context, AppResponsiveLayoutData data)?
   desktop;
 
+  /// SafeArea 사용 여부 (기본값: true)
+  final bool useSafeArea;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -77,7 +81,7 @@ class AppResponsiveLayout extends StatelessWidget {
           screenHeight: height,
         );
 
-        return switch (bp) {
+        final child = switch (bp) {
           AppBreakpoint.desktop =>
             desktop?.call(context, data) ??
                 tablet?.call(context, data) ??
@@ -86,6 +90,11 @@ class AppResponsiveLayout extends StatelessWidget {
             tablet?.call(context, data) ?? mobile(context, data),
           AppBreakpoint.mobile => mobile(context, data),
         };
+
+        if (useSafeArea) {
+          return SafeArea(child: child);
+        }
+        return child;
       },
     );
   }

@@ -12,4 +12,7 @@ abstract final class RoutePaths {
 
   /// 설정 화면 (SCR_SETTINGS)
   static const String settings = '/settings';
+
+  /// 라이선스 화면 (SCR_LICENSE)
+  static const String license = '/settings/license';
 }
