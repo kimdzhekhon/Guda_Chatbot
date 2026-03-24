@@ -3,12 +3,16 @@
 abstract final class AppConfig {
   // ── Supabase 설정 ─────────────────────────────────
   /// Supabase 프로젝트 URL
-  /// TODO: 실제 Supabase 프로젝트 URL로 교체
-  static const String supabaseUrl = 'https://your-project.supabase.co';
+  static const String supabaseUrl = String.fromEnvironment(
+    'SUPABASE_URL',
+    defaultValue: 'https://your-project.supabase.co',
+  );
 
   /// Supabase anon key (공개 키, 비밀 키 아님)
-  /// TODO: 실제 Supabase anon key로 교체
-  static const String supabaseAnonKey = 'your-anon-key';
+  static const String supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+    defaultValue: 'your-anon-key',
+  );
 
   // ── Edge Functions 엔드포인트 ─────────────────────
   /// 팔만대장경 RAG 채팅 Edge Function
