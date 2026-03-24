@@ -49,37 +49,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final homeState = ref.watch(homeViewModelProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // 대화가 선택되어 있으면 해당 대화의 메시지를 구독
     final activeId = homeState.activeConversationId;
-    final chatState = activeId != null
-        ? ref.watch(chatRoomViewModelProvider(activeId))
-        : const UiSuccess<List<Message>>([]);
 
     // 메시지 업데이트 시 스크롤
     if (activeId != null) {
       ref.listen(chatRoomViewModelProvider(activeId), (_, next) {
         if (next.isSuccess) {
-          WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _scrollToBottom(),
+          );
         }
       });
     }
 
-    final isStreaming = chatState.dataOrNull?.any((m) => m.isStreaming) ?? false;
-    final messages = chatState.dataOrNull ?? [];
-    final showBackButton = activeId != null && messages.isEmpty;
+    final isMessagesEmpty = activeId != null
+        ? ref.watch(chatRoomViewModelProvider(activeId).select(
+            (state) => state.dataOrNull?.isEmpty ?? true,
+          ))
+        : true;
+    final showBackButton = activeId != null && isMessagesEmpty;
 
     return Scaffold(
-      backgroundColor: isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
+      backgroundColor: isDark
+          ? GudaColors.backgroundDark
+          : GudaColors.backgroundLight,
       appBar: AppBar(
-        title: Text(AppStrings.appName, style: GudaTypography.heading2(
-          color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
-        ).copyWith(fontWeight: FontWeight.bold, letterSpacing: 2)),
+        title: Text(
+          AppStrings.appName,
+          style: GudaTypography.heading2(
+            color: isDark
+                ? GudaColors.onSurfaceDark
+                : GudaColors.onSurfaceLight,
+          ).copyWith(fontWeight: FontWeight.bold, letterSpacing: 2),
+        ),
         leading: Builder(
           builder: (context) => IconButton(
             icon: Icon(showBackButton ? Icons.arrow_back : Icons.menu),
             onPressed: () {
               if (showBackButton) {
-                ref.read(homeViewModelProvider.notifier).clearActiveConversation();
+                ref
+                    .read(homeViewModelProvider.notifier)
+                    .clearActiveConversation();
               } else {
                 Scaffold.of(context).openDrawer();
               }
@@ -91,42 +101,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.settings_outlined),
               onPressed: () {
-              context.push(RoutePaths.settings);
-            },
+                context.push(RoutePaths.settings);
+              },
             ),
         ],
       ),
       drawer: const GudaDrawer(),
-      body: Column(
-        children: [
-          // ── 메시지 영역 ──────────────────────────────
-          Expanded(
-            child: activeId == null
-                ? const Center(child: SingleChildScrollView(child: ClassicCardSlider()))
-                : switch (chatState) {
-                    UiLoading() => const GudaLoadingWidget(message: '불러오는 중...'),
-                    UiError(message: final msg) => GudaErrorWidget(message: msg),
-                    UiSuccess(data: final messages) => _buildMessageList(messages, isDark, homeState.selectedClassicType),
-                  },
-          ),
+      body: activeId == null
+          ? const Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(child: ClassicCardSlider()),
+                  ),
+                ),
+              ],
+            )
+          : Consumer(
+              builder: (context, ref, child) {
+                final chatState =
+                    ref.watch(chatRoomViewModelProvider(activeId));
+                final isStreaming =
+                    chatState.dataOrNull?.any((m) => m.isStreaming) ?? false;
+                final messages = chatState.dataOrNull ?? [];
 
-          // ── 입력창 (대화 중이며 메시지가 존재하거나, 팔만대장경 초기 상태일 때 노출) ────────────────
-          if (activeId != null && 
-              ((chatState.dataOrNull?.isNotEmpty ?? false) || 
-               homeState.selectedClassicType == ClassicType.tripitaka))
-            ChatInputBar(
-              isLoading: isStreaming,
-              onSend: (text) => _handleSendMessage(text, homeState),
+                return Column(
+                  children: [
+                    Expanded(
+                      child: switch (chatState) {
+                        UiLoading() => const GudaLoadingWidget(
+                          message: '불러오는 중...',
+                        ),
+                        UiError(message: final msg) => GudaErrorWidget(
+                          message: msg,
+                        ),
+                        UiSuccess(data: final messages) => _buildMessageList(
+                          messages,
+                          isDark,
+                          homeState.selectedClassicType,
+                        ),
+                      },
+                    ),
+                    if (messages.isNotEmpty ||
+                        homeState.selectedClassicType == ClassicType.tripitaka)
+                      ChatInputBar(
+                        isLoading: isStreaming,
+                        onSend: (text) => _handleSendMessage(text, homeState),
+                      ),
+                  ],
+                );
+              },
             ),
-        ],
-      ),
     );
   }
 
-  Widget _buildMessageList(List<Message> messages, bool isDark, ClassicType type) {
+  Widget _buildMessageList(
+    List<Message> messages,
+    bool isDark,
+    ClassicType type,
+  ) {
     if (messages.isEmpty) {
       if (type == ClassicType.tripitaka) {
-        final activeId = ref.read(homeViewModelProvider).activeConversationId ?? '';
+        final activeId =
+            ref.read(homeViewModelProvider).activeConversationId ?? '';
         // 팔만대장경은 채팅 형식으로 시작
         return ListView(
           controller: _scrollController,
@@ -147,20 +184,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
 
       return Center(
-        child: SingleChildScrollView(
-          child: InitialQuestionCard(
-            type: type,
-            onSkip: () => _handleSendMessage('', ref.read(homeViewModelProvider)),
-            onStart: (question) => _handleSendMessage(question, ref.read(homeViewModelProvider)),
-          ),
-        ),
-      ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95));
+            child: SingleChildScrollView(
+              child: InitialQuestionCard(
+                type: type,
+                onSkip: () =>
+                    _handleSendMessage('', ref.read(homeViewModelProvider)),
+                onStart: (question) => _handleSendMessage(
+                  question,
+                  ref.read(homeViewModelProvider),
+                ),
+              ),
+            ),
+          )
+          .animate()
+          .fadeIn(duration: 600.ms)
+          .scale(begin: const Offset(0.95, 0.95));
     }
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
       itemCount: messages.length,
-      itemBuilder: (context, index) => MessageBubble(message: messages[index], isDark: isDark),
+      itemBuilder: (context, index) =>
+          MessageBubble(message: messages[index], isDark: isDark),
     );
   }
 
@@ -172,7 +217,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final newConv = await ref
           .read(chatListViewModelProvider.notifier)
           .createConversation(classicType: homeState.selectedClassicType);
-      
+
       if (newConv != null) {
         convId = newConv.id;
         ref.read(homeViewModelProvider.notifier).selectConversation(newConv);

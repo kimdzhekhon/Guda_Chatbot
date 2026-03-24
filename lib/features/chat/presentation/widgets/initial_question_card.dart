@@ -10,9 +10,9 @@ import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_selecti
 import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_widgets.dart';
 
 enum CardPhase {
-  selection,   // 궤 선택/던지기 선택 단계
-  animating,   // 궤 던지는 애니메이션 단계
-  input,       // 질문 입력 단계
+  selection, // 궤 선택/던지기 선택 단계
+  animating, // 궤 던지는 애니메이션 단계
+  input, // 질문 입력 단계
 }
 
 class InitialQuestionCard extends StatefulWidget {
@@ -40,7 +40,9 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
   void initState() {
     super.initState();
     // 팔만대장경은 궤 선택 단계 없이 입력창으로 시작
-    _phase = widget.type == ClassicType.tripitaka ? CardPhase.input : CardPhase.selection;
+    _phase = widget.type == ClassicType.tripitaka
+        ? CardPhase.input
+        : CardPhase.selection;
   }
 
   @override
@@ -58,8 +60,9 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
         final random = Random();
-        final pickedHexagram = hexagramData[random.nextInt(hexagramData.length)];
-        
+        final pickedHexagram =
+            hexagramData[random.nextInt(hexagramData.length)];
+
         setState(() {
           _selectedHexagram = pickedHexagram;
           _phase = CardPhase.input;
@@ -98,7 +101,8 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
         borderRadius: GudaRadius.lgAll,
         boxShadow: GudaShadows.card,
         border: Border.all(
-          color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight).withValues(alpha: 0.5),
+          color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+              .withValues(alpha: 0.5),
           width: 0.5,
         ),
       ),
@@ -125,11 +129,13 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
       children: [
         const SizedBox(height: GudaSpacing.md),
         Text(
-          widget.type == ClassicType.tripitaka 
-              ? AppStrings.tripitakaInitialTitle 
+          widget.type == ClassicType.tripitaka
+              ? AppStrings.tripitakaInitialTitle
               : AppStrings.ichingSelectionTitle,
           style: GudaTypography.heading3(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+            color: isDark
+                ? GudaColors.onSurfaceDark
+                : GudaColors.onSurfaceLight,
           ),
           textAlign: TextAlign.center,
         ),
@@ -176,7 +182,9 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
         Text(
           '괘를 던지는 중입니다...',
           style: GudaTypography.body1(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+            color: isDark
+                ? GudaColors.onSurfaceDark
+                : GudaColors.onSurfaceLight,
           ),
         ),
         const SizedBox(height: GudaSpacing.md),
@@ -191,19 +199,25 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
       children: [
         const SizedBox(height: GudaSpacing.md),
         Text(
-          widget.type == ClassicType.tripitaka ? AppStrings.tripitakaName : AppStrings.initialQuestionTitle,
+          widget.type == ClassicType.tripitaka
+              ? AppStrings.tripitakaName
+              : AppStrings.initialQuestionTitle,
           style: GudaTypography.heading3(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+            color: isDark
+                ? GudaColors.onSurfaceDark
+                : GudaColors.onSurfaceLight,
           ).copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: GudaSpacing.lg),
         Text(
-          widget.type == ClassicType.tripitaka 
+          widget.type == ClassicType.tripitaka
               ? '고려대장경의 불교 경전에 대해 질문해보세요. 금강경, 반야심경,\n법화경 등 다양한 경전에 대해 대화할 수 있습니다.'
               : AppStrings.initialQuestionSubtitle,
           style: GudaTypography.body2(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+            color: isDark
+                ? GudaColors.onSurfaceDark
+                : GudaColors.onSurfaceLight,
           ),
           textAlign: TextAlign.center,
         ),
@@ -212,7 +226,9 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
         if (_selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
+            color: isDark
+                ? GudaColors.backgroundDark
+                : GudaColors.backgroundLight,
             borderRadius: GudaRadius.smAll,
             border: Border.all(
               color: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
@@ -222,14 +238,20 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
             controller: _controller,
             autofocus: true,
             style: GudaTypography.input(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+              color: isDark
+                  ? GudaColors.onSurfaceDark
+                  : GudaColors.onSurfaceLight,
             ),
             decoration: InputDecoration(
-              hintText: widget.type == ClassicType.tripitaka 
-                  ? '경전에 대해 궁금한 점을 적어주세요' 
+              hintText: widget.type == ClassicType.tripitaka
+                  ? '경전에 대해 궁금한 점을 적어주세요'
                   : AppStrings.initialQuestionHint,
               hintStyle: GudaTypography.input(
-                color: (isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight).withValues(alpha: 0.5),
+                color:
+                    (isDark
+                            ? GudaColors.onSurfaceVariantDark
+                            : GudaColors.onSurfaceVariantLight)
+                        .withValues(alpha: 0.5),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: GudaSpacing.md,
@@ -246,13 +268,13 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
             backgroundColor: GudaColors.primary,
             foregroundColor: GudaColors.onUserBubble,
             padding: const EdgeInsets.symmetric(vertical: GudaSpacing.md),
-            shape: const RoundedRectangleBorder(
-              borderRadius: GudaRadius.smAll,
-            ),
+            shape: const RoundedRectangleBorder(borderRadius: GudaRadius.smAll),
             elevation: 0,
           ),
           child: Text(
-            widget.type == ClassicType.tripitaka ? '대화 시작하기' : AppStrings.startDivinationButton,
+            widget.type == ClassicType.tripitaka
+                ? '대화 시작하기'
+                : AppStrings.startDivinationButton,
             style: GudaTypography.button(),
           ),
         ),
@@ -267,10 +289,15 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
     return Container(
       padding: const EdgeInsets.all(GudaSpacing.md),
       decoration: BoxDecoration(
-        color: (isDark ? GudaColors.surfaceVariantDark : GudaColors.surfaceVariantLight).withValues(alpha: 0.5),
+        color:
+            (isDark
+                    ? GudaColors.surfaceVariantDark
+                    : GudaColors.surfaceVariantLight)
+                .withValues(alpha: 0.5),
         borderRadius: GudaRadius.mdAll,
         border: Border.all(
-          color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight).withValues(alpha: 0.3),
+          color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+              .withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -290,14 +317,18 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
                     Text(
                       _selectedHexagram!.name,
                       style: GudaTypography.body1(
-                        color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+                        color: isDark
+                            ? GudaColors.onSurfaceDark
+                            : GudaColors.onSurfaceLight,
                       ).copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: GudaSpacing.xs),
                     Text(
                       '(${_selectedHexagram!.hanja})',
                       style: GudaTypography.caption(
-                        color: (isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight),
+                        color: (isDark
+                            ? GudaColors.onSurfaceVariantDark
+                            : GudaColors.onSurfaceVariantLight),
                       ),
                     ),
                   ],
@@ -305,7 +336,9 @@ class _InitialQuestionCardState extends State<InitialQuestionCard> {
                 Text(
                   _selectedHexagram!.summary,
                   style: GudaTypography.caption(
-                    color: (isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight),
+                    color: (isDark
+                        ? GudaColors.onSurfaceVariantDark
+                        : GudaColors.onSurfaceVariantLight),
                   ),
                 ),
               ],
@@ -352,24 +385,25 @@ class _SelectionBox extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: GudaSpacing.lg),
         decoration: BoxDecoration(
-          color: isDark ? GudaColors.surfaceVariantDark : GudaColors.surfaceVariantLight,
+          color: isDark
+              ? GudaColors.surfaceVariantDark
+              : GudaColors.surfaceVariantLight,
           borderRadius: GudaRadius.mdAll,
           border: Border.all(
-            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight).withValues(alpha: 0.5),
+            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+                .withValues(alpha: 0.5),
           ),
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 32,
-              color: GudaColors.primary,
-            ),
+            Icon(icon, size: 32, color: GudaColors.primary),
             const SizedBox(height: GudaSpacing.sm),
             Text(
               label,
               style: GudaTypography.button(
-                color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+                color: isDark
+                    ? GudaColors.onSurfaceDark
+                    : GudaColors.onSurfaceLight,
               ),
             ),
           ],

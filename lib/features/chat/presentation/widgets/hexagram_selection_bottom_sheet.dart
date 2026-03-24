@@ -32,12 +32,14 @@ class HexagramSelectionBottomSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight),
+              color: (isDark
+                  ? GudaColors.dividerDark
+                  : GudaColors.dividerLight),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // 헤더
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.lg),
@@ -47,14 +49,18 @@ class HexagramSelectionBottomSheet extends StatelessWidget {
                 Text(
                   '괘 선택',
                   style: GudaTypography.heading2(
-                    color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+                    color: isDark
+                        ? GudaColors.onSurfaceDark
+                        : GudaColors.onSurfaceLight,
                   ),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(
                     Icons.close_rounded,
-                    color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+                    color: isDark
+                        ? GudaColors.onSurfaceVariantDark
+                        : GudaColors.onSurfaceVariantLight,
                   ),
                 ),
               ],
@@ -99,10 +105,7 @@ class _HexagramItem extends StatelessWidget {
   final Hexagram hexagram;
   final VoidCallback onTap;
 
-  const _HexagramItem({
-    required this.hexagram,
-    required this.onTap,
-  });
+  const _HexagramItem({required this.hexagram, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -121,12 +124,17 @@ class _HexagramItem extends StatelessWidget {
           ),
           const SizedBox(height: GudaSpacing.sm),
           Text(
-            hexagram.name.replaceAll('중', '').replaceAll('천', '').replaceAll('지', ''), // 간략화된 이름 표시 (선택사항)
+            hexagram.name
+                .replaceAll('중', '')
+                .replaceAll('천', '')
+                .replaceAll('지', ''), // 간략화된 이름 표시 (선택사항)
             // 하지만 사용자가 "궤 이름"이 나오게 해달라고 했으므로 전체 이름을 적절히 표시
             // 너무 길면 줄바꿈 처리
             textAlign: TextAlign.center,
             style: GudaTypography.caption(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+              color: isDark
+                  ? GudaColors.onSurfaceDark
+                  : GudaColors.onSurfaceLight,
             ).copyWith(fontWeight: FontWeight.w600),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -134,7 +142,11 @@ class _HexagramItem extends StatelessWidget {
           Text(
             hexagram.hanja,
             style: GudaTypography.caption(
-              color: (isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight).withValues(alpha: 0.7),
+              color:
+                  (isDark
+                          ? GudaColors.onSurfaceVariantDark
+                          : GudaColors.onSurfaceVariantLight)
+                      .withValues(alpha: 0.7),
             ).copyWith(fontSize: 10),
           ),
         ],

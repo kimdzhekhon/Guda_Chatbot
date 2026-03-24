@@ -8,10 +8,7 @@ class HomeState {
   final String? activeConversationId;
   final ClassicType selectedClassicType;
 
-  HomeState({
-    this.activeConversationId,
-    required this.selectedClassicType,
-  });
+  HomeState({this.activeConversationId, required this.selectedClassicType});
 
   HomeState copyWith({
     String? activeConversationId,
@@ -19,7 +16,9 @@ class HomeState {
     bool clearActiveConversation = false,
   }) {
     return HomeState(
-      activeConversationId: clearActiveConversation ? null : (activeConversationId ?? this.activeConversationId),
+      activeConversationId: clearActiveConversation
+          ? null
+          : (activeConversationId ?? this.activeConversationId),
       selectedClassicType: selectedClassicType ?? this.selectedClassicType,
     );
   }
@@ -33,7 +32,10 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   void selectClassicType(ClassicType type) {
-    state = state.copyWith(selectedClassicType: type, clearActiveConversation: true);
+    state = state.copyWith(
+      selectedClassicType: type,
+      clearActiveConversation: true,
+    );
   }
 
   void selectConversation(Conversation conversation) {

@@ -72,7 +72,7 @@ class ChatListViewModel extends _$ChatListViewModel {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-    
+
     final current = state.dataOrNull ?? [];
     state = UiSuccess([conversation, ...current]);
     return conversation;
@@ -144,11 +144,15 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
     // Mock 스트리밍 시뮬레이션
     await Future.delayed(const Duration(milliseconds: 500));
-    
-    String fullResponse = classicType == ClassicType.tripitaka 
-      ? "부처님의 말씀에 따르면 모든 것은 마음먹기에 달렸습니다. 마음을 비우고 현재에 집중해 보세요."
-      : "주역의 괘를 살펴보니 현재는 나아갈 때가 아닌 머무를 때입니다. 신중하게 행동하십시오.";
-    
-    state = UiSuccess([...currentMessages, userMsg, streamingMsg.copyWith(content: fullResponse, isStreaming: false)]);
+
+    String fullResponse = classicType == ClassicType.tripitaka
+        ? "부처님의 말씀에 따르면 모든 것은 마음먹기에 달렸습니다. 마음을 비우고 현재에 집중해 보세요."
+        : "주역의 괘를 살펴보니 현재는 나아갈 때가 아닌 머무를 때입니다. 신중하게 행동하십시오.";
+
+    state = UiSuccess([
+      ...currentMessages,
+      userMsg,
+      streamingMsg.copyWith(content: fullResponse, isStreaming: false),
+    ]);
   }
 }

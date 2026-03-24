@@ -41,10 +41,7 @@ GoRouter appRouter(Ref ref) {
     routes: [
       GoRoute(path: RoutePaths.splash, builder: (_, _) => const SplashScreen()),
       GoRoute(path: RoutePaths.auth, builder: (_, _) => const AuthScreen()),
-      GoRoute(
-        path: RoutePaths.chatList,
-        builder: (_, _) => const HomeScreen(),
-      ),
+      GoRoute(path: RoutePaths.chatList, builder: (_, _) => const HomeScreen()),
       GoRoute(
         path: RoutePaths.settings,
         builder: (_, _) => const SettingsScreen(),

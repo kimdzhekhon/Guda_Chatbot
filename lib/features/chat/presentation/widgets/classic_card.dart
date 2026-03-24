@@ -22,7 +22,9 @@ class ClassicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final typeColor = type == ClassicType.tripitaka ? GudaColors.tripitaka : GudaColors.iching;
+    final typeColor = type == ClassicType.tripitaka
+        ? GudaColors.tripitaka
+        : GudaColors.iching;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.sm),
@@ -45,7 +47,7 @@ class ClassicCard extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: GudaColors.iching.withOpacity(0.1),
+              color: GudaColors.iching.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -71,7 +73,9 @@ class ClassicCard extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: GudaTypography.heading3(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+              color: isDark
+                  ? GudaColors.onSurfaceDark
+                  : GudaColors.onSurfaceLight,
             ),
           ),
           const SizedBox(height: GudaSpacing.xs),
@@ -79,10 +83,12 @@ class ClassicCard extends StatelessWidget {
             description,
             textAlign: TextAlign.center,
             style: GudaTypography.body2(
-              color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+              color: isDark
+                  ? GudaColors.onSurfaceVariantDark
+                  : GudaColors.onSurfaceVariantLight,
             ),
           ),
-          
+
           const Padding(
             padding: EdgeInsets.symmetric(vertical: GudaSpacing.lg),
             child: Divider(),
@@ -92,27 +98,33 @@ class ClassicCard extends StatelessWidget {
           Text(
             contentsSubtitle,
             style: GudaTypography.caption(
-              color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+              color: isDark
+                  ? GudaColors.onSurfaceVariantDark
+                  : GudaColors.onSurfaceVariantLight,
             ).copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: GudaSpacing.sm),
-          ...contents.map((content) => Padding(
-            padding: const EdgeInsets.only(bottom: GudaSpacing.xs),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('• ', style: TextStyle(color: typeColor)),
-                Expanded(
-                  child: Text(
-                    content,
-                    style: GudaTypography.body2(
-                      color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+          ...contents.map(
+            (content) => Padding(
+              padding: const EdgeInsets.only(bottom: GudaSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('• ', style: TextStyle(color: typeColor)),
+                  Expanded(
+                    child: Text(
+                      content,
+                      style: GudaTypography.body2(
+                        color: isDark
+                            ? GudaColors.onSurfaceVariantDark
+                            : GudaColors.onSurfaceVariantLight,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
