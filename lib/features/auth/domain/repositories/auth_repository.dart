@@ -12,6 +12,9 @@ abstract interface class AuthRepository {
   /// 로그아웃
   Future<void> signOut();
 
+  /// 계정 탈퇴
+  Future<void> deleteAccount();
+
   /// 현재 로그인된 사용자 조회 (null이면 미인증)
   Future<GudaUser?> getCurrentUser();
 

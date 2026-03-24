@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:guda_chatbot/app/router/route_paths.dart';
-import 'package:guda_chatbot/core/constants/app_strings.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
-import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
+import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/guda_drawer.dart';
-import 'package:guda_chatbot/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/classic_card_slider.dart';
-import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question_card.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/guda_home_app_bar.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/message_list.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -73,140 +69,80 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: isDark
           ? GudaColors.backgroundDark
           : GudaColors.backgroundLight,
-      appBar: AppBar(
-        title: Text(
-          AppStrings.appName,
-          style: GudaTypography.heading2(
-            color: isDark
-                ? GudaColors.onSurfaceDark
-                : GudaColors.onSurfaceLight,
-          ).copyWith(fontWeight: FontWeight.bold, letterSpacing: 2),
-        ),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(showBackButton ? Icons.arrow_back : Icons.menu),
-            onPressed: () {
-              if (showBackButton) {
-                ref
-                    .read(homeViewModelProvider.notifier)
-                    .clearActiveConversation();
-              } else {
-                Scaffold.of(context).openDrawer();
-              }
-            },
-          ),
-        ),
-        actions: [
-          if (activeId == null)
-            IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () {
-                context.push(RoutePaths.settings);
-              },
-            ),
-        ],
+      appBar: GudaHomeAppBar(
+        isDark: isDark,
+        showBackButton: showBackButton,
+        activeId: activeId,
       ),
       drawer: const GudaDrawer(),
-      body: activeId == null
-          ? const Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(child: ClassicCardSlider()),
-                  ),
-                ),
-              ],
-            )
+      body: AppResponsiveLayout(
+        useSafeArea: false,
+        mobile: (context, data) => _buildBody(activeId, homeState, isDark),
+      ),
+      bottomNavigationBar: activeId == null
+          ? null
           : Consumer(
               builder: (context, ref, child) {
-                final chatState =
-                    ref.watch(chatRoomViewModelProvider(activeId));
+                final chatState = ref.watch(chatRoomViewModelProvider(activeId));
                 final isStreaming =
                     chatState.dataOrNull?.any((m) => m.isStreaming) ?? false;
                 final messages = chatState.dataOrNull ?? [];
 
-                return Column(
-                  children: [
-                    Expanded(
-                      child: switch (chatState) {
-                        UiLoading() => const GudaLoadingWidget(
-                          message: '불러오는 중...',
-                        ),
-                        UiError(message: final msg) => GudaErrorWidget(
-                          message: msg,
-                        ),
-                        UiSuccess(data: final messages) => _buildMessageList(
-                          messages,
-                          isDark,
-                          homeState.selectedClassicType,
-                        ),
-                      },
-                    ),
-                    if (messages.isNotEmpty ||
-                        homeState.selectedClassicType == ClassicType.tripitaka)
-                      ChatInputBar(
-                        isLoading: isStreaming,
-                        onSend: (text) => _handleSendMessage(text, homeState),
-                      ),
-                  ],
+                if (messages.isEmpty &&
+                    homeState.selectedClassicType != ClassicType.tripitaka) {
+                  return const SizedBox.shrink();
+                }
+
+                return ChatInputBar(
+                  isLoading: isStreaming,
+                  onSend: (text) => _handleSendMessage(text, homeState),
                 );
               },
             ),
     );
   }
 
-  Widget _buildMessageList(
-    List<Message> messages,
-    bool isDark,
-    ClassicType type,
-  ) {
-    if (messages.isEmpty) {
-      if (type == ClassicType.tripitaka) {
-        final activeId =
-            ref.read(homeViewModelProvider).activeConversationId ?? '';
-        // 팔만대장경은 채팅 형식으로 시작
-        return ListView(
-          controller: _scrollController,
-          padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
-          children: [
-            MessageBubble(
-              message: Message(
-                id: 'tripitaka-guidance',
-                conversationId: activeId,
-                content: type.guidanceMessage,
-                role: MessageRole.assistant,
-                createdAt: DateTime.now(),
-              ),
-              isDark: isDark,
-            ),
-          ],
-        );
-      }
-
-      return Center(
-            child: SingleChildScrollView(
-              child: InitialQuestionCard(
-                type: type,
-                onSkip: () =>
-                    _handleSendMessage('', ref.read(homeViewModelProvider)),
-                onStart: (question) => _handleSendMessage(
-                  question,
-                  ref.read(homeViewModelProvider),
+  Widget _buildBody(String? activeId, HomeState homeState, bool isDark) {
+    return activeId == null
+        ? const Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(child: ClassicCardSlider()),
                 ),
               ),
-            ),
+            ],
           )
-          .animate()
-          .fadeIn(duration: 600.ms)
-          .scale(begin: const Offset(0.95, 0.95));
-    }
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
-      itemCount: messages.length,
-      itemBuilder: (context, index) =>
-          MessageBubble(message: messages[index], isDark: isDark),
-    );
+        : Consumer(
+            builder: (context, ref, child) {
+              final chatState = ref.watch(chatRoomViewModelProvider(activeId));
+              ref.watch(chatRoomViewModelProvider(activeId));
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: switch (chatState) {
+                      UiLoading() => const GudaLoadingWidget(
+                        message: '불러오는 중...',
+                      ),
+                      UiError(message: final msg) => GudaErrorWidget(
+                        message: msg,
+                      ),
+                      UiSuccess(data: final messages) => MessageList(
+                        messages: messages,
+                        isDark: isDark,
+                        type: homeState.selectedClassicType,
+                        scrollController: _scrollController,
+                        onSendMessage: (text) =>
+                            _handleSendMessage(text, homeState),
+                        activeConversationId: activeId,
+                      ),
+                    },
+                  ),
+                ],
+              );
+            },
+          );
   }
 
   Future<void> _handleSendMessage(String text, HomeState homeState) async {

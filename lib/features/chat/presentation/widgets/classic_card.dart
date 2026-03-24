@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/constants/app_assets.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_bullet_list.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 
 /// 고전 유형(팔만대장경, 주역)의 정보를 시각적으로 보여주는 카드 위젯
@@ -53,13 +56,13 @@ class ClassicCard extends StatelessWidget {
             child: Center(
               child: type == ClassicType.iching
                   ? Image.asset(
-                      'assets/images/I Ching.png',
+                      AppAssets.ichingImage,
                       width: 80,
                       height: 80,
                       fit: BoxFit.contain,
                     )
                   : Image.asset(
-                      'assets/images/Tripitakakoreana.png',
+                      AppAssets.tripitakaImage,
                       width: 80,
                       height: 80,
                       fit: BoxFit.contain,
@@ -91,39 +94,22 @@ class ClassicCard extends StatelessWidget {
 
           const Padding(
             padding: EdgeInsets.symmetric(vertical: GudaSpacing.lg),
-            child: Divider(),
+            child: GudaDivider(),
           ),
 
           // ── 수록 내용 ─────────────────────────────
           Text(
             contentsSubtitle,
-            style: GudaTypography.caption(
+            style: GudaTypography.captionBold(
               color: isDark
                   ? GudaColors.onSurfaceVariantDark
                   : GudaColors.onSurfaceVariantLight,
-            ).copyWith(fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(height: GudaSpacing.sm),
-          ...contents.map(
-            (content) => Padding(
-              padding: const EdgeInsets.only(bottom: GudaSpacing.xs),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('• ', style: TextStyle(color: typeColor)),
-                  Expanded(
-                    child: Text(
-                      content,
-                      style: GudaTypography.body2(
-                        color: isDark
-                            ? GudaColors.onSurfaceVariantDark
-                            : GudaColors.onSurfaceVariantLight,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          GudaBulletList(
+            items: contents,
+            bulletColor: typeColor,
           ),
         ],
       ),

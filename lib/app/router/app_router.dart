@@ -7,6 +7,7 @@ import 'package:guda_chatbot/features/auth/presentation/screens/splash_screen.da
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/screens/home_screen.dart';
 import 'package:guda_chatbot/features/settings/presentation/screens/settings_screen.dart';
+import 'package:guda_chatbot/features/settings/presentation/screens/license_screen.dart';
 import 'route_paths.dart';
 
 part 'app_router.g.dart';
@@ -45,6 +46,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RoutePaths.settings,
         builder: (_, _) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.license,
+        builder: (_, _) => const LicenseScreen(),
       ),
     ],
   );

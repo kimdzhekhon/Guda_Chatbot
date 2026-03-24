@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_bottom_sheet.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_bottom_sheet_header.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/domain/constants/hexagram_data.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_widgets.dart';
 
 /// 64괘 선택 바텀 시트
-class HexagramSelectionBottomSheet extends StatelessWidget {
+class HexagramSelectionBottomSheet extends StatefulWidget {
   final Function(Hexagram) onHexagramSelected;
 
   const HexagramSelectionBottomSheet({
@@ -14,86 +18,100 @@ class HexagramSelectionBottomSheet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+  State<HexagramSelectionBottomSheet> createState() =>
+      _HexagramSelectionBottomSheetState();
+}
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7, // 화면의 70% 높이
-      decoration: BoxDecoration(
-        color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+class _HexagramSelectionBottomSheetState
+    extends State<HexagramSelectionBottomSheet> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.trim();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final filteredHexagrams = hexagramData.where((hexagram) {
+      if (_searchQuery.isEmpty) return true;
+      return hexagram.name.contains(_searchQuery) ||
+          hexagram.hanja.contains(_searchQuery);
+    }).toList();
+
+    return GudaBottomSheet(
       child: Column(
         children: [
-          // 드래그 핸들
-          const SizedBox(height: 12),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: (isDark
-                  ? GudaColors.dividerDark
-                  : GudaColors.dividerLight),
-              borderRadius: BorderRadius.circular(2),
-            ),
+          GudaBottomSheetHeader(
+            title: '괘 선택',
+            onClose: () => Navigator.pop(context),
           ),
-          const SizedBox(height: 16),
-
-          // 헤더
+          
+          // 검색창
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.lg),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '괘 선택',
-                  style: GudaTypography.heading2(
-                    color: isDark
-                        ? GudaColors.onSurfaceDark
-                        : GudaColors.onSurfaceLight,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: isDark
-                        ? GudaColors.onSurfaceVariantDark
-                        : GudaColors.onSurfaceVariantLight,
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
+            child: GudaTextInputField(
+              controller: _searchController,
+              isDark: isDark,
+              hintText: '괘 이름이나 한자를 검색해보세요',
             ),
           ),
-          const Divider(height: 32),
+          const SizedBox(height: GudaSpacing.md),
+          const GudaDivider(),
 
           // 64괘 그리드
           Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.only(
-                left: GudaSpacing.md,
-                right: GudaSpacing.md,
-                bottom: bottomPadding + GudaSpacing.lg,
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, // 1줄에 4개
-                childAspectRatio: 0.8, // 세로로 약간 긴 형태 (이미지 + 텍스트)
-                crossAxisSpacing: GudaSpacing.md,
-                mainAxisSpacing: GudaSpacing.lg,
-              ),
-              itemCount: hexagramData.length,
-              itemBuilder: (context, index) {
-                final hexagram = hexagramData[index];
-                return _HexagramItem(
-                  hexagram: hexagram,
-                  onTap: () {
-                    onHexagramSelected(hexagram);
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
+            child: filteredHexagrams.isEmpty
+                ? Center(
+                    child: Text(
+                      '검색 결과가 없습니다.',
+                      style: GudaTypography.body1(
+                        color: isDark
+                            ? GudaColors.onSurfaceVariantDark
+                            : GudaColors.onSurfaceVariantLight,
+                      ),
+                    ),
+                  )
+                : GridView.builder(
+                    padding: EdgeInsets.only(
+                      top: GudaSpacing.md,
+                      left: GudaSpacing.md,
+                      right: GudaSpacing.md,
+                      bottom: bottomPadding + GudaSpacing.lg,
+                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4, // 1줄에 4개
+                      childAspectRatio: 0.8, // 세로로 약간 긴 형태 (이미지 + 텍스트)
+                      crossAxisSpacing: GudaSpacing.md,
+                      mainAxisSpacing: GudaSpacing.lg,
+                    ),
+                    itemCount: filteredHexagrams.length,
+                    itemBuilder: (context, index) {
+                      final hexagram = filteredHexagrams[index];
+                      return _HexagramItem(
+                        hexagram: hexagram,
+                        onTap: () {
+                          widget.onHexagramSelected(hexagram);
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -131,23 +149,22 @@ class _HexagramItem extends StatelessWidget {
             // 하지만 사용자가 "궤 이름"이 나오게 해달라고 했으므로 전체 이름을 적절히 표시
             // 너무 길면 줄바꿈 처리
             textAlign: TextAlign.center,
-            style: GudaTypography.caption(
+            style: GudaTypography.captionSemiBold(
               color: isDark
                   ? GudaColors.onSurfaceDark
                   : GudaColors.onSurfaceLight,
-            ).copyWith(fontWeight: FontWeight.w600),
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           Text(
             hexagram.hanja,
-            style: GudaTypography.caption(
-              color:
-                  (isDark
-                          ? GudaColors.onSurfaceVariantDark
-                          : GudaColors.onSurfaceVariantLight)
-                      .withValues(alpha: 0.7),
-            ).copyWith(fontSize: 10),
+            style: GudaTypography.tiny(
+              color: (isDark
+                      ? GudaColors.onSurfaceVariantDark
+                      : GudaColors.onSurfaceVariantLight)
+                  .withValues(alpha: 0.7),
+            ),
           ),
         ],
       ),
