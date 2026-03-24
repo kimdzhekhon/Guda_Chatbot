@@ -1,0 +1,39 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:guda_chatbot/core/design_system/design_system.dart';
+
+/// Guda 로딩 위젯 — 전역 로딩 상태 표시
+class GudaLoadingWidget extends StatelessWidget {
+  const GudaLoadingWidget({super.key, this.message});
+
+  /// 로딩 메시지 (선택)
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(colorScheme.secondary),
+            ),
+          ),
+          if (message != null) ...[
+            const SizedBox(height: GudaSpacing.md),
+            Text(
+              message!,
+              style: GudaTypography.body2(color: colorScheme.onSurfaceVariant),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms);
+  }
+}
