@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Guda 앱 타이포그래피 토큰
-/// Google Fonts: Noto Serif KR (한국어), Inter (영문/숫자)
+/// Google Fonts 사용 (Noto Serif KR, Inter) — 로컬 에셋 누락 방지
 abstract final class GudaTypography {
   // ── 한국어 세리프 스타일 (경전 본문용) ──────────────
   /// 대제목 — 화면 타이틀

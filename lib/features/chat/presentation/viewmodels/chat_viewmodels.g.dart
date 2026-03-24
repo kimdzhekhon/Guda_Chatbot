@@ -61,13 +61,8 @@ String _$supabaseChatDataSourceHash() =>
 final chatRepositoryProvider = ChatRepositoryProvider._();
 
 final class ChatRepositoryProvider
-    extends
-        $FunctionalProvider<
-          ChatRepositoryImpl,
-          ChatRepositoryImpl,
-          ChatRepositoryImpl
-        >
-    with $Provider<ChatRepositoryImpl> {
+    extends $FunctionalProvider<ChatRepository, ChatRepository, ChatRepository>
+    with $Provider<ChatRepository> {
   ChatRepositoryProvider._()
     : super(
         from: null,
@@ -84,35 +79,270 @@ final class ChatRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<ChatRepositoryImpl> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<ChatRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  ChatRepositoryImpl create(Ref ref) {
+  ChatRepository create(Ref ref) {
     return chatRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ChatRepositoryImpl value) {
+  Override overrideWithValue(ChatRepository value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ChatRepositoryImpl>(value),
+      providerOverride: $SyncValueProvider<ChatRepository>(value),
     );
   }
 }
 
-String _$chatRepositoryHash() => r'eb1a21676770c2a27c3ab407e508535dc57decfe';
+String _$chatRepositoryHash() => r'1ceb781606c32bf3199cb12c95ef1e8456624fca';
 
-/// 대화 목록 상태 관리
+@ProviderFor(getConversationsUseCase)
+final getConversationsUseCaseProvider = GetConversationsUseCaseProvider._();
+
+final class GetConversationsUseCaseProvider
+    extends
+        $FunctionalProvider<
+          GetConversationsUseCase,
+          GetConversationsUseCase,
+          GetConversationsUseCase
+        >
+    with $Provider<GetConversationsUseCase> {
+  GetConversationsUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getConversationsUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getConversationsUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetConversationsUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GetConversationsUseCase create(Ref ref) {
+    return getConversationsUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetConversationsUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetConversationsUseCase>(value),
+    );
+  }
+}
+
+String _$getConversationsUseCaseHash() =>
+    r'9173743ed614aeebab66e8f1939c5a4cea807f90';
+
+@ProviderFor(createConversationUseCase)
+final createConversationUseCaseProvider = CreateConversationUseCaseProvider._();
+
+final class CreateConversationUseCaseProvider
+    extends
+        $FunctionalProvider<
+          CreateConversationUseCase,
+          CreateConversationUseCase,
+          CreateConversationUseCase
+        >
+    with $Provider<CreateConversationUseCase> {
+  CreateConversationUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'createConversationUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$createConversationUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<CreateConversationUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  CreateConversationUseCase create(Ref ref) {
+    return createConversationUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CreateConversationUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CreateConversationUseCase>(value),
+    );
+  }
+}
+
+String _$createConversationUseCaseHash() =>
+    r'a4f561cdb6d37845b2efdc910a7352f62e27f762';
+
+@ProviderFor(deleteConversationUseCase)
+final deleteConversationUseCaseProvider = DeleteConversationUseCaseProvider._();
+
+final class DeleteConversationUseCaseProvider
+    extends
+        $FunctionalProvider<
+          DeleteConversationUseCase,
+          DeleteConversationUseCase,
+          DeleteConversationUseCase
+        >
+    with $Provider<DeleteConversationUseCase> {
+  DeleteConversationUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteConversationUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteConversationUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteConversationUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DeleteConversationUseCase create(Ref ref) {
+    return deleteConversationUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteConversationUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteConversationUseCase>(value),
+    );
+  }
+}
+
+String _$deleteConversationUseCaseHash() =>
+    r'b00181c604761783c29950d821237f3e281628bb';
+
+@ProviderFor(getMessagesUseCase)
+final getMessagesUseCaseProvider = GetMessagesUseCaseProvider._();
+
+final class GetMessagesUseCaseProvider
+    extends
+        $FunctionalProvider<
+          GetMessagesUseCase,
+          GetMessagesUseCase,
+          GetMessagesUseCase
+        >
+    with $Provider<GetMessagesUseCase> {
+  GetMessagesUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getMessagesUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getMessagesUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetMessagesUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GetMessagesUseCase create(Ref ref) {
+    return getMessagesUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetMessagesUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetMessagesUseCase>(value),
+    );
+  }
+}
+
+String _$getMessagesUseCaseHash() =>
+    r'ced351a3c01c94e98ca05227b9c76e883955c7ff';
+
+@ProviderFor(sendMessageUseCase)
+final sendMessageUseCaseProvider = SendMessageUseCaseProvider._();
+
+final class SendMessageUseCaseProvider
+    extends
+        $FunctionalProvider<
+          SendMessageUseCase,
+          SendMessageUseCase,
+          SendMessageUseCase
+        >
+    with $Provider<SendMessageUseCase> {
+  SendMessageUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sendMessageUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sendMessageUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<SendMessageUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SendMessageUseCase create(Ref ref) {
+    return sendMessageUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SendMessageUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SendMessageUseCase>(value),
+    );
+  }
+}
+
+String _$sendMessageUseCaseHash() =>
+    r'55850c09b954fe0a47d8b252a0ff70bb6cd6e22b';
 
 @ProviderFor(ChatListViewModel)
 final chatListViewModelProvider = ChatListViewModelProvider._();
 
-/// 대화 목록 상태 관리
 final class ChatListViewModelProvider
     extends $NotifierProvider<ChatListViewModel, UiState<List<Conversation>>> {
-  /// 대화 목록 상태 관리
   ChatListViewModelProvider._()
     : super(
         from: null,
@@ -140,9 +370,7 @@ final class ChatListViewModelProvider
   }
 }
 
-String _$chatListViewModelHash() => r'a2664593c60887ead5b8f9658839eae9b6458093';
-
-/// 대화 목록 상태 관리
+String _$chatListViewModelHash() => r'f48ec54d6e40003ec7a11c481afebbdb1166cdd2';
 
 abstract class _$ChatListViewModel
     extends $Notifier<UiState<List<Conversation>>> {
@@ -168,15 +396,11 @@ abstract class _$ChatListViewModel
   }
 }
 
-/// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
-
 @ProviderFor(ChatRoomViewModel)
 final chatRoomViewModelProvider = ChatRoomViewModelFamily._();
 
-/// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
 final class ChatRoomViewModelProvider
     extends $NotifierProvider<ChatRoomViewModel, UiState<List<Message>>> {
-  /// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
   ChatRoomViewModelProvider._({
     required ChatRoomViewModelFamily super.from,
     required String super.argument,
@@ -221,9 +445,7 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'3cebf6a3ada0531a3cc3f60c87a6e3a913cd6f13';
-
-/// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
+String _$chatRoomViewModelHash() => r'fcc98f41038cafeef66c12e1474760a572e78d1b';
 
 final class ChatRoomViewModelFamily extends $Family
     with
@@ -243,16 +465,12 @@ final class ChatRoomViewModelFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
-
   ChatRoomViewModelProvider call(String conversationId) =>
       ChatRoomViewModelProvider._(argument: conversationId, from: this);
 
   @override
   String toString() => r'chatRoomViewModelProvider';
 }
-
-/// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
 
 abstract class _$ChatRoomViewModel extends $Notifier<UiState<List<Message>>> {
   late final _$args = ref.$arg as String;

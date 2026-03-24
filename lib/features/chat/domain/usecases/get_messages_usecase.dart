@@ -1,0 +1,10 @@
+import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
+import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.dart';
+
+class GetMessagesUseCase {
+  const GetMessagesUseCase(this._repository);
+  final ChatRepository _repository;
+
+  Future<List<Message>> call(String conversationId) =>
+      _repository.getMessages(conversationId);
+}
