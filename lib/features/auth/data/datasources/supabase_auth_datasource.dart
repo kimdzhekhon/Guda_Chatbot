@@ -1,5 +1,6 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 
 /// Supabase 인증 데이터 소스 — Google OAuth 연동
@@ -70,13 +71,12 @@ class SupabaseAuthDataSource {
 
   /// Supabase User → GudaUser 도메인 엔티티 변환
   GudaUser _mapSupabaseUserToEntity(User user) {
-    final meta = user.userMetadata ?? {};
-    return GudaUser(
-      id: user.id,
-      email: user.email ?? '',
-      displayName: meta['full_name'] as String? ?? meta['name'] as String?,
-      photoUrl: meta['avatar_url'] as String? ?? meta['picture'] as String?,
-      createdAt: DateTime.parse(user.createdAt),
-    );
+    final json = {
+      'id': user.id,
+      'email': user.email,
+      ...user.userMetadata ?? {},
+      'created_at': user.createdAt,
+    };
+    return AuthResponseDto.fromJson(json).toDomain();
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
+import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
@@ -12,7 +13,7 @@ class SupabaseChatDataSource {
 
   final SupabaseClient _supabase;
 
-  /// 사용자의 대화 목록 조회
+  // ── 대화(Conversation) 관리 ───────────────────────
   Future<List<Conversation>> getConversations() async {
     final currentUser = _supabase.auth.currentUser;
     final userId = currentUser?.id ?? 'mock-1234'; // Mock 지원을 위해 기본 ID 사용
@@ -66,13 +67,15 @@ class SupabaseChatDataSource {
 
     // 실제 Supabase 연결 시도
     try {
+      final request = CreateConversationRequestDto(
+        title: title,
+        classicType: classicType,
+        userId: userId,
+      );
+
       final response = await _supabase
           .from('conversations')
-          .insert({
-            'title': title,
-            'classic_type': classicType,
-            'user_id': userId,
-          })
+          .insert(request.toJson())
           .select()
           .single();
 
@@ -97,19 +100,20 @@ class SupabaseChatDataSource {
     await _supabase.from('conversations').delete().eq('id', conversationId);
   }
 
-  /// 메시지 저장
   Future<Message> saveMessage({
     required String conversationId,
     required String content,
     required String role,
   }) async {
+    final request = SaveMessageRequestDto(
+      conversationId: conversationId,
+      content: content,
+      role: role,
+    );
+
     final response = await _supabase
         .from('messages')
-        .insert({
-          'conversation_id': conversationId,
-          'content': content,
-          'role': role,
-        })
+        .insert(request.toJson())
         .select()
         .single();
 
@@ -125,8 +129,7 @@ class SupabaseChatDataSource {
   }) {
     final controller = StreamController<String>();
 
-    // TODO: Edge Function 배포 후 실제 스트리밍 연동
-    // 현재는 Mock 데이터 스트리밍으로 동작
+    // 인공지능 응답 스트리밍 수신 (Edge Function 연동 전까지 Mock 데이터 사용)
     _mockStream(classicType, userMessage, controller);
 
     return controller.stream;
