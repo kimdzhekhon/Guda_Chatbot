@@ -53,28 +53,34 @@ class InputPhaseView extends StatelessWidget {
         ),
         const SizedBox(height: GudaSpacing.lg),
         if (selectedHexagram != null)
-          SelectedHexagramDisplay(
-            isDark: isDark,
-            hexagram: selectedHexagram!,
-            onReset: onResetHexagram,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
+            child: SelectedHexagramDisplay(
+              isDark: isDark,
+              hexagram: selectedHexagram!,
+              onReset: onResetHexagram,
+            ),
           ),
         if (selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
-        GudaTextInputField(
-          controller: controller,
-          isDark: isDark,
-          autofocus: true,
-          hintText: type == ClassicType.tripitaka
-              ? '경전에 대해 궁금한 점을 적어주세요'
-              : AppStrings.initialQuestionHint,
-          backgroundColor:
-              isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
-          borderRadius: GudaRadius.smAll,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: GudaSpacing.md,
-            vertical: GudaSpacing.md,
-          ),
-          style: GudaTypography.input(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
+          child: GudaTextInputField(
+            controller: controller,
+            isDark: isDark,
+            autofocus: true,
+            hintText: type == ClassicType.tripitaka
+                ? '경전에 대해 궁금한 점을 적어주세요'
+                : AppStrings.initialQuestionHint,
+            backgroundColor:
+                isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
+            borderRadius: GudaRadius.smAll,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: GudaSpacing.md,
+              vertical: GudaSpacing.md,
+            ),
+            style: GudaTypography.input(
+              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+            ),
           ),
         ),
         const SizedBox(height: GudaSpacing.lg),

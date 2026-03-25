@@ -1,4 +1,5 @@
 import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.dart';
+import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 
 class SendMessageUseCase {
   const SendMessageUseCase(this._repository);
@@ -13,9 +14,11 @@ class SendMessageUseCase {
   }) async* {
     // 1. 사용자 메시지 저장
     await _repository.saveMessage(
-      conversationId: conversationId,
-      content: content,
-      role: 'user',
+      SaveMessageRequestDto(
+        conversationId: conversationId,
+        content: content,
+        role: 'user',
+      ),
     );
 
     // 2. AI 응답 스트리밍

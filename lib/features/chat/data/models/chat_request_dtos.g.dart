@@ -37,3 +37,21 @@ Map<String, dynamic> _$SaveMessageRequestDtoToJson(
   'content': instance.content,
   'role': instance.role,
 };
+
+_GetMessagesRequestDto _$GetMessagesRequestDtoFromJson(
+  Map<String, dynamic> json,
+) => _GetMessagesRequestDto(conversationId: json['conversation_id'] as String);
+
+Map<String, dynamic> _$GetMessagesRequestDtoToJson(
+  _GetMessagesRequestDto instance,
+) => <String, dynamic>{'conversation_id': instance.conversationId};
+
+_DeleteConversationRequestDto _$DeleteConversationRequestDtoFromJson(
+  Map<String, dynamic> json,
+) => _DeleteConversationRequestDto(
+  conversationId: json['conversation_id'] as String,
+);
+
+Map<String, dynamic> _$DeleteConversationRequestDtoToJson(
+  _DeleteConversationRequestDto instance,
+) => <String, dynamic>{'conversation_id': instance.conversationId};

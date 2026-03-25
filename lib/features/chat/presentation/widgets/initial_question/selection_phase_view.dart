@@ -36,26 +36,29 @@ class SelectionPhaseView extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: GudaSpacing.lg),
-        Row(
-          children: [
-            Expanded(
-              child: _SelectionBox(
-                label: AppStrings.selectHexagram,
-                icon: Icons.grid_view_rounded,
-                onTap: onSelect,
-                isDark: isDark,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
+          child: Row(
+            children: [
+              Expanded(
+                child: _SelectionBox(
+                  label: AppStrings.selectHexagram,
+                  icon: Icons.grid_view_rounded,
+                  onTap: onSelect,
+                  isDark: isDark,
+                ),
               ),
-            ),
-            const SizedBox(width: GudaSpacing.md),
-            Expanded(
-              child: _SelectionBox(
-                label: AppStrings.throwHexagram,
-                icon: Icons.casino_outlined,
-                onTap: onThrow,
-                isDark: isDark,
+              const SizedBox(width: GudaSpacing.md),
+              Expanded(
+                child: _SelectionBox(
+                  label: AppStrings.throwHexagram,
+                  icon: Icons.casino_outlined,
+                  onTap: onThrow,
+                  isDark: isDark,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: GudaSpacing.lg),
       ],

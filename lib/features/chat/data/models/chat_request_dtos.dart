@@ -28,3 +28,25 @@ abstract class SaveMessageRequestDto with _$SaveMessageRequestDto {
   factory SaveMessageRequestDto.fromJson(Map<String, dynamic> json) =>
       _$SaveMessageRequestDtoFromJson(json);
 }
+
+/// 메시지 목록 조회 요청 DTO
+@freezed
+abstract class GetMessagesRequestDto with _$GetMessagesRequestDto {
+  const factory GetMessagesRequestDto({
+    @JsonKey(name: 'conversation_id') required String conversationId,
+  }) = _GetMessagesRequestDto;
+
+  factory GetMessagesRequestDto.fromJson(Map<String, dynamic> json) =>
+      _$GetMessagesRequestDtoFromJson(json);
+}
+
+/// 대화 삭제 요청 DTO
+@freezed
+abstract class DeleteConversationRequestDto with _$DeleteConversationRequestDto {
+  const factory DeleteConversationRequestDto({
+    @JsonKey(name: 'conversation_id') required String conversationId,
+  }) = _DeleteConversationRequestDto;
+
+  factory DeleteConversationRequestDto.fromJson(Map<String, dynamic> json) =>
+      _$DeleteConversationRequestDtoFromJson(json);
+}
