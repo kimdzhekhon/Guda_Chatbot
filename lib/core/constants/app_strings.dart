@@ -137,7 +137,6 @@ abstract final class AppStrings {
 
   static const List<String> tripitakaSuggestions = [
     '마음이 불안할 때 읽기 좋은 구절',
-    '사업을 할 때 가져야 할 올바른 마음가짐',
     '지혜로운 삶이란 무엇인가요?',
     '고통에서 벗어나는 법',
     '인간관계에 대한 부처님의 조언',

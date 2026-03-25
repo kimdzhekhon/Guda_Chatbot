@@ -64,16 +64,18 @@ class InputPhaseView extends StatelessWidget {
           ),
         if (selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
         
-        // ── 추천 질문 칩들 (Approved Proposal) ──────────
-        SuggestedQuestionChips(
-          type: type,
-          isDark: isDark,
-          onTap: (text) {
-            controller.text = text;
-            // 텍스트 입력 후 버튼 클릭 유도 또는 즉시 시작 가능
-          },
-        ),
-        const SizedBox(height: GudaSpacing.md),
+        // ── 추천 질문 칩들 (I Ching 전용) ──────────
+        if (type != ClassicType.tripitaka)
+          Padding(
+            padding: const EdgeInsets.only(bottom: GudaSpacing.md),
+            child: SuggestedQuestionChips(
+              type: type,
+              isDark: isDark,
+              onTap: (text) {
+                controller.text = text;
+              },
+            ),
+          ),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
