@@ -11,6 +11,7 @@ import 'package:guda_chatbot/features/chat/domain/usecases/delete_conversation_u
 import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 
 part 'chat_viewmodels.g.dart';
 
@@ -122,6 +123,9 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     required ClassicType classicType,
   }) async {
     final currentMessages = state.dataOrNull ?? [];
+    
+    // 사용량 증가
+    ref.read(chatUsageViewModelProvider.notifier).incrementUsedCount();
     
     // 1. 임시 사용자 메시지 추가 (반응성)
     final tempUserMsg = Message(

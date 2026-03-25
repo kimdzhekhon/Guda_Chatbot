@@ -64,6 +64,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ))
         : true;
     final showBackButton = activeId != null && isMessagesEmpty;
+    final hideChatCount = activeId != null &&
+        isMessagesEmpty &&
+        homeState.selectedClassicType != ClassicType.tripitaka &&
+        homeState.phase != CardPhase.input;
 
     return Scaffold(
       backgroundColor: isDark
@@ -73,6 +77,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         isDark: isDark,
         showBackButton: showBackButton,
         activeId: activeId,
+        hideChatCount: hideChatCount,
       ),
       drawer: const GudaDrawer(),
       body: AppResponsiveLayout(
