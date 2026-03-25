@@ -20,10 +20,10 @@ enum ClassicType {
     iching => AppStrings.ichingDomainDesc,
   };
 
-  /// Supabase Edge Function 이름
-  String get edgeFunctionName => switch (this) {
-    tripitaka => 'tripitaka-chat',
-    iching => 'iching-chat',
+  /// API 엔드포인트 경로 (Next.js 웹앱)
+  String get apiPath => switch (this) {
+    tripitaka => '/api/chat/tripitaka',
+    iching => '/api/chat/zhouyi',
   };
 
   /// AI 응답 구조 단계 수 (팔만대장경: 2단계, 주역: 3단계)
