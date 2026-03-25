@@ -209,6 +209,22 @@ class GudaDrawerFooter extends ConsumerWidget {
               IconButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  context.push(RoutePaths.bookmarks);
+                },
+                icon: const Icon(Icons.bookmarks_outlined),
+                padding: const EdgeInsets.all(GudaSpacing.md),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: isDark
+                      ? GudaColors.onSurfaceVariantDark
+                      : GudaColors.onSurfaceVariantLight,
+                  shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
+                ),
+              ),
+              const SizedBox(width: GudaSpacing.xs),
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
                   context.push(RoutePaths.settings);
                 },
                 icon: const Icon(Icons.settings_outlined),

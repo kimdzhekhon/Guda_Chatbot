@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
-import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
@@ -9,95 +6,87 @@ import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 
 /// Supabase 채팅 데이터 소스
 class SupabaseChatDataSource {
-  SupabaseChatDataSource() : _supabase = Supabase.instance.client;
+  SupabaseChatDataSource();
 
-  final SupabaseClient _supabase;
+  // final SupabaseClient _supabase; // Supabase 연동 시 주석 해제하여 사용
+
 
   // ── 대화(Conversation) 관리 ───────────────────────
   Future<List<Conversation>> getConversations() async {
-    final currentUser = _supabase.auth.currentUser;
-    final userId = currentUser?.id ?? 'mock-1234'; // Mock 지원을 위해 기본 ID 사용
-
-    try {
-      final response = await _supabase
-          .from('conversations')
-          .select()
-          .eq('user_id', userId)
-          .order('updated_at', ascending: false);
-
-      return (response as List)
-          .map(
-            (json) => ConversationDto.fromJson(
-              json as Map<String, dynamic>,
-            ).toDomain(),
-          )
-          .toList();
-    } catch (e) {
-      // 테이블이 없거나 권한 문제가 있을 경우 빈 목록 반환 (테스트 환경 고려)
-      return [];
-    }
+    // 테스트를 위한 Mock 데이터 반환
+    return [
+      Conversation(
+        id: 'mock-1',
+        title: '부처님의 지혜에 대하여',
+        classicType: ClassicType.tripitaka,
+        userId: 'mock-user',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        updatedAt: DateTime.now().subtract(const Duration(hours: 2)),
+        lastMessagePreview: '제행무상(諸行無常)의 의미는 무엇인가요?',
+      ),
+      Conversation(
+        id: 'mock-2',
+        title: '오늘의 운세와 주역',
+        classicType: ClassicType.iching,
+        userId: 'mock-user',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
+        lastMessagePreview: '건괘가 나왔습니다. 아주 좋은 기운입니다.',
+      ),
+    ];
   }
 
   /// 특정 대화의 메시지 목록 조회
   Future<List<Message>> getMessages(GetMessagesRequestDto request) async {
-    try {
-      final response = await _supabase
-          .from('messages')
-          .select()
-          .eq('conversation_id', request.conversationId)
-          .order('created_at', ascending: true);
-
-      return (response as List)
-          .map(
-            (json) =>
-                MessageDto.fromJson(json as Map<String, dynamic>).toDomain(),
-          )
-          .toList();
-    } catch (e) {
-      return [];
+    if (request.conversationId == 'mock-1') {
+      return [
+        Message(
+          id: 'msg-1',
+          conversationId: 'mock-1',
+          role: MessageRole.user,
+          content: '제행무상(諸行無常)의 의미는 무엇인가요?',
+          createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+        ),
+        Message(
+          id: 'msg-2',
+          conversationId: 'mock-1',
+          role: MessageRole.assistant,
+          content: '## 📿 제행무상의 의미\n\n모든 형성된 것들은 영원하지 않다는 뜻입니다. 세상의 모든 고통은 변하는 것을 변하지 않게 잡으려는 집착에서 비롯됩니다.',
+          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        ),
+      ];
     }
+    return [];
   }
 
   /// 새 대화 세션 생성
   Future<Conversation> createConversation(CreateConversationRequestDto request) async {
-    // 실제 Supabase 연결 시도
-    try {
-      final response = await _supabase
-          .from('conversations')
-          .insert(request.toJson())
-          .select()
-          .single();
-
-      return ConversationDto.fromJson(response).toDomain();
-    } catch (e) {
-      final userId = _supabase.auth.currentUser?.id ?? 'mock-1234';
-      // 실제 DB 연동 실패 시 Mock 데이터 반환 (UI 흐름 테스트용)
-      return Conversation(
-        id: 'mock-conv-${DateTime.now().millisecondsSinceEpoch}',
-        title: request.title,
-        classicType: ClassicType.values.firstWhere(
-          (e) => e.name == request.classicType,
-        ),
-        userId: userId,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-    }
+    return Conversation(
+      id: 'mock-new-${DateTime.now().millisecondsSinceEpoch}',
+      title: request.title,
+      classicType: ClassicType.values.firstWhere(
+        (e) => e.name == request.classicType,
+        orElse: () => ClassicType.tripitaka,
+      ),
+      userId: 'mock-user',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
   }
 
   /// 대화 삭제
   Future<void> deleteConversation(DeleteConversationRequestDto request) async {
-    await _supabase.from('conversations').delete().eq('id', request.conversationId);
+    // Mock에서는 아무 작업도 하지 않음
   }
 
   Future<Message> saveMessage(SaveMessageRequestDto request) async {
-    final response = await _supabase
-        .from('messages')
-        .insert(request.toJson())
-        .select()
-        .single();
-
-    return MessageDto.fromJson(response).toDomain();
+    return Message(
+      id: 'msg-${DateTime.now().millisecondsSinceEpoch}',
+      conversationId: request.conversationId,
+      role: MessageRole.values.firstWhere((e) => e.name == request.role),
+      content: request.content,
+      createdAt: DateTime.now(),
+    );
   }
 
   /// Edge Function 스트리밍 AI 응답
@@ -132,11 +121,11 @@ class SupabaseChatDataSource {
   List<String> _getMockResponse(String classicType, String query) {
     final response = switch (classicType) {
       'tripitaka' =>
-        '## 📿 부처님의 말씀\n\n**금강경**에서는 "범소유상 개시허망(凡所有相 皆是虛妄)"이라 하셨습니다.\n\n*세상의 모든 형상은 다 허망하다*는 뜻으로, 현재 겪고 계신 고민 또한 영원하지 않으며 마음이 만들어낸 그림자일 수 있음을 성찰해 보시기 바랍니다.\n\n---\n\n## 💡 자비로운 가이던스\n\n집착을 내려놓고 고요한 마음으로 상황을 바라보세요. 마치 구름이 걷히면 달이 드러나듯, 마음의 파도가 잦아들면 해결책이 저절로 보일 것입니다.',
+        '## 부처님의 말씀\n\n**금강경**에서는 "범소유상 개시허망(凡所有相 계시허망)"이라 하셨습니다.\n\n*세상의 모든 형상은 다 허망하다*는 뜻으로, 현재 겪고 계신 고민 또한 영원하지 않으며 마음이 만들어낸 그림자일 수 있음을 성찰해 보시기 바랍니다.\n\n---\n\n## 자비로운 가이던스\n\n집착을 내려놓고 고요한 마음으로 상황을 바라보세요. 마치 구름이 걷히면 달이 드러나듯, 마음의 파도가 잦아들면 해결책이 저절로 보일 것입니다.',
       'iching' =>
-        '## 🔮 64괘 분석\n\n**점괘**: **건(乾)괘** — 하늘의 기운이 충만함\n\n*풀이*: 건은 원(元)하고 형(亨)하며 이(利)하고 정(貞)하니라. 하늘의 이치는 강건하니, 군자는 이를 본받아 스스로 힘쓰며 쉬지 않아야 합니다.\n\n---\n\n## 📜 철학적 조언\n\n현재의 상황은 마치 태양이 중천에 뜬 것과 같아 매우 강력한 운때에 있습니다. 하지만 태양이 너무 뜨거우면 대지를 말리듯, 지나친 고집은 오히려 화를 부를 수 있으니 유순함을 잃지 마십시오.',
+        '## 64괘 분석\n\n**점괘**: **건(乾)괘** — 하늘의 기운이 충만함\n\n*풀이*: 건은 원(元)하고 형(亨)하며 이(利)하고 정(貞)하니라. 하늘의 이치는 강건하니, 군자는 이를 본받아 스스로 힘쓰며 쉬지 않아야 합니다.\n\n---\n\n## 철학적 조언\n\n현재의 상황은 마치 태양이 중천에 뜬 것과 같아 매우 강력한 운때에 있습니다. 하지만 태양이 너무 뜨거우면 대지를 말리듯, 지나친 고집은 오히려 화를 부를 수 있으니 유순함을 잃지 마십시오.',
       _ =>
-        '## 📖 원전 기반 설명\n\n**구사론**에 따르면 인간의 고통은 무명(無明)에서 비롯된다고 합니다. 당신의 질문에서 느껴지는 고민은 본래 실체가 없는 것일 수 있습니다.\n\n---\n\n## 💡 제언\n\n지각하는 주체와 대상을 분리하여 바라보는 연습을 통해 지혜로운 판단을 내리시길 권합니다.',
+        '## 원전 기반 설명\n\n**구사론**에 따르면 인간의 고통은 무명(무명)에서 비롯된다고 합니다. 당신의 질문에서 느껴지는 고민은 본래 실체가 없는 것일 수 있습니다.\n\n---\n\n## 제언\n\n지각하는 주체와 대상을 분리하여 바라보는 연습을 통해 지혜로운 판단을 내리시길 권합니다.',
     };
 
     // 청크 단위로 나누어 스트리밍 시뮬레이션

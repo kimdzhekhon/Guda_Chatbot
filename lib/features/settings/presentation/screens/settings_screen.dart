@@ -133,6 +133,16 @@ class SettingsScreen extends ConsumerWidget {
           onTap: () => context.push(RoutePaths.fontSize),
         ),
         const GudaDivider(alpha: 1.0),
+        GudaTile(
+          leading: const Icon(Icons.bookmark_outline_rounded),
+          title: '보관함',
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+          onTap: () => context.push(RoutePaths.bookmarks),
+        ),
+        const GudaDivider(alpha: 1.0),
         _ThemeSelectionTile(),
         const GudaDivider(alpha: 1.0),
 

@@ -18,4 +18,5 @@ abstract final class RoutePaths {
 
   /// 글자 크기 조절 화면 (SCR_FONT_SIZE)
   static const String fontSize = '/settings/font-size';
+  static const String bookmarks = '/bookmarks';
 }
