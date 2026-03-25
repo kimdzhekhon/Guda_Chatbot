@@ -11,6 +11,9 @@ abstract class ChatUsage with _$ChatUsage {
 
     /// 총 허용 대화 횟수
     required int totalLimit,
+
+    /// 현재 이용 중인 플랜명
+    required String planName,
   }) = _ChatUsage;
 
   const ChatUsage._();

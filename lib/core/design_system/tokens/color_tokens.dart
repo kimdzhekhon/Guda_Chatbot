@@ -59,7 +59,7 @@ abstract final class GudaColors {
   static const Color onUserBubble = Color(0xFFFFFFFF);
 
   /// AI 메시지 버블 배경 (라이트)
-  static const Color assistantBubbleLight = Color(0xFFF4F1E8);
+  static const Color assistantBubbleLight = Color(0xFFEBE4D1);
 
   /// AI 메시지 버블 배경 (다크)
   static const Color assistantBubbleDark = Color(0xFF211D3D);

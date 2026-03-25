@@ -60,6 +60,7 @@ class HomeViewModel extends _$HomeViewModel {
     state = state.copyWith(
       activeConversationId: conversation.id,
       selectedClassicType: conversation.classicType,
+      phase: CardPhase.input,
     );
   }
 

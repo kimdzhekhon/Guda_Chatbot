@@ -5,8 +5,8 @@ import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
-
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
+import 'package:guda_chatbot/features/payment/presentation/widgets/payment_selection_modal.dart';
 
 class GudaHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const GudaHomeAppBar({
@@ -72,8 +72,11 @@ class GudaHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('인앱 결제 기능 준비 중입니다.')),
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const PaymentSelectionModal(),
               );
             },
           ),

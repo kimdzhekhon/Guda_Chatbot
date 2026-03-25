@@ -51,7 +51,7 @@ class SupabaseChatDataSource {
           id: 'msg-2',
           conversationId: 'mock-1',
           role: MessageRole.assistant,
-          content: '## 📿 제행무상의 의미\n\n모든 형성된 것들은 영원하지 않다는 뜻입니다. 세상의 모든 고통은 변하는 것을 변하지 않게 잡으려는 집착에서 비롯됩니다.',
+          content: '## 제행무상의 의미\n\n모든 형성된 것들은 영원하지 않다는 뜻입니다. 세상의 모든 고통은 변하는 것을 변하지 않게 잡으려는 집착에서 비롯됩니다.',
           createdAt: DateTime.now().subtract(const Duration(hours: 2)),
         ),
       ];

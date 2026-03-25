@@ -84,7 +84,7 @@ class ResultCard extends StatelessWidget {
             child: Opacity(
               opacity: 0.5,
               child: Text(
-                '© 2024 Guda. All rights reserved.',
+                '© ${DateTime.now().year} Guda. All rights reserved.',
                 style: GudaTypography.caption(
                   color: isDark ? Colors.white38 : Colors.black38,
                 ),
