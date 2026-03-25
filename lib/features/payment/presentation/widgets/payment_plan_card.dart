@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_price_display.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
@@ -16,13 +17,6 @@ class PaymentPlanCard extends StatelessWidget {
     this.isSelected = false,
     this.onTap,
   });
-
-  String _formatNumber(num number) {
-    return number.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]},',
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +49,6 @@ class PaymentPlanCard extends StatelessWidget {
                   color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
                 ).copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: GudaSpacing.sm),
               Text(
                 plan.description,
                 textAlign: TextAlign.center,
@@ -64,28 +57,23 @@ class PaymentPlanCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              const SizedBox(height: GudaSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(GudaSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark ? GudaColors.surfaceVariantDark : GudaColors.surfaceVariantLight,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  plan.icon,
+                  size: 60,
+                  color: GudaColors.accent,
+                ),
+              ),
+              const Spacer(),
               const GudaDivider(height: GudaSpacing.xl),
               const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    _formatNumber(plan.price),
-                    style: GudaTypography.heading1(
-                      color: GudaColors.accent,
-                    ).copyWith(fontSize: 36, fontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '원',
-                    style: GudaTypography.body1(
-                      color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
-                    ),
-                  ),
-                ],
-              ),
+              GudaPriceDisplay(price: plan.price),
               const SizedBox(height: GudaSpacing.xs),
               Text(
                 plan.type == PaymentType.subscription 
@@ -97,7 +85,7 @@ class PaymentPlanCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '회당 약 ${_formatNumber(plan.pricePerChat)}원',
+                '회당 약 ${GudaPriceDisplay.format(plan.pricePerChat)}원',
                 style: GudaTypography.caption(
                   color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
                 ).copyWith(fontSize: 13),

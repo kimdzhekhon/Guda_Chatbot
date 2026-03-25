@@ -60,12 +60,7 @@ class LicenseScreen extends StatelessWidget {
     
     return GudaTile(
       title: name,
-      subtitle: Text(
-        licenseType,
-        style: GudaTypography.caption(
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-        ),
-      ),
+      subtitle: licenseType,
       trailing: Icon(
         Icons.chevron_right_rounded,
         color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),

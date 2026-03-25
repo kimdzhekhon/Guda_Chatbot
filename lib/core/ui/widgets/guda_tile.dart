@@ -8,55 +8,98 @@ class GudaTile extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
+    this.icon,
     this.leading,
     this.trailing,
     this.onTap,
-    this.selected = false,
+    this.isSelected = false,
     this.color,
-    this.selectedTileColor,
-    this.contentPadding,
+    this.iconColor,
+    this.padding,
   });
 
   final String title;
-  final Widget? subtitle;
+  final String? subtitle;
+  final IconData? icon;
   final Widget? leading;
   final Widget? trailing;
   final VoidCallback? onTap;
-  final bool selected;
+  final bool isSelected;
   final Color? color;
-  final Color? selectedTileColor;
-  final EdgeInsetsGeometry? contentPadding;
+  final Color? iconColor;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return ListTile(
+    // 기본 색상 설정
+    final effectiveTextColor = isSelected
+        ? colorScheme.primary
+        : (color ?? (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight));
+    
+    final effectiveIconColor = iconColor ?? effectiveTextColor;
+
+    return InkWell(
       onTap: onTap,
-      selected: selected,
-      selectedTileColor: selectedTileColor ??
-          (isDark ? GudaColors.primary : GudaColors.surfaceVariantLight)
-              .withValues(alpha: 0.1),
-      contentPadding: contentPadding ??
-          const EdgeInsets.symmetric(
-            horizontal: GudaSpacing.md,
-            vertical: GudaSpacing.xs,
-          ),
-      leading: leading,
-      title: Text(
-        title,
-        style: selected
-            ? GudaTypography.body1Bold(
-                color: color ??
-                    (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight),
-              )
-            : GudaTypography.body1(
-                color: color ??
-                    (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight),
+      borderRadius: GudaRadius.smAll,
+      child: Padding(
+        padding: padding ??
+            const EdgeInsets.symmetric(
+              horizontal: GudaSpacing.md,
+              vertical: GudaSpacing.md,
+            ),
+        child: Row(
+          children: [
+            // ── Leading 영역 ──────────────────────
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: GudaSpacing.md),
+            ] else if (icon != null) ...[
+              Icon(
+                icon,
+                size: 24,
+                color: effectiveIconColor,
               ),
+              const SizedBox(width: GudaSpacing.md),
+            ],
+
+            // ── Title / Subtitle 영역 ─────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: isSelected
+                        ? GudaTypography.body1Bold(color: effectiveTextColor)
+                        : GudaTypography.body1(color: effectiveTextColor),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: GudaTypography.caption(
+                        color: isDark
+                            ? GudaColors.onSurfaceVariantDark
+                            : GudaColors.onSurfaceVariantLight,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            // ── Trailing 영역 ─────────────────────
+            if (trailing != null) ...[
+              const SizedBox(width: GudaSpacing.sm),
+              trailing!,
+            ],
+          ],
+        ),
       ),
-      subtitle: subtitle,
-      trailing: trailing,
     );
   }
 }

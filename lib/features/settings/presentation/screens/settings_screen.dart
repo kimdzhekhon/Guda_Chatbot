@@ -9,7 +9,7 @@ import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_section_header.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_section.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
@@ -63,13 +63,9 @@ class SettingsScreen extends ConsumerWidget {
     return ListView(
       children: [
         // ── 프로필 영역 ─────────────────────────
-        if (user != null) ...[
-          const GudaSectionHeader(title: AppStrings.profileSection),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: GudaSpacing.xl,
-              vertical: GudaSpacing.md,
-            ),
+        if (user != null)
+          GudaSection(
+            title: AppStrings.profileSection,
             child: Container(
               padding: const EdgeInsets.all(GudaSpacing.lg),
               decoration: BoxDecoration(
@@ -113,7 +109,8 @@ class SettingsScreen extends ConsumerWidget {
                           borderRadius: GudaRadius.smAll,
                           child: LinearProgressIndicator(
                             value: progress,
-                          backgroundColor: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
+                            backgroundColor:
+                                isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
                             color: GudaColors.accent,
                             minHeight: 8,
                           ),
@@ -143,132 +140,153 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: GudaSpacing.xs),
-        ],
 
         // ── 결제 및 이용 ───────────────────────────
-        const GudaSectionHeader(
+        GudaSection(
           title: AppStrings.billingSection,
-          padding: EdgeInsets.fromLTRB(
+          headerPadding: const EdgeInsets.fromLTRB(
             GudaSpacing.xl,
             GudaSpacing.md,
             GudaSpacing.xl,
             GudaSpacing.sm,
           ),
-        ),
-        GudaTile(
-          leading: const Icon(Icons.receipt_long_rounded),
-          title: AppStrings.purchaseHistoryLabel,
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          contentPadding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              GudaTile(
+                leading: const Icon(Icons.receipt_long_rounded),
+                title: AppStrings.purchaseHistoryLabel,
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('준비 중인 기능입니다.')),
+                  );
+                },
+              ),
+              const GudaDivider(alpha: 1.0),
+              GudaTile(
+                leading: const Icon(Icons.history_rounded),
+                title: AppStrings.usageHistoryLabel,
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('준비 중인 기능입니다.')),
+                  );
+                },
+              ),
+            ],
           ),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('준비 중인 기능입니다.')),
-            );
-          },
         ),
-        const GudaDivider(alpha: 1.0),
-        GudaTile(
-          leading: const Icon(Icons.history_rounded),
-          title: AppStrings.usageHistoryLabel,
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-          ),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('준비 중인 기능입니다.')),
-            );
-          },
-        ),
-        const GudaDivider(alpha: 1.0),
 
         // ── 앱 설정 ─────────────────────────────
-        const GudaSectionHeader(title: AppStrings.appSettingsSection),
-        GudaTile(
-          leading: const Icon(Icons.text_format_rounded),
-          title: AppStrings.fontSizeLabel,
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+        GudaSection(
+          title: AppStrings.appSettingsSection,
+          contentPadding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              GudaTile(
+                leading: const Icon(Icons.text_format_rounded),
+                title: AppStrings.fontSizeLabel,
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () => context.push(RoutePaths.fontSize),
+              ),
+              const GudaDivider(alpha: 1.0),
+              GudaTile(
+                leading: const Icon(Icons.bookmark_outline_rounded),
+                title: '보관함',
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () => context.push(RoutePaths.bookmarks),
+              ),
+              const GudaDivider(alpha: 1.0),
+              _ThemeSelectionTile(),
+            ],
           ),
-          onTap: () => context.push(RoutePaths.fontSize),
         ),
-        const GudaDivider(alpha: 1.0),
-        GudaTile(
-          leading: const Icon(Icons.bookmark_outline_rounded),
-          title: '보관함',
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-          ),
-          onTap: () => context.push(RoutePaths.bookmarks),
-        ),
-        const GudaDivider(alpha: 1.0),
-        _ThemeSelectionTile(),
-        const GudaDivider(alpha: 1.0),
 
         // ── 앱 정보 ─────────────────────────────
-        const GudaSectionHeader(title: AppStrings.appInfoSection),
-        GudaTile(
-          leading: const Icon(Icons.info_outline_rounded),
-          title: AppStrings.appVersionLabel,
-          trailing: Text(
-            AppStrings.version.split(' ').last,
-            style: GudaTypography.caption(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ),
+        GudaSection(
+          title: AppStrings.appInfoSection,
+          contentPadding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              GudaTile(
+                leading: const Icon(Icons.info_outline_rounded),
+                title: AppStrings.appVersionLabel,
+                trailing: Text(
+                  AppStrings.version.split(' ').last,
+                  style: GudaTypography.caption(
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  ),
+                ),
+              ),
+              const GudaDivider(alpha: 1.0),
+              GudaTile(
+                leading: const Icon(Icons.description_outlined),
+                title: AppStrings.licenseLabel,
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () => context.push(RoutePaths.license),
+              ),
+            ],
           ),
         ),
-        const GudaDivider(alpha: 1.0),
-        GudaTile(
-          leading: const Icon(Icons.description_outlined),
-          title: AppStrings.licenseLabel,
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-          ),
-          onTap: () => context.push(RoutePaths.license),
-        ),
-        const GudaDivider(alpha: 1.0),
 
-        // ── 계정 관리 ─────────────────────────────
-        const GudaSectionHeader(title: AppStrings.accountSection),
-        GudaTile(
-          leading: Icon(Icons.logout_rounded, color: colorScheme.error),
-          title: AppStrings.logoutConfirmTitle,
-          color: colorScheme.error,
-          onTap: () async {
-            final confirm = await GudaDialog.show(
-              context,
-              title: AppStrings.logoutConfirmTitle,
-              content: AppStrings.logoutConfirmMessage,
-              confirmLabel: AppStrings.logoutConfirmTitle,
-              isDestructive: true,
-            );
-            if (confirm == true && context.mounted) {
-              await ref.read(authViewModelProvider.notifier).signOut();
-            }
-          },
-        ),
-        GudaTile(
-          leading: Icon(Icons.person_remove_outlined, color: colorScheme.error),
-          title: AppStrings.deleteAccountConfirmTitle,
-          color: colorScheme.error,
-          onTap: () async {
-            final confirm = await GudaDialog.show(
-              context,
-              title: AppStrings.deleteAccountConfirmTitle,
-              content: AppStrings.deleteAccountConfirmMessage,
-              confirmLabel: AppStrings.deleteAccountConfirmTitle,
-              isDestructive: true,
-            );
-            if (confirm == true && context.mounted) {
-              await ref.read(authViewModelProvider.notifier).deleteAccount();
-            }
-          },
+        GudaSection(
+          title: AppStrings.accountSection,
+          contentPadding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              GudaTile(
+                leading: Icon(Icons.logout_rounded, color: colorScheme.error),
+                title: AppStrings.logoutConfirmTitle,
+                color: colorScheme.error,
+                onTap: () async {
+                  final confirm = await GudaDialog.show(
+                    context,
+                    title: AppStrings.logoutConfirmTitle,
+                    content: AppStrings.logoutConfirmMessage,
+                    confirmLabel: AppStrings.logoutConfirmTitle,
+                    isDestructive: true,
+                  );
+                  if (confirm == true && context.mounted) {
+                    await ref.read(authViewModelProvider.notifier).signOut();
+                  }
+                },
+              ),
+              const GudaDivider(alpha: 1.0),
+              GudaTile(
+                leading: Icon(Icons.person_remove_outlined, color: colorScheme.error),
+                title: AppStrings.deleteAccountConfirmTitle,
+                color: colorScheme.error,
+                onTap: () async {
+                  final confirm = await GudaDialog.show(
+                    context,
+                    title: AppStrings.deleteAccountConfirmTitle,
+                    content: AppStrings.deleteAccountConfirmMessage,
+                    confirmLabel: AppStrings.deleteAccountConfirmTitle,
+                    isDestructive: true,
+                  );
+                  if (confirm == true && context.mounted) {
+                    await ref.read(authViewModelProvider.notifier).deleteAccount();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: GudaSpacing.xxl),
       ],
@@ -326,38 +344,45 @@ class _ThemeSelectionTile extends ConsumerWidget {
     WidgetRef ref,
     ThemeMode currentMode,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     GudaDialog.show(
       context,
       title: AppStrings.themeLabel,
       contentWidget: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _ThemeOption(
-            label: AppStrings.systemThemeLabel,
-            value: ThemeMode.system,
-            groupValue: currentMode,
-            onChanged: (mode) {
-              ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+          GudaTile(
+            title: AppStrings.systemThemeLabel,
+            isSelected: currentMode == ThemeMode.system,
+            onTap: () {
+              ref.read(themeViewModelProvider.notifier).setThemeMode(ThemeMode.system);
               Navigator.pop(context);
             },
+            trailing: currentMode == ThemeMode.system
+                ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                : null,
           ),
-          _ThemeOption(
-            label: AppStrings.lightThemeLabel,
-            value: ThemeMode.light,
-            groupValue: currentMode,
-            onChanged: (mode) {
-              ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+          GudaTile(
+            title: AppStrings.lightThemeLabel,
+            isSelected: currentMode == ThemeMode.light,
+            onTap: () {
+              ref.read(themeViewModelProvider.notifier).setThemeMode(ThemeMode.light);
               Navigator.pop(context);
             },
+            trailing: currentMode == ThemeMode.light
+                ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                : null,
           ),
-          _ThemeOption(
-            label: AppStrings.darkThemeLabel,
-            value: ThemeMode.dark,
-            groupValue: currentMode,
-            onChanged: (mode) {
-              ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+          GudaTile(
+            title: AppStrings.darkThemeLabel,
+            isSelected: currentMode == ThemeMode.dark,
+            onTap: () {
+              ref.read(themeViewModelProvider.notifier).setThemeMode(ThemeMode.dark);
               Navigator.pop(context);
             },
+            trailing: currentMode == ThemeMode.dark
+                ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                : null,
           ),
         ],
       ),
@@ -367,49 +392,3 @@ class _ThemeSelectionTile extends ConsumerWidget {
   }
 }
 
-class _ThemeOption extends StatelessWidget {
-  const _ThemeOption({
-    required this.label,
-    required this.value,
-    required this.groupValue,
-    required this.onChanged,
-  });
-
-  final String label;
-  final ThemeMode value;
-  final ThemeMode groupValue;
-  final ValueChanged<ThemeMode?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final isSelected = value == groupValue;
-
-    return InkWell(
-      onTap: () => onChanged(value),
-      borderRadius: GudaRadius.smAll,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: GudaSpacing.md,
-          horizontal: GudaSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: GudaTypography.body1(
-                  color: isSelected ? colorScheme.primary : colorScheme.onSurface,
-                ).copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-            if (isSelected)
-              Icon(Icons.check_rounded, color: colorScheme.primary),
-          ],
-        ),
-      ),
-    );
-  }
-}
