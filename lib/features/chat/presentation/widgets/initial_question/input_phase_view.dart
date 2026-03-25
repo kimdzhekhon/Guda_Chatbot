@@ -6,6 +6,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question/selected_hexagram_display.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question/suggested_question_chips.dart';
 
 class InputPhaseView extends StatelessWidget {
   const InputPhaseView({
@@ -62,6 +63,20 @@ class InputPhaseView extends StatelessWidget {
             ),
           ),
         if (selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
+        
+        // ── 추천 질문 칩들 (I Ching 전용) ──────────
+        if (type != ClassicType.tripitaka)
+          Padding(
+            padding: const EdgeInsets.only(bottom: GudaSpacing.md),
+            child: SuggestedQuestionChips(
+              type: type,
+              isDark: isDark,
+              onTap: (text) {
+                controller.text = text;
+              },
+            ),
+          ),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
           child: GudaTextInputField(
