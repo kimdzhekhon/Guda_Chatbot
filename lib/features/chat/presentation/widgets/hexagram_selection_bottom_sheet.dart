@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_bottom_sheet.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_bottom_sheet_header.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/domain/constants/hexagram_data.dart';

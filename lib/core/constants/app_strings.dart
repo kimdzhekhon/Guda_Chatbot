@@ -5,6 +5,9 @@ abstract final class AppStrings {
   // ── 공통 ─────────────────────────────────────
   static const String appTitle = AppConfig.appName;
   static const String appName = AppConfig.appName;
+  static const String error = '오류';
+  static const String errorPrefix = '오류가발생했습니다:';
+  static const String retryLabel = '다시 시도';
 
   // ── 스플래시 ──────────────────────────────────
   static const String splashMessage = '동양 고전의 지혜를 깨우다';
@@ -56,6 +59,14 @@ abstract final class AppStrings {
   static const String chatInputHint = '메시지를 입력하세요...';
   static const String remainingChatCount = '잔여 대화: ';
   static const String countUnit = '회';
+  static const String messageLoadFail = '메시지를 불러오는 데 실패했습니다.';
+  static const String messageSendFail = '메시지 전송에 실패했습니다.';
+  static const String conversationLoadFail = '대화 목록을 불러오는 데 실패했습니다.';
+  static const String conversationCreateFail = '대화 생성에 실패했습니다.';
+  static const String conversationDeleteFail = '대화 삭제에 실패했습니다.';
+  static const String aiAdviceTitle = 'Guda AI의 조언';
+  static const String aiAdviceMsg = 'Guda AI가 전하는 고전의 지혜입니다.';
+  static const String shareAsImage = '이미지로 공유하기';
 
   // 주역 64괘 관련
   static const String selectHexagram = '궤 선택';
@@ -103,6 +114,12 @@ abstract final class AppStrings {
 
   // 주역 관련
   static const String ichingThrowing = '괘를 던지는 중입니다...';
+  static const String aiWisdomLabel = 'AI 지혜';
+  static const String copyrightSuffix = 'Guda. All rights reserved.';
+  static const String selectHexagramLabel = '괘 직접 선택';
+  static const String selectHexagramDesc = '64괘 중 하나를 직접 선택하거나 검색해보세요.';
+  static const String analyzingHexagram = '괘를 분석하고 있습니다.';
+  static const String ichingThrowingMsg = '괘를 던지는 중입니다...';
 
   // 설정 화면
   static const String settingLabel = '설정';
@@ -117,6 +134,8 @@ abstract final class AppStrings {
   static const String lightThemeLabel = '라이트 모드';
   static const String darkThemeLabel = '다크 모드';
   static const String closeLabel = '닫기';
+  static const String bookmarksTitle = '보관함';
+  static const String noBookmarksMessage = '아직 저장된 북마크가 없습니다.';
 
   // 섹션 헤더
   static const String profileSection = '프로필';
@@ -134,6 +153,11 @@ abstract final class AppStrings {
   static const String purchaseHistoryLabel = '구매 내역';
   static const String usageHistoryLabel = '사용 내역';
   static const String billingSection = '결제 및 이용';
+  static const String membershipChargeTitle = '멤버십 & 충전';
+  static const String membershipChargeDesc = '당신에게 가장 잘 맞는 지혜의 여정을 선택하세요';
+  static const String subscriptionTypeLabel = '정기 구독형';
+  static const String chargeTypeLabel = '단일 충전형';
+  static const String planSelectionSuffix = '선택 완료';
 
   // ── 추천 질문 ──────────────────────────────────
   static const List<String> ichingSuggestions = [

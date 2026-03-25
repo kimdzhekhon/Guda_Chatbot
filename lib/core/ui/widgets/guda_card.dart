@@ -13,8 +13,11 @@ class GudaCard extends StatelessWidget {
     this.height,
     this.constraints,
     this.backgroundColor,
+    this.borderColor,
     this.borderRadius,
     this.showBorder = true,
+    this.boxShadow,
+    this.borderWidth = 0.5,
   });
 
   final Widget child;
@@ -24,8 +27,11 @@ class GudaCard extends StatelessWidget {
   final double? height;
   final BoxConstraints? constraints;
   final Color? backgroundColor;
+  final Color? borderColor;
   final BorderRadiusGeometry? borderRadius;
   final bool showBorder;
+  final List<BoxShadow>? boxShadow;
+  final double borderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +46,12 @@ class GudaCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? (isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight),
         borderRadius: borderRadius ?? GudaRadius.lgAll,
-        boxShadow: GudaShadows.card,
+        boxShadow: boxShadow ?? GudaShadows.card,
         border: showBorder 
             ? Border.all(
-                color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+                color: borderColor ?? (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
                     .withValues(alpha: 0.5),
-                width: 0.5,
+                width: borderWidth,
               )
             : null,
       ),

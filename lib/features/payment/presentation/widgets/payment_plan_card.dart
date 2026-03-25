@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 
 class PaymentPlanCard extends StatelessWidget {
   final PaymentPlan plan;
@@ -25,29 +28,22 @@ class PaymentPlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return GudaCard(
       margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.sm),
-      decoration: BoxDecoration(
-        color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
-        borderRadius: GudaRadius.lgAll,
-        border: Border.all(
-          color: isSelected 
-            ? GudaColors.accent 
-            : (isDark ? GudaColors.dividerDark : GudaColors.dividerLight),
-          width: isSelected ? 2 : 1,
-        ),
-        boxShadow: isSelected ? [
-          BoxShadow(
-            color: GudaColors.accent.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ] : null,
-      ),
+      padding: EdgeInsets.zero,
+      showBorder: true,
+      backgroundColor: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
+      borderRadius: GudaRadius.lgAll,
       child: InkWell(
         onTap: onTap,
         borderRadius: GudaRadius.lgAll,
-        child: Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: GudaRadius.lgAll,
+            border: isSelected 
+                ? Border.all(color: GudaColors.accent, width: 2)
+                : null,
+          ),
           padding: const EdgeInsets.all(GudaSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +64,7 @@ class PaymentPlanCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const Divider(height: GudaSpacing.xl),
+              const GudaDivider(height: GudaSpacing.xl),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -107,24 +103,10 @@ class PaymentPlanCard extends StatelessWidget {
                 ).copyWith(fontSize: 13),
               ),
               const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: onTap,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: GudaColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: GudaSpacing.md),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: GudaRadius.mdAll,
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    '선택하기',
-                    style: GudaTypography.button(color: Colors.white),
-                  ),
-                ),
+              GudaButton.filled(
+                label: '선택하기',
+                onPressed: onTap ?? () {},
+                isFullWidth: true,
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_lottie.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_action_layout.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 class AnimationPhaseView extends StatelessWidget {
   const AnimationPhaseView({
@@ -12,28 +13,15 @@ class AnimationPhaseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: GudaSpacing.md),
-        SizedBox(
-          height: 150,
-          child: Lottie.asset(
-            'assets/lottie/Dice Roll Purple.json',
-            repeat: false,
-          ),
+    return GudaActionLayout(
+      isDark: isDark,
+      title: AppStrings.ichingThrowingMsg,
+      child: const Center(
+        child: GudaLottie(
+          path: 'assets/lottie/Dice Roll Purple.json',
+          size: 150,
         ),
-        const SizedBox(height: GudaSpacing.md),
-        Text(
-          '괘를 던지는 중입니다...',
-          style: GudaTypography.body1(
-            color: isDark
-                ? GudaColors.onSurfaceDark
-                : GudaColors.onSurfaceLight,
-          ),
-        ),
-        const SizedBox(height: GudaSpacing.md),
-      ],
+      ),
     );
   }
 }

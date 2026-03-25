@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Guda 인증 인터셉터 — 모든 요청에 Supabase 세션 토큰 자동 첨부
@@ -17,15 +18,13 @@ class AuthInterceptor extends Interceptor {
 class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // ignore: avoid_print
-    print('[HTTP] ${options.method} ${options.uri}');
+    debugPrint('[HTTP] ${options.method} ${options.uri}');
     handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    // ignore: avoid_print
-    print('[HTTP Error] ${err.response?.statusCode} ${err.message}');
+    debugPrint('[HTTP Error] ${err.response?.statusCode} ${err.message}');
     handler.next(err);
   }
 }

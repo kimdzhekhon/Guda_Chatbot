@@ -12,6 +12,7 @@ import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_use
 import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 part 'chat_viewmodels.g.dart';
 
@@ -63,7 +64,7 @@ class ChatListViewModel extends _$ChatListViewModel {
       final conversations = await useCase();
       state = UiSuccess(conversations);
     } catch (e) {
-      state = UiError('대화 목록을 불러오는 데 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.conversationLoadFail}: ${e.toString()}');
     }
   }
 
@@ -81,7 +82,7 @@ class ChatListViewModel extends _$ChatListViewModel {
       await refresh();
       return newConv;
     } catch (e) {
-      state = UiError('대화 생성에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.conversationCreateFail}: ${e.toString()}');
       return null;
     }
   }
@@ -92,7 +93,7 @@ class ChatListViewModel extends _$ChatListViewModel {
       await useCase(conversationId);
       await refresh();
     } catch (e) {
-      state = UiError('대화 삭제에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.conversationDeleteFail}: ${e.toString()}');
     }
   }
 }
@@ -114,7 +115,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       final messages = await useCase(conversationId);
       state = UiSuccess(messages);
     } catch (e) {
-      state = UiError('메시지를 불러오는 데 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.messageLoadFail} ${e.toString()}');
     }
   }
 
@@ -177,7 +178,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       // DB와 동기화를 위해 실제 메시지 목록 다시 불러오기 (선택 사항)
       // await _loadMessages();
     } catch (e) {
-      state = UiError('메시지 전송에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.messageSendFail} ${e.toString()}');
     }
   }
 }

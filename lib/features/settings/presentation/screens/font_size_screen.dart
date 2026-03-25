@@ -4,6 +4,7 @@ import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/font_size_viewmodel.dart';
 
 /// SCR_FONT_SIZE — 글자 크기 조절 화면
@@ -19,7 +20,7 @@ class FontSizeScreen extends ConsumerWidget {
       appBar: const GudaAppBar(title: AppStrings.fontSizeScreenTitle),
       body: fontScaleAsync.when(
         data: (scale) => _buildBody(context, ref, scale, colorScheme),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const GudaLoadingWidget(),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
@@ -106,7 +107,7 @@ class FontSizeScreen extends ConsumerWidget {
                     thumbColor: colorScheme.primary,
                     overlayColor: colorScheme.primary.withValues(alpha: 0.12),
                     valueIndicatorColor: colorScheme.primary,
-                    valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+                    valueIndicatorTextStyle: GudaTypography.caption(color: Colors.white),
                   ),
                   child: Slider(
                     value: sliderValue,

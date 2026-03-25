@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
+import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 
 /// SCR_SPLASH — 스플래시 화면
@@ -25,9 +27,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -35,19 +38,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             children: [
               // 연꽃 아이콘 (임시 아이콘)
               Image.asset(
-                'assets/images/app_logo_transparent.png',
+                AppAssets.appLogoTransparent,
                 width: 100,
                 height: 100,
               ).gudaScaleIn(duration: const Duration(milliseconds: 600), curve: Curves.elasticOut),
               const SizedBox(height: GudaSpacing.lg),
               Text(
-                'G u d a',
-                style: GudaTypography.brand(color: colorScheme.primary),
-              ).gudaFadeIn(delay: const Duration(milliseconds: 300), duration: const Duration(milliseconds: 500)),
+                AppStrings.brandName,
+                style: GudaTypography.brand(color: GudaColors.primary),
+              ).gudaScaleIn(duration: const Duration(milliseconds: 600), curve: Curves.elasticOut),
               const SizedBox(height: GudaSpacing.sm),
               Text(
-                '동양 고전의 지혜를 만나다',
-                style: GudaTypography.body2(color: colorScheme.onSurfaceVariant),
+                AppStrings.splashMessage,
+                style: GudaTypography.body2(
+                  color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+                ),
               ).gudaFadeIn(delay: const Duration(milliseconds: 500), duration: const Duration(milliseconds: 500)),
             ],
           ),

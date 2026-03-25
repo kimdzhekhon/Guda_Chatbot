@@ -3,6 +3,7 @@ import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_bullet_list.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 
 /// 고전 유형(팔만대장경, 주역)의 정보를 시각적으로 보여주는 카드 위젯
@@ -29,18 +30,10 @@ class ClassicCard extends StatelessWidget {
         ? GudaColors.tripitaka
         : GudaColors.iching;
 
-    return Container(
+    return GudaCard(
       margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.sm),
       padding: const EdgeInsets.all(GudaSpacing.xl),
-      decoration: BoxDecoration(
-        color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
-        borderRadius: GudaRadius.lgAll,
-        border: Border.all(
-          color: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
-          width: 1,
-        ),
-        boxShadow: GudaShadows.bubble,
-      ),
+      boxShadow: GudaShadows.bubble,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -51,24 +44,19 @@ class ClassicCard extends StatelessWidget {
             height: 100,
             decoration: BoxDecoration(
               color: isDark
-                  ? GudaColors.accent
+                  ? GudaColors.accent.withValues(alpha: 0.1)
                   : GudaColors.iching.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: type == ClassicType.iching
-                  ? Image.asset(
-                      AppAssets.ichingImage,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.contain,
-                    )
-                  : Image.asset(
-                      AppAssets.tripitakaImage,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.contain,
-                    ),
+              child: Image.asset(
+                type == ClassicType.iching
+                    ? AppAssets.ichingImage
+                    : AppAssets.tripitakaImage,
+                width: 80,
+                height: 80,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(height: GudaSpacing.lg),

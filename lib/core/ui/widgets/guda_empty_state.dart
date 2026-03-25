@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_lottie.dart';
 
-/// Guda 공통 빈 상태/안내 위젯
-/// 데이터가 없거나 초기 시작 화면에서 일관된 디자인을 제공합니다.
 class GudaEmptyState extends StatelessWidget {
   const GudaEmptyState({
     super.key,
     this.icon,
+    this.lottiePath,
+    this.lottieSize = 120,
     required this.title,
     this.subtitle,
     this.action,
   });
 
   final IconData? icon;
+  final String? lottiePath;
+  final double lottieSize;
   final String title;
   final String? subtitle;
   final Widget? action;
@@ -27,7 +30,13 @@ class GudaEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
+            if (lottiePath != null) ...[
+              GudaLottie(
+                path: lottiePath!,
+                size: lottieSize,
+              ),
+              const SizedBox(height: GudaSpacing.md),
+            ] else if (icon != null) ...[
               Icon(
                 icon,
                 size: 64,
