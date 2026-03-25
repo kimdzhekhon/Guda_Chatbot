@@ -43,7 +43,8 @@ class SelectedHexagramDisplay extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       hexagram.name,
