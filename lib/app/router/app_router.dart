@@ -9,6 +9,7 @@ import 'package:guda_chatbot/features/chat/presentation/screens/home_screen.dart
 import 'package:guda_chatbot/features/settings/presentation/screens/settings_screen.dart';
 import 'package:guda_chatbot/features/settings/presentation/screens/license_screen.dart';
 import 'package:guda_chatbot/features/settings/presentation/screens/font_size_screen.dart';
+import 'package:guda_chatbot/features/bookmarks/presentation/screens/bookmark_screen.dart';
 import 'route_paths.dart';
 
 part 'app_router.g.dart';
@@ -55,6 +56,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RoutePaths.fontSize,
         builder: (_, _) => const FontSizeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.bookmarks,
+        builder: (_, _) => const BookmarkScreen(),
       ),
     ],
   );

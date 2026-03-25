@@ -42,6 +42,7 @@ class MessageList extends StatelessWidget {
                 createdAt: DateTime.now(),
               ),
               isDark: isDark,
+              showActions: false,
             ),
           ],
         );
