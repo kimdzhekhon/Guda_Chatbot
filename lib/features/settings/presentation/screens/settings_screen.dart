@@ -90,6 +90,37 @@ class SettingsScreen extends ConsumerWidget {
           const GudaDivider(),
         ],
 
+        // ── 결제 및 이용 ───────────────────────────
+        const GudaSectionHeader(title: AppStrings.billingSection),
+        GudaTile(
+          leading: const Icon(Icons.receipt_long_rounded),
+          title: AppStrings.purchaseHistoryLabel,
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('준비 중인 기능입니다.')),
+            );
+          },
+        ),
+        const GudaDivider(alpha: 1.0),
+        GudaTile(
+          leading: const Icon(Icons.history_rounded),
+          title: AppStrings.usageHistoryLabel,
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('준비 중인 기능입니다.')),
+            );
+          },
+        ),
+        const GudaDivider(alpha: 1.0),
+
         // ── 앱 설정 ─────────────────────────────
         const GudaSectionHeader(title: AppStrings.appSettingsSection),
         GudaTile(
@@ -197,12 +228,13 @@ class _ThemeSelectionTile extends ConsumerWidget {
       title: AppStrings.themeLabel,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             modeLabel,
             style: GudaTypography.caption(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ),
+            ).copyWith(height: 1.3),
           ),
           const SizedBox(width: GudaSpacing.xs),
           Icon(

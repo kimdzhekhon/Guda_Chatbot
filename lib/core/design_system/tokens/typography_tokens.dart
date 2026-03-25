@@ -105,6 +105,7 @@ abstract final class GudaTypography {
     fontSize: 15,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.2,
+    height: 1.3,
     color: color,
   );
 
@@ -114,6 +115,7 @@ abstract final class GudaTypography {
     fontSize: 15,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.2,
+    height: 1.3,
     color: color,
   );
 

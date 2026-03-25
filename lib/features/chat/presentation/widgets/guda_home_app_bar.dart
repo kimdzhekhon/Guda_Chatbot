@@ -6,23 +6,29 @@ import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
+
 class GudaHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const GudaHomeAppBar({
     super.key,
     required this.isDark,
     required this.showBackButton,
     required this.activeId,
+    this.hideChatCount = false,
   });
 
   final bool isDark;
   final bool showBackButton;
   final String? activeId;
+  final bool hideChatCount;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final usage = ref.watch(chatUsageViewModelProvider);
+
     return AppBar(
       title: Text(
         AppStrings.appName,
@@ -43,6 +49,34 @@ class GudaHomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
+        if (activeId != null && !hideChatCount)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: GudaSpacing.md,
+                top: 6, // 바닥선 맞추기 위한 상단 여백 추가
+              ),
+              child: Text(
+                '${AppStrings.remainingChatCount}${usage.remainingCount}${AppStrings.countUnit}',
+                style: GudaTypography.caption(
+                  color: isDark
+                      ? GudaColors.onSurfaceVariantDark
+                      : GudaColors.onSurfaceVariantLight,
+                ).copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        if (activeId == null)
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('인앱 결제 기능 준비 중입니다.')),
+              );
+            },
+          ),
         if (activeId == null)
           IconButton(
             icon: const Icon(Icons.settings_outlined),

@@ -54,6 +54,8 @@ abstract final class AppStrings {
 
   // 채팅
   static const String chatInputHint = '메시지를 입력하세요...';
+  static const String remainingChatCount = '잔여 대화: ';
+  static const String countUnit = '회';
 
   // 주역 64괘 관련
   static const String selectHexagram = '궤 선택';
@@ -129,6 +131,9 @@ abstract final class AppStrings {
   static const String fontSizeSmall = '작게';
   static const String fontSizeNormal = '보통';
   static const String fontSizeLarge = '크게';
+  static const String purchaseHistoryLabel = '구매 내역';
+  static const String usageHistoryLabel = '사용 내역';
+  static const String billingSection = '결제 및 이용';
 
   // ── 추천 질문 ──────────────────────────────────
   static const List<String> ichingSuggestions = [
