@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_action_circle_button.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 
 /// 채팅 입력창 위젯
 class ChatInputBar extends StatefulWidget {
@@ -42,7 +44,6 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
     final isDark = brightness == Brightness.dark;
 
@@ -63,81 +64,23 @@ class _ChatInputBarState extends State<ChatInputBar> {
             children: [
               // ── 텍스트 입력 영역 ────────────────────
               Expanded(
-                child: Container(
-                  constraints: const BoxConstraints(maxHeight: 120),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? GudaColors.surfaceVariantDark
-                        : GudaColors.surfaceVariantLight,
-                    borderRadius: GudaRadius.lgAll,
-                  ),
-                  child: TextField(
-                    controller: _controller,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction: TextInputAction.newline,
-                    enabled: !widget.isLoading,
-                    style: GudaTypography.input(color: colorScheme.onSurface),
-                    decoration: InputDecoration(
-                      hintText: '메시지를 입력하세요...',
-                      hintStyle: GudaTypography.input(
-                        color: colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.5,
-                        ),
-                      ),
-                      fillColor: Colors.transparent,
-                      filled: true,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: GudaRadius.lgAll,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: GudaSpacing.md,
-                        vertical: GudaSpacing.md12,
-                      ),
-                    ),
-                    onSubmitted: (_) => _send(),
-                  ),
+                child: GudaTextInputField(
+                  controller: _controller,
+                  isDark: isDark,
+                  hintText: '메시지를 입력하세요...',
+                  maxLines: null,
+                  enabled: !widget.isLoading,
+                  onSubmitted: (_) => _send(),
                 ),
               ),
               const SizedBox(width: GudaSpacing.sm),
 
               // ── 전송 버튼 ─────────────────────────
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                child: Material(
-                  color: _hasText && !widget.isLoading
-                      ? colorScheme.primary
-                      : colorScheme.surfaceContainerHighest,
-                  borderRadius: GudaRadius.fullAll,
-                  child: InkWell(
-                    onTap: _send,
-                    borderRadius: GudaRadius.fullAll,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      alignment: Alignment.center,
-                      child: widget.isLoading
-                          ? SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            )
-                          : Icon(
-                              Icons.arrow_upward_rounded,
-                              color: _hasText
-                                  ? colorScheme.onPrimary
-                                  : colorScheme.onSurfaceVariant,
-                              size: 22,
-                            ),
-                    ),
-                  ),
-                ),
+              GudaActionCircleButton(
+                onPressed: _send,
+                icon: Icons.arrow_upward_rounded,
+                isLoading: widget.isLoading,
+                isEnabled: _hasText,
               ),
             ],
           ),

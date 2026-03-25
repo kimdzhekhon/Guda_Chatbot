@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 
 /// Guda 로딩 위젯 — 전역 로딩 상태 표시
@@ -34,6 +34,6 @@ class GudaLoadingWidget extends StatelessWidget {
           ],
         ],
       ),
-    ).animate().fadeIn(duration: 300.ms);
+    ).gudaFadeIn(duration: const Duration(milliseconds: 300));
   }
 }

@@ -1,100 +1,105 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:uuid/uuid.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_datasource.dart';
 import 'package:guda_chatbot/features/chat/data/repositories/chat_repository_impl.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
+import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/create_conversation_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/delete_conversation_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 part 'chat_viewmodels.g.dart';
 
-const _uuid = Uuid();
-
-// ── Provider 의존성 ──────────────────────────────────
+// ── Provider 의존성 (DI) ──────────────────────────────
 
 @riverpod
 SupabaseChatDataSource supabaseChatDataSource(Ref ref) =>
     SupabaseChatDataSource();
 
 @riverpod
-ChatRepositoryImpl chatRepository(Ref ref) =>
+ChatRepository chatRepository(Ref ref) =>
     ChatRepositoryImpl(ref.watch(supabaseChatDataSourceProvider));
+
+@riverpod
+GetConversationsUseCase getConversationsUseCase(Ref ref) =>
+    GetConversationsUseCase(ref.watch(chatRepositoryProvider));
+
+@riverpod
+CreateConversationUseCase createConversationUseCase(Ref ref) =>
+    CreateConversationUseCase(ref.watch(chatRepositoryProvider));
+
+@riverpod
+DeleteConversationUseCase deleteConversationUseCase(Ref ref) =>
+    DeleteConversationUseCase(ref.watch(chatRepositoryProvider));
+
+@riverpod
+GetMessagesUseCase getMessagesUseCase(Ref ref) =>
+    GetMessagesUseCase(ref.watch(chatRepositoryProvider));
+
+@riverpod
+SendMessageUseCase sendMessageUseCase(Ref ref) =>
+    SendMessageUseCase(ref.watch(chatRepositoryProvider));
 
 // ── Chat List ViewModel ────────────────────────────
 
-/// 대화 목록 상태 관리
 @riverpod
 class ChatListViewModel extends _$ChatListViewModel {
   @override
   UiState<List<Conversation>> build() {
-    return UiSuccess([
-      Conversation(
-        id: 'mock-1',
-        title: '팔만대장경 첫 대화',
-        classicType: ClassicType.tripitaka,
-        userId: 'mock-user',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        updatedAt: DateTime.now().subtract(const Duration(hours: 2)),
-      ),
-      Conversation(
-        id: 'mock-2',
-        title: '주역의 지혜',
-        classicType: ClassicType.iching,
-        userId: 'mock-user',
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
-      ),
-    ]);
+    // 초기 로딩 수행
+    Future.microtask(() => refresh());
+    return const UiLoading();
   }
 
-  Future<void> _loadConversations() async {
+  Future<void> refresh() async {
     state = const UiLoading();
     try {
-      final conversations = await ref
-          .read(chatRepositoryProvider)
-          .getConversations();
+      final useCase = ref.read(getConversationsUseCaseProvider);
+      final conversations = await useCase();
       state = UiSuccess(conversations);
     } catch (e) {
-      state = UiError('대화 목록을 불러오는 데 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.conversationLoadFail}: ${e.toString()}');
     }
   }
 
-  /// 새 대화 생성 (Mock)
   Future<Conversation?> createConversation({
     required ClassicType classicType,
   }) async {
-    final conversation = Conversation(
-      id: 'mock-${_uuid.v4()}',
-      title: '${classicType.displayName} 새 대화',
-      classicType: classicType,
-      userId: 'mock-user',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    
-    final current = state.dataOrNull ?? [];
-    state = UiSuccess([conversation, ...current]);
-    return conversation;
-  }
-
-  /// 대화 삭제
-  Future<void> deleteConversation(String conversationId) async {
     try {
-      await ref.read(chatRepositoryProvider).deleteConversation(conversationId);
-      await _loadConversations();
+      final useCase = ref.read(createConversationUseCaseProvider);
+      final newConv = await useCase(
+        title: '${classicType.displayName} 새 대화',
+        classicType: classicType.name,
+      );
+      
+      // 목록 갱신
+      await refresh();
+      return newConv;
     } catch (e) {
-      state = UiError('대화 삭제에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.conversationCreateFail}: ${e.toString()}');
+      return null;
     }
   }
 
-  /// 새로고침
-  Future<void> refresh() => _loadConversations();
+  Future<void> deleteConversation(String conversationId) async {
+    try {
+      final useCase = ref.read(deleteConversationUseCaseProvider);
+      await useCase(conversationId);
+      await refresh();
+    } catch (e) {
+      state = UiError('${AppStrings.conversationDeleteFail}: ${e.toString()}');
+    }
+  }
 }
 
 // ── Chat Room ViewModel ────────────────────────────
 
-/// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
 @riverpod
 class ChatRoomViewModel extends _$ChatRoomViewModel {
   @override
@@ -106,49 +111,74 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
   Future<void> _loadMessages() async {
     state = const UiLoading();
     try {
-      final messages = await ref
-          .read(chatRepositoryProvider)
-          .getMessages(conversationId);
+      final useCase = ref.read(getMessagesUseCaseProvider);
+      final messages = await useCase(conversationId);
       state = UiSuccess(messages);
     } catch (e) {
-      state = UiError('메시지를 불러오는 데 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.messageLoadFail} ${e.toString()}');
     }
   }
 
-  /// 메시지 전송 (Mock 스트리밍)
   Future<void> sendMessage({
     required String content,
     required ClassicType classicType,
   }) async {
     final currentMessages = state.dataOrNull ?? [];
-    final streamingId = _uuid.v4();
-
-    final userMsg = Message(
-      id: _uuid.v4(),
+    
+    // 사용량 증가
+    ref.read(chatUsageViewModelProvider.notifier).incrementUsedCount();
+    
+    // 1. 임시 사용자 메시지 추가 (반응성)
+    final tempUserMsg = Message(
+      id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
       conversationId: conversationId,
       role: MessageRole.user,
       content: content,
       createdAt: DateTime.now(),
     );
-
-    final streamingMsg = Message(
-      id: streamingId,
+    
+    // AI 스트리밍용 빈 메시지 추가
+    final aiStreamingMsg = Message(
+      id: 'ai-streaming',
       conversationId: conversationId,
       role: MessageRole.assistant,
-      content: '고전의 지혜를 빌려 답변을 준비 중입니다...',
+      content: '',
       createdAt: DateTime.now(),
       isStreaming: true,
     );
-
-    state = UiSuccess([...currentMessages, userMsg, streamingMsg]);
-
-    // Mock 스트리밍 시뮬레이션
-    await Future.delayed(const Duration(milliseconds: 500));
     
-    String fullResponse = classicType == ClassicType.tripitaka 
-      ? "부처님의 말씀에 따르면 모든 것은 마음먹기에 달렸습니다. 마음을 비우고 현재에 집중해 보세요."
-      : "주역의 괘를 살펴보니 현재는 나아갈 때가 아닌 머무를 때입니다. 신중하게 행동하십시오.";
-    
-    state = UiSuccess([...currentMessages, userMsg, streamingMsg.copyWith(content: fullResponse, isStreaming: false)]);
+    state = UiSuccess([...currentMessages, tempUserMsg, aiStreamingMsg]);
+
+    try {
+      final useCase = ref.read(sendMessageUseCaseProvider);
+      String accumulatedContent = '';
+      
+      await for (final chunk in useCase(
+        conversationId: conversationId,
+        content: content,
+        classicType: classicType.name,
+      )) {
+        accumulatedContent += chunk;
+        
+        // UI 상태 업데이트
+        state = UiSuccess([
+          ...currentMessages,
+          tempUserMsg,
+          aiStreamingMsg.copyWith(content: accumulatedContent),
+        ]);
+      }
+      
+      // 스트리밍 종료 후 상태 확정
+      state = UiSuccess([
+        ...currentMessages,
+        tempUserMsg,
+        aiStreamingMsg.copyWith(content: accumulatedContent, isStreaming: false),
+      ]);
+      
+      // DB와 동기화를 위해 실제 메시지 목록 다시 불러오기 (선택 사항)
+      // await _loadMessages();
+    } catch (e) {
+      state = UiError('${AppStrings.messageSendFail} ${e.toString()}');
+    }
   }
 }

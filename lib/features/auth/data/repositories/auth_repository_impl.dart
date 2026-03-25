@@ -8,17 +8,44 @@ class AuthRepositoryImpl implements AuthRepository {
   final SupabaseAuthDataSource _dataSource;
 
   @override
-  Future<GudaUser> signInWithGoogle() => _dataSource.signInWithGoogle();
+  Future<GudaUser> signInWithEmail(String email, String password) async {
+    final dto = await _dataSource.signInWithEmail(email, password);
+    return dto.toDomain();
+  }
 
   @override
-  Future<GudaUser> signInWithApple() => _dataSource.signInWithApple();
+  Future<GudaUser> signUpWithEmail(String email, String password) async {
+    final dto = await _dataSource.signUpWithEmail(email, password);
+    return dto.toDomain();
+  }
+
+  @override
+  Future<GudaUser> signInWithGoogle() async {
+    final dto = await _dataSource.signInWithGoogle();
+    return dto.toDomain();
+  }
+
+
+  @override
+  Future<GudaUser> signInWithApple() async {
+    final dto = await _dataSource.signInWithApple();
+    return dto.toDomain();
+  }
 
   @override
   Future<void> signOut() => _dataSource.signOut();
 
   @override
-  Future<GudaUser?> getCurrentUser() => _dataSource.getCurrentUser();
+  Future<void> deleteAccount() => _dataSource.deleteAccount();
 
   @override
-  Stream<GudaUser?> authStateChanges() => _dataSource.authStateChanges();
+  Future<GudaUser?> getCurrentUser() async {
+    final dto = await _dataSource.getCurrentUser();
+    return dto?.toDomain();
+  }
+
+  @override
+  Stream<GudaUser?> authStateChanges() {
+    return _dataSource.authStateChanges().map((dto) => dto?.toDomain());
+  }
 }

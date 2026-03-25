@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
@@ -32,11 +33,6 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
   }
 
   @override
-  void didUpdateWidget(covariant ClassicCardSlider oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -60,14 +56,14 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
     );
   }
 
-  Widget _buildSlider(AppResponsiveLayoutData data, double viewportFraction, double height) {
-    // 컨트롤러 뷰포트가 다르면 새로 생성하되, 빌드 중 직접 할당하지 않고 리턴값으로 사용하거나 관리 개선
-    // 여기서는 기존 컨트롤러를 최대한 활용
-
+  Widget _buildSlider(
+    AppResponsiveLayoutData data,
+    double viewportFraction,
+    double height,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── 카드 슬라이더 ────────────────────────────
         SizedBox(
           height: height,
           child: PageView(
@@ -98,58 +94,38 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
               ),
             ],
           ),
-        ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0),
-
+        )
+            .gudaFadeIn(duration: const Duration(milliseconds: 400))
+            .gudaSlideIn(begin: const Offset(0, 0.05)),
         const SizedBox(height: GudaSpacing.xl),
-
-        // ── 새 대화 시작 버튼 ────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
-          child: ElevatedButton(
-            onPressed: _isLoading ? null : () async {
+          child: GudaButton.filled(
+            label: _isLoading ? '대화 생성 중...' : '새 대화 시작',
+            onPressed: () async {
               setState(() => _isLoading = true);
-              // Mock 모드: 즉시 상태 업데이트
               await Future.delayed(const Duration(milliseconds: 500));
               if (mounted) {
                 ref.read(homeViewModelProvider.notifier).startNewChat();
                 setState(() => _isLoading = false);
               }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: GudaColors.primary,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                borderRadius: GudaRadius.lgAll,
-              ),
-              elevation: 4,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_isLoading)
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                else
-                  const Icon(Icons.chat_bubble_outline),
-                const SizedBox(width: GudaSpacing.sm),
-                Text(
-                  _isLoading ? '대화 생성 중...' : '새 대화 시작',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+            icon: _isLoading ? null : Icons.chat_bubble_outline,
+            isLoading: _isLoading,
+            isFullWidth: true,
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? GudaColors.accent
+                : null, // null defaults to cs.primary (Indigo)
+            foregroundColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : null,
           ),
-        ).animate().fadeIn(delay: 200.ms).scale(duration: 300.ms, curve: Curves.easeOutBack),
+        )
+            .gudaFadeIn(delay: const Duration(milliseconds: 200))
+            .gudaScaleIn(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutBack,
+            ),
       ],
     );
   }
