@@ -6,6 +6,7 @@ import 'package:guda_chatbot/app/router/app_router.dart';
 import 'package:guda_chatbot/app/theme/app_theme.dart';
 import 'package:guda_chatbot/core/network/dio_client.dart';
 import 'package:guda_chatbot/core/utils/license_registry_util.dart';
+import 'package:guda_chatbot/features/settings/presentation/viewmodels/font_size_viewmodel.dart';
 
 /// 앱 부트스트랩 — Supabase, Dio 초기화 후 runApp 호출
 Future<void> main() async {
@@ -34,6 +35,7 @@ class GudaApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
+    final fontScale = ref.watch(fontSizeViewModelProvider);
 
     return MaterialApp.router(
       title: AppConfig.appName,
@@ -42,6 +44,19 @@ class GudaApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
       routerConfig: router,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(
+              fontScale.maybeWhen(
+                data: (scale) => scale,
+                orElse: () => 1.0,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
   }
 }

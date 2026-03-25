@@ -115,4 +115,13 @@ abstract final class AppStrings {
   static const String profileSection = '프로필';
   static const String appInfoSection = '앱 정보';
   static const String accountSection = '계정 관리';
+  static const String appSettingsSection = '앱 설정';
+
+  // 글자 크기 조절
+  static const String fontSizeLabel = '글자 크기';
+  static const String fontSizeScreenTitle = '글자 크기 조절';
+  static const String fontSizePreviewText = '가나다라마바사 아자차카타파하\n동양 고전의 지혜를 깨우다, Guda';
+  static const String fontSizeSmall = '작게';
+  static const String fontSizeNormal = '보통';
+  static const String fontSizeLarge = '크게';
 }

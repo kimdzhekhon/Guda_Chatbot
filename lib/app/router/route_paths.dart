@@ -15,4 +15,7 @@ abstract final class RoutePaths {
 
   /// 라이선스 화면 (SCR_LICENSE)
   static const String license = '/settings/license';
+
+  /// 글자 크기 조절 화면 (SCR_FONT_SIZE)
+  static const String fontSize = '/settings/font-size';
 }

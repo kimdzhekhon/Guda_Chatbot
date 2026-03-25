@@ -77,12 +77,8 @@ class SettingsScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user.displayName ?? AppStrings.userNamePlaceholder,
-                        style: GudaTypography.heading3(color: colorScheme.onSurface),
-                      ),
-                      Text(
                         user.email,
-                        style: GudaTypography.body2(color: colorScheme.onSurfaceVariant),
+                        style: GudaTypography.heading3(color: colorScheme.onSurface),
                       ),
                     ],
                   ),
@@ -92,6 +88,19 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const GudaDivider(),
         ],
+
+        // ── 앱 설정 ─────────────────────────────
+        const GudaSectionHeader(title: AppStrings.appSettingsSection),
+        GudaTile(
+          leading: const Icon(Icons.text_format_rounded),
+          title: AppStrings.fontSizeLabel,
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+          onTap: () => context.push(RoutePaths.fontSize),
+        ),
+        const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
 
         // ── 앱 정보 ─────────────────────────────
         const GudaSectionHeader(title: AppStrings.appInfoSection),
