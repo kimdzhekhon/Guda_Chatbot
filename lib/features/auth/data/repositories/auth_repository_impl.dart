@@ -8,6 +8,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final SupabaseAuthDataSource _dataSource;
 
   @override
+<<<<<<< feature/email-auth
   Future<GudaUser> signInWithEmail(String email, String password) =>
       _dataSource.signInWithEmail(email, password);
 
@@ -17,16 +18,33 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<GudaUser> signInWithGoogle() => _dataSource.signInWithGoogle();
+=======
+  Future<GudaUser> signInWithGoogle() async {
+    final dto = await _dataSource.signInWithGoogle();
+    return dto.toDomain();
+  }
+>>>>>>> dev
 
   @override
-  Future<GudaUser> signInWithApple() => _dataSource.signInWithApple();
+  Future<GudaUser> signInWithApple() async {
+    final dto = await _dataSource.signInWithApple();
+    return dto.toDomain();
+  }
 
   @override
   Future<void> signOut() => _dataSource.signOut();
 
   @override
-  Future<GudaUser?> getCurrentUser() => _dataSource.getCurrentUser();
+  Future<void> deleteAccount() => _dataSource.deleteAccount();
 
   @override
-  Stream<GudaUser?> authStateChanges() => _dataSource.authStateChanges();
+  Future<GudaUser?> getCurrentUser() async {
+    final dto = await _dataSource.getCurrentUser();
+    return dto?.toDomain();
+  }
+
+  @override
+  Stream<GudaUser?> authStateChanges() {
+    return _dataSource.authStateChanges().map((dto) => dto?.toDomain());
+  }
 }

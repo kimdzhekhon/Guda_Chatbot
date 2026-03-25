@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
+import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_social_button.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_gradient_background.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_brand_header.dart';
+import 'package:guda_chatbot/core/constants/app_assets.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_snack_bar.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 
+<<<<<<< feature/email-auth
 /// 로그인/회원가입 화면 — 이메일 + 소셜 로그인
 class AuthScreen extends ConsumerStatefulWidget {
+=======
+/// SCR_AUTH_GOOGLE — Google 소셜 로그인 화면
+class AuthScreen extends ConsumerWidget {
+>>>>>>> dev
   const AuthScreen({super.key});
 
   @override
@@ -34,6 +47,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     // Error snackbar
     ref.listen(authViewModelProvider, (_, next) {
       if (next is UiError<GudaUser?>) {
+<<<<<<< feature/email-auth
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.message, style: const TextStyle(fontSize: 16)),
@@ -41,11 +55,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             behavior: SnackBarBehavior.floating,
             shape: const RoundedRectangleBorder(borderRadius: GudaRadius.smAll),
           ),
+=======
+        GudaSnackBar.show(
+          context,
+          message: next.message,
+          isError: true,
+>>>>>>> dev
         );
       }
     });
 
     return Scaffold(
+<<<<<<< feature/email-auth
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -303,6 +324,42 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
             ),
           ),
+=======
+      body: GudaGradientBackground(
+        child: AppResponsiveLayout(
+          mobile: (context, data) {
+            final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
+              child: Column(
+                children: [
+                  if (!isKeyboardOpen) const Spacer(flex: 2),
+                  const GudaBrandHeader(
+                    subtitle: AppStrings.authSubtitle,
+                  ),
+                  if (!isKeyboardOpen) const Spacer(flex: 2),
+                  AuthLoginCard(
+                    isLoading: isLoading,
+                    onGoogleSignIn: () => ref
+                        .read(authViewModelProvider.notifier)
+                        .signInWithGoogle(),
+                    onAppleSignIn: () => ref
+                        .read(authViewModelProvider.notifier)
+                        .signInWithApple(),
+                  ),
+                  const Spacer(flex: 1),
+                  Text(
+                    AppStrings.version,
+                    style: GudaTypography.caption2(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    ),
+                  ).gudaFadeIn(delay: const Duration(milliseconds: 600)),
+                  const SizedBox(height: GudaSpacing.lg),
+                ],
+              ),
+            );
+          },
+>>>>>>> dev
         ),
       ),
     );
@@ -322,26 +379,28 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 }
 
+<<<<<<< feature/email-auth
 /// Social login button widget
 class _SocialLoginButton extends StatelessWidget {
   const _SocialLoginButton({
     required this.onPressed,
+=======
+class AuthLoginCard extends StatelessWidget {
+  const AuthLoginCard({
+    super.key,
+>>>>>>> dev
     required this.isLoading,
-    required this.iconPath,
-    required this.label,
-    required this.backgroundColor,
-    required this.foregroundColor,
+    required this.onGoogleSignIn,
+    required this.onAppleSignIn,
   });
 
-  final VoidCallback? onPressed;
   final bool isLoading;
-  final String iconPath;
-  final String label;
-  final Color backgroundColor;
-  final Color foregroundColor;
+  final VoidCallback onGoogleSignIn;
+  final VoidCallback onAppleSignIn;
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< feature/email-auth
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -383,7 +442,65 @@ class _SocialLoginButton extends StatelessWidget {
                   style: GudaTypography.button(color: foregroundColor),
                 ),
               ],
+=======
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return GudaCard(
+      padding: const EdgeInsets.all(GudaSpacing.xl),
+      backgroundColor: colorScheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.authTitleLine1,
+            style: GudaTypography.heading2(
+              color: colorScheme.onSurface,
             ),
+          ),
+          Text(
+            AppStrings.authTitleLine2,
+            style: GudaTypography.heading2(
+              color: colorScheme.secondary,
+>>>>>>> dev
+            ),
+          ),
+          const SizedBox(height: GudaSpacing.sm),
+          Text(
+            AppStrings.authDesc,
+            style: GudaTypography.body2(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: GudaSpacing.xl),
+
+          // Google 로그인 버튼
+          GudaSocialButton(
+            onPressed: onGoogleSignIn,
+            isLoading: isLoading,
+            iconPath: AppAssets.googleIcon,
+            label: AppStrings.continueWithGoogle,
+            backgroundColor: Colors.white,
+            foregroundColor: GudaColors.onSurfaceLight,
+          ),
+
+          const SizedBox(height: GudaSpacing.md),
+
+          // Apple 로그인 버튼
+          GudaSocialButton(
+            onPressed: onAppleSignIn,
+            isLoading: isLoading,
+            iconPath: AppAssets.appleIcon,
+            label: AppStrings.continueWithApple,
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+        ],
+      ),
+    ).gudaSlideIn(
+      begin: const Offset(0, 0.1),
+      delay: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
     );
   }
 }

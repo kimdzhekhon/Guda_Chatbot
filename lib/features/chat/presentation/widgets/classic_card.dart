@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/constants/app_assets.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_bullet_list.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 
 /// 고전 유형(팔만대장경, 주역)의 정보를 시각적으로 보여주는 카드 위젯
@@ -22,20 +26,14 @@ class ClassicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final typeColor = type == ClassicType.tripitaka ? GudaColors.tripitaka : GudaColors.iching;
+    final typeColor = type == ClassicType.tripitaka
+        ? GudaColors.tripitaka
+        : GudaColors.iching;
 
-    return Container(
+    return GudaCard(
       margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.sm),
       padding: const EdgeInsets.all(GudaSpacing.xl),
-      decoration: BoxDecoration(
-        color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
-        borderRadius: GudaRadius.lgAll,
-        border: Border.all(
-          color: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
-          width: 1,
-        ),
-        boxShadow: GudaShadows.bubble,
-      ),
+      boxShadow: GudaShadows.bubble,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,23 +43,20 @@ class ClassicCard extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: GudaColors.iching.withOpacity(0.1),
+              color: isDark
+                  ? GudaColors.accent.withValues(alpha: 0.1)
+                  : GudaColors.iching.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: type == ClassicType.iching
-                  ? Image.asset(
-                      'assets/images/I Ching.png',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.contain,
-                    )
-                  : Image.asset(
-                      'assets/images/Tripitakakoreana.png',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.contain,
-                    ),
+              child: Image.asset(
+                type == ClassicType.iching
+                    ? AppAssets.ichingImage
+                    : AppAssets.tripitakaImage,
+                width: 80,
+                height: 80,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(height: GudaSpacing.lg),
@@ -71,7 +66,9 @@ class ClassicCard extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: GudaTypography.heading3(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+              color: isDark
+                  ? GudaColors.onSurfaceDark
+                  : GudaColors.onSurfaceLight,
             ),
           ),
           const SizedBox(height: GudaSpacing.xs),
@@ -79,40 +76,31 @@ class ClassicCard extends StatelessWidget {
             description,
             textAlign: TextAlign.center,
             style: GudaTypography.body2(
-              color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+              color: isDark
+                  ? GudaColors.onSurfaceVariantDark
+                  : GudaColors.onSurfaceVariantLight,
             ),
           ),
-          
+
           const Padding(
             padding: EdgeInsets.symmetric(vertical: GudaSpacing.lg),
-            child: Divider(),
+            child: GudaDivider(),
           ),
 
           // ── 수록 내용 ─────────────────────────────
           Text(
             contentsSubtitle,
-            style: GudaTypography.caption(
-              color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
-            ).copyWith(fontWeight: FontWeight.bold),
+            style: GudaTypography.captionBold(
+              color: isDark
+                  ? GudaColors.onSurfaceVariantDark
+                  : GudaColors.onSurfaceVariantLight,
+            ),
           ),
           const SizedBox(height: GudaSpacing.sm),
-          ...contents.map((content) => Padding(
-            padding: const EdgeInsets.only(bottom: GudaSpacing.xs),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('• ', style: TextStyle(color: typeColor)),
-                Expanded(
-                  child: Text(
-                    content,
-                    style: GudaTypography.body2(
-                      color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )),
+          GudaBulletList(
+            items: contents,
+            bulletColor: typeColor,
+          ),
         ],
       ),
     );

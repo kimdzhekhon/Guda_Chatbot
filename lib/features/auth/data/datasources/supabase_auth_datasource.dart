@@ -1,6 +1,6 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
+import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 
 /// Supabase 인증 데이터 소스 — Google OAuth 연동
 class SupabaseAuthDataSource {
@@ -12,7 +12,7 @@ class SupabaseAuthDataSource {
   final GoogleSignIn _googleSignIn;
 
   /// Google 계정으로 Supabase 인증
-  Future<GudaUser> signInWithGoogle() async {
+  Future<AuthResponseDto> signInWithGoogle() async {
     // 1. Google 로그인 팝업
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
@@ -38,7 +38,7 @@ class SupabaseAuthDataSource {
     final user = response.user;
     if (user == null) throw const AuthException('Supabase 인증에 실패했습니다.');
 
-    return _mapSupabaseUserToEntity(user);
+    return _mapSupabaseUserToDto(user);
   }
 
   /// 이메일/비밀번호 로그인
@@ -66,7 +66,7 @@ class SupabaseAuthDataSource {
   }
 
   /// Apple 계정으로 Supabase 인증 (Placeholder)
-  Future<GudaUser> signInWithApple() async {
+  Future<AuthResponseDto> signInWithApple() async {
     // TODO: Apple 로그인 SDK 연동 필요
     throw const AuthException('Apple 로그인은 현재 준비 중입니다.');
   }
@@ -77,30 +77,35 @@ class SupabaseAuthDataSource {
   }
 
   /// 현재 세션에서 사용자 조회
-  Future<GudaUser?> getCurrentUser() async {
+  Future<AuthResponseDto?> getCurrentUser() async {
     final user = _supabase.auth.currentUser;
     if (user == null) return null;
-    return _mapSupabaseUserToEntity(user);
+    return _mapSupabaseUserToDto(user);
+  }
+
+  /// 계정 탈퇴
+  Future<void> deleteAccount() async {
+    // TODO: 실제 백엔드 연동 전까지 로컬 로그아웃만 수행 (보통 Edge Function이나 RPC로 처리)
+    await signOut();
   }
 
   /// 인증 상태 스트림
-  Stream<GudaUser?> authStateChanges() {
+  Stream<AuthResponseDto?> authStateChanges() {
     return _supabase.auth.onAuthStateChange.map((event) {
       final user = event.session?.user;
       if (user == null) return null;
-      return _mapSupabaseUserToEntity(user);
+      return _mapSupabaseUserToDto(user);
     });
   }
 
-  /// Supabase User → GudaUser 도메인 엔티티 변환
-  GudaUser _mapSupabaseUserToEntity(User user) {
-    final meta = user.userMetadata ?? {};
-    return GudaUser(
-      id: user.id,
-      email: user.email ?? '',
-      displayName: meta['full_name'] as String? ?? meta['name'] as String?,
-      photoUrl: meta['avatar_url'] as String? ?? meta['picture'] as String?,
-      createdAt: DateTime.parse(user.createdAt),
-    );
+  /// Supabase User → AuthResponseDto 변환
+  AuthResponseDto _mapSupabaseUserToDto(User user) {
+    final json = {
+      'id': user.id,
+      'email': user.email,
+      ...user.userMetadata ?? {},
+      'created_at': user.createdAt,
+    };
+    return AuthResponseDto.fromJson(json);
   }
 }

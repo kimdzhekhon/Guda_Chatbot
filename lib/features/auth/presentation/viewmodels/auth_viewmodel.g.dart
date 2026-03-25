@@ -341,6 +341,54 @@ final class SignOutUseCaseProvider
 
 String _$signOutUseCaseHash() => r'43b88dc732fc2ec257d73871891f04dcae657f24';
 
+@ProviderFor(deleteAccountUseCase)
+final deleteAccountUseCaseProvider = DeleteAccountUseCaseProvider._();
+
+final class DeleteAccountUseCaseProvider
+    extends
+        $FunctionalProvider<
+          DeleteAccountUseCase,
+          DeleteAccountUseCase,
+          DeleteAccountUseCase
+        >
+    with $Provider<DeleteAccountUseCase> {
+  DeleteAccountUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAccountUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAccountUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteAccountUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DeleteAccountUseCase create(Ref ref) {
+    return deleteAccountUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteAccountUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteAccountUseCase>(value),
+    );
+  }
+}
+
+String _$deleteAccountUseCaseHash() =>
+    r'5151c398edebe0bff7902d834da66a1ab99079c9';
+
 @ProviderFor(getCurrentUserUseCase)
 final getCurrentUserUseCaseProvider = GetCurrentUserUseCaseProvider._();
 

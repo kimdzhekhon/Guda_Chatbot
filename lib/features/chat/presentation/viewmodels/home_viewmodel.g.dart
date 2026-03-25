@@ -41,7 +41,11 @@ final class HomeViewModelProvider
   }
 }
 
+<<<<<<< feature/email-auth
 String _$homeViewModelHash() => r'52056424dd668b49e31238a2b5ea927b3489373c';
+=======
+String _$homeViewModelHash() => r'20481ce3d93e969b101c433e61cf452a4fec1b27';
+>>>>>>> dev
 
 abstract class _$HomeViewModel extends $Notifier<HomeState> {
   HomeState build();

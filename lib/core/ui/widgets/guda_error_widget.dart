@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'guda_button.dart';
 
@@ -61,6 +61,6 @@ class GudaErrorWidget extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05);
+    ).gudaFadeIn(duration: const Duration(milliseconds: 300)).gudaSlideIn(begin: const Offset(0, 0.05));
   }
 }

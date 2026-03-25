@@ -37,11 +37,11 @@ abstract final class GudaRadius {
     bottomRight: Radius.circular(xs),
   );
 
-  /// 채팅 버블 — AI (좌측 하단만 뾰족)
+  /// 채팅 버블 — AI (좌측 상단만 뾰족)
   static const BorderRadius assistantBubble = BorderRadius.only(
-    topLeft: Radius.circular(bubble),
+    topLeft: Radius.circular(xs),
     topRight: Radius.circular(bubble),
-    bottomLeft: Radius.circular(xs),
+    bottomLeft: Radius.circular(bubble),
     bottomRight: Radius.circular(bubble),
   );
 }

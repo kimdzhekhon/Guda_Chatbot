@@ -11,10 +11,10 @@ abstract final class GudaColors {
   static const Color primaryLight = Color(0xFF26204A);
 
   /// 강조 색상: 한국 전통 금색 (채도와 명도 최적화)
-  static const Color accent = Color(0xFFBA8B32);
+  static const Color accent = Color(0xFFA37521);
 
   /// 강조 색상 밝은 변형
-  static const Color accentLight = Color(0xFFD4A44D);
+  static const Color accentLight = Color(0xFFC4953B);
 
   // ── 배경/표면 ─────────────────────────────────
   /// 라이트 배경 (웜 아이보리 유지)
@@ -59,7 +59,7 @@ abstract final class GudaColors {
   static const Color onUserBubble = Color(0xFFFFFFFF);
 
   /// AI 메시지 버블 배경 (라이트)
-  static const Color assistantBubbleLight = Color(0xFFF4F1E8);
+  static const Color assistantBubbleLight = Color(0xFFEBE4D1);
 
   /// AI 메시지 버블 배경 (다크)
   static const Color assistantBubbleDark = Color(0xFF211D3D);
