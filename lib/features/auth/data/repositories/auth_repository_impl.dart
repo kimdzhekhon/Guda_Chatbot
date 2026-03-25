@@ -8,10 +8,22 @@ class AuthRepositoryImpl implements AuthRepository {
   final SupabaseAuthDataSource _dataSource;
 
   @override
+<<<<<<< feature/email-auth
+  Future<GudaUser> signInWithEmail(String email, String password) =>
+      _dataSource.signInWithEmail(email, password);
+
+  @override
+  Future<GudaUser> signUpWithEmail(String email, String password) =>
+      _dataSource.signUpWithEmail(email, password);
+
+  @override
+  Future<GudaUser> signInWithGoogle() => _dataSource.signInWithGoogle();
+=======
   Future<GudaUser> signInWithGoogle() async {
     final dto = await _dataSource.signInWithGoogle();
     return dto.toDomain();
   }
+>>>>>>> dev
 
   @override
   Future<GudaUser> signInWithApple() async {

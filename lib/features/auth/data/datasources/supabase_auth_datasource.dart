@@ -41,6 +41,30 @@ class SupabaseAuthDataSource {
     return _mapSupabaseUserToDto(user);
   }
 
+  /// 이메일/비밀번호 로그인
+  Future<GudaUser> signInWithEmail(String email, String password) async {
+    final response = await _supabase.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+
+    final user = response.user;
+    if (user == null) throw const AuthException('로그인에 실패했습니다.');
+    return _mapSupabaseUserToEntity(user);
+  }
+
+  /// 이메일/비밀번호 회원가입
+  Future<GudaUser> signUpWithEmail(String email, String password) async {
+    final response = await _supabase.auth.signUp(
+      email: email,
+      password: password,
+    );
+
+    final user = response.user;
+    if (user == null) throw const AuthException('회원가입에 실패했습니다.');
+    return _mapSupabaseUserToEntity(user);
+  }
+
   /// Apple 계정으로 Supabase 인증 (Placeholder)
   Future<AuthResponseDto> signInWithApple() async {
     // TODO: Apple 로그인 SDK 연동 필요
