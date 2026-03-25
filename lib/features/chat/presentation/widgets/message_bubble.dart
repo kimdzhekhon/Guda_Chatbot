@@ -3,9 +3,9 @@ import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_message_item.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_markdown.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_bot_avatar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/message_actions.dart';
 
 class MessageBubble extends ConsumerWidget {
@@ -30,16 +30,9 @@ class MessageBubble extends ConsumerWidget {
       mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         if (!isUser) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: GudaSpacing.sm, left: GudaSpacing.md),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
-              child: Padding(
-                padding: const EdgeInsets.all(GudaSpacing.xs),
-                child: Image.asset(AppAssets.appLogoTransparent),
-              ),
-            ),
+          const Padding(
+            padding: EdgeInsets.only(top: GudaSpacing.sm, left: GudaSpacing.md),
+            child: GudaBotAvatar(),
           ),
         ],
         Flexible(

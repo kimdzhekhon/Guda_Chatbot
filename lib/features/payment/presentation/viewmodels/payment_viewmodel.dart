@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -43,6 +44,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         pricePerChat: 15.8,
         description: '가볍게 시작하는 명상과 대화',
         type: PaymentType.subscription,
+        icon: Icons.eco,
       ),
       const PaymentPlan(
         id: 'pro',
@@ -52,6 +54,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         pricePerChat: 12.4,
         description: '깊이 있는 탐구를 위한 추천 요금제',
         type: PaymentType.subscription,
+        icon: Icons.psychology,
       ),
       const PaymentPlan(
         id: 'elite',
@@ -61,6 +64,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         pricePerChat: 9.9,
         description: '모든 지혜를 자유롭게 누리는 마스터 플랜',
         type: PaymentType.subscription,
+        icon: Icons.workspace_premium,
       ),
     ];
 
@@ -73,6 +77,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         pricePerChat: 29.0,
         description: '부담 없이 한 번씩 사용하는 실속형',
         type: PaymentType.charge,
+        icon: Icons.chat_bubble,
       ),
       const PaymentPlan(
         id: 'charge_200',
@@ -82,6 +87,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         pricePerChat: 24.5,
         description: '가장 많은 사용자가 선택하는 충전식',
         type: PaymentType.charge,
+        icon: Icons.forum,
       ),
       const PaymentPlan(
         id: 'charge_500',
@@ -91,6 +97,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         pricePerChat: 19.8,
         description: '헤비 유저를 위한 대용량 충전 플랜',
         type: PaymentType.charge,
+        icon: Icons.people,
       ),
     ];
 

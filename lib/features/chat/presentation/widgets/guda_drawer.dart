@@ -14,6 +14,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_action_icon_button.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
@@ -140,7 +141,7 @@ class GudaDrawerList extends ConsumerWidget {
             ref.read(homeViewModelProvider.notifier).selectConversation(conv);
             Navigator.pop(context);
           },
-          selected: isActive,
+          isSelected: isActive,
           leading: ClipRRect(
             borderRadius: GudaRadius.smAll,
             child: Image.asset(
@@ -151,15 +152,7 @@ class GudaDrawerList extends ConsumerWidget {
             ),
           ),
           title: conv.title,
-          subtitle: Text(
-            conv.updatedAt.toLocal().toMmDd(),
-            style: GudaTypography.caption(
-              color: (isDark
-                      ? GudaColors.onSurfaceVariantDark
-                      : GudaColors.onSurfaceVariantLight)
-                  .withValues(alpha: 0.6),
-            ),
-          ),
+          subtitle: conv.updatedAt.toLocal().toMmDd(),
           trailing: IconButton(
             icon: const Icon(Icons.delete_outline_rounded, size: 16),
             onPressed: () => ref
@@ -181,8 +174,6 @@ class GudaDrawerFooter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.all(GudaSpacing.md),
       decoration: const BoxDecoration(
@@ -199,36 +190,20 @@ class GudaDrawerFooter extends ConsumerWidget {
           const SizedBox(height: GudaSpacing.md),
           Row(
             children: [
-              IconButton(
+              GudaActionIconButton(
                 onPressed: () {
                   Navigator.pop(context);
                   context.push(RoutePaths.bookmarks);
                 },
-                icon: const Icon(Icons.bookmarks_outlined),
-                padding: const EdgeInsets.all(GudaSpacing.md),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: isDark
-                      ? GudaColors.onSurfaceVariantDark
-                      : GudaColors.onSurfaceVariantLight,
-                  shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
-                ),
+                icon: Icons.bookmarks_outlined,
               ),
               const SizedBox(width: GudaSpacing.xs),
-              IconButton(
+              GudaActionIconButton(
                 onPressed: () {
                   Navigator.pop(context);
                   context.push(RoutePaths.settings);
                 },
-                icon: const Icon(Icons.settings_outlined),
-                padding: const EdgeInsets.all(GudaSpacing.md),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: isDark
-                      ? GudaColors.onSurfaceVariantDark
-                      : GudaColors.onSurfaceVariantLight,
-                  shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
-                ),
+                icon: Icons.settings_outlined,
               ),
               const SizedBox(width: GudaSpacing.md),
               Expanded(
