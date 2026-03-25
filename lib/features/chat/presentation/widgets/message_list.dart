@@ -49,6 +49,7 @@ class MessageList extends StatelessWidget {
 
       return Center(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.lg),
           child: InitialQuestionCard(
             type: type,
             onSkip: () => onSendMessage(''),

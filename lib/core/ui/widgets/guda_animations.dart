@@ -166,69 +166,6 @@ class _GudaSlideInState extends State<GudaSlideIn>
   }
 }
 
-class GudaStreamingDots extends StatefulWidget {
-  const GudaStreamingDots({super.key});
-
-  @override
-  State<GudaStreamingDots> createState() => _GudaStreamingDotsState();
-}
-
-class _GudaStreamingDotsState extends State<GudaStreamingDots>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, (index) {
-        return AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final delay = index * 0.2;
-            double value = (_controller.value - delay) % 1.0;
-            if (value < 0) value += 1.0;
-
-            // Scale up and down
-            double scale = 0.5;
-            if (value < 0.4) {
-              scale = 0.5 + (0.5 * (value / 0.4));
-            } else if (value < 0.8) {
-              scale = 1.0 - (0.5 * ((value - 0.4) / 0.4));
-            }
-
-            return Container(
-              width: 6,
-              height: 6,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFFC09C88), // GudaColors.accent
-              ),
-              transform: Matrix4.diagonal3Values(scale, scale, 1.0),
-              transformAlignment: Alignment.center,
-            );
-          },
-        );
-      }),
-    );
-  }
-}
 
 class GudaFadeScaleIn extends StatefulWidget {
   const GudaFadeScaleIn({

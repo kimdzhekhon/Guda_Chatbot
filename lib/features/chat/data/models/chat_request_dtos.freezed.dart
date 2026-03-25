@@ -549,4 +549,530 @@ as String,
 
 }
 
+
+/// @nodoc
+mixin _$GetMessagesRequestDto {
+
+@JsonKey(name: 'conversation_id') String get conversationId;
+/// Create a copy of GetMessagesRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GetMessagesRequestDtoCopyWith<GetMessagesRequestDto> get copyWith => _$GetMessagesRequestDtoCopyWithImpl<GetMessagesRequestDto>(this as GetMessagesRequestDto, _$identity);
+
+  /// Serializes this GetMessagesRequestDto to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetMessagesRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,conversationId);
+
+@override
+String toString() {
+  return 'GetMessagesRequestDto(conversationId: $conversationId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $GetMessagesRequestDtoCopyWith<$Res>  {
+  factory $GetMessagesRequestDtoCopyWith(GetMessagesRequestDto value, $Res Function(GetMessagesRequestDto) _then) = _$GetMessagesRequestDtoCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: 'conversation_id') String conversationId
+});
+
+
+
+
+}
+/// @nodoc
+class _$GetMessagesRequestDtoCopyWithImpl<$Res>
+    implements $GetMessagesRequestDtoCopyWith<$Res> {
+  _$GetMessagesRequestDtoCopyWithImpl(this._self, this._then);
+
+  final GetMessagesRequestDto _self;
+  final $Res Function(GetMessagesRequestDto) _then;
+
+/// Create a copy of GetMessagesRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? conversationId = null,}) {
+  return _then(_self.copyWith(
+conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [GetMessagesRequestDto].
+extension GetMessagesRequestDtoPatterns on GetMessagesRequestDto {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GetMessagesRequestDto value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GetMessagesRequestDto() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GetMessagesRequestDto value)  $default,){
+final _that = this;
+switch (_that) {
+case _GetMessagesRequestDto():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GetMessagesRequestDto value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GetMessagesRequestDto() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GetMessagesRequestDto() when $default != null:
+return $default(_that.conversationId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)  $default,) {final _that = this;
+switch (_that) {
+case _GetMessagesRequestDto():
+return $default(_that.conversationId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,) {final _that = this;
+switch (_that) {
+case _GetMessagesRequestDto() when $default != null:
+return $default(_that.conversationId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _GetMessagesRequestDto implements GetMessagesRequestDto {
+  const _GetMessagesRequestDto({@JsonKey(name: 'conversation_id') required this.conversationId});
+  factory _GetMessagesRequestDto.fromJson(Map<String, dynamic> json) => _$GetMessagesRequestDtoFromJson(json);
+
+@override@JsonKey(name: 'conversation_id') final  String conversationId;
+
+/// Create a copy of GetMessagesRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GetMessagesRequestDtoCopyWith<_GetMessagesRequestDto> get copyWith => __$GetMessagesRequestDtoCopyWithImpl<_GetMessagesRequestDto>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$GetMessagesRequestDtoToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GetMessagesRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,conversationId);
+
+@override
+String toString() {
+  return 'GetMessagesRequestDto(conversationId: $conversationId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$GetMessagesRequestDtoCopyWith<$Res> implements $GetMessagesRequestDtoCopyWith<$Res> {
+  factory _$GetMessagesRequestDtoCopyWith(_GetMessagesRequestDto value, $Res Function(_GetMessagesRequestDto) _then) = __$GetMessagesRequestDtoCopyWithImpl;
+@override @useResult
+$Res call({
+@JsonKey(name: 'conversation_id') String conversationId
+});
+
+
+
+
+}
+/// @nodoc
+class __$GetMessagesRequestDtoCopyWithImpl<$Res>
+    implements _$GetMessagesRequestDtoCopyWith<$Res> {
+  __$GetMessagesRequestDtoCopyWithImpl(this._self, this._then);
+
+  final _GetMessagesRequestDto _self;
+  final $Res Function(_GetMessagesRequestDto) _then;
+
+/// Create a copy of GetMessagesRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? conversationId = null,}) {
+  return _then(_GetMessagesRequestDto(
+conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$DeleteConversationRequestDto {
+
+@JsonKey(name: 'conversation_id') String get conversationId;
+/// Create a copy of DeleteConversationRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$DeleteConversationRequestDtoCopyWith<DeleteConversationRequestDto> get copyWith => _$DeleteConversationRequestDtoCopyWithImpl<DeleteConversationRequestDto>(this as DeleteConversationRequestDto, _$identity);
+
+  /// Serializes this DeleteConversationRequestDto to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteConversationRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,conversationId);
+
+@override
+String toString() {
+  return 'DeleteConversationRequestDto(conversationId: $conversationId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $DeleteConversationRequestDtoCopyWith<$Res>  {
+  factory $DeleteConversationRequestDtoCopyWith(DeleteConversationRequestDto value, $Res Function(DeleteConversationRequestDto) _then) = _$DeleteConversationRequestDtoCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: 'conversation_id') String conversationId
+});
+
+
+
+
+}
+/// @nodoc
+class _$DeleteConversationRequestDtoCopyWithImpl<$Res>
+    implements $DeleteConversationRequestDtoCopyWith<$Res> {
+  _$DeleteConversationRequestDtoCopyWithImpl(this._self, this._then);
+
+  final DeleteConversationRequestDto _self;
+  final $Res Function(DeleteConversationRequestDto) _then;
+
+/// Create a copy of DeleteConversationRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? conversationId = null,}) {
+  return _then(_self.copyWith(
+conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [DeleteConversationRequestDto].
+extension DeleteConversationRequestDtoPatterns on DeleteConversationRequestDto {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _DeleteConversationRequestDto value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _DeleteConversationRequestDto() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _DeleteConversationRequestDto value)  $default,){
+final _that = this;
+switch (_that) {
+case _DeleteConversationRequestDto():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _DeleteConversationRequestDto value)?  $default,){
+final _that = this;
+switch (_that) {
+case _DeleteConversationRequestDto() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _DeleteConversationRequestDto() when $default != null:
+return $default(_that.conversationId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)  $default,) {final _that = this;
+switch (_that) {
+case _DeleteConversationRequestDto():
+return $default(_that.conversationId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,) {final _that = this;
+switch (_that) {
+case _DeleteConversationRequestDto() when $default != null:
+return $default(_that.conversationId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _DeleteConversationRequestDto implements DeleteConversationRequestDto {
+  const _DeleteConversationRequestDto({@JsonKey(name: 'conversation_id') required this.conversationId});
+  factory _DeleteConversationRequestDto.fromJson(Map<String, dynamic> json) => _$DeleteConversationRequestDtoFromJson(json);
+
+@override@JsonKey(name: 'conversation_id') final  String conversationId;
+
+/// Create a copy of DeleteConversationRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$DeleteConversationRequestDtoCopyWith<_DeleteConversationRequestDto> get copyWith => __$DeleteConversationRequestDtoCopyWithImpl<_DeleteConversationRequestDto>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$DeleteConversationRequestDtoToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteConversationRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,conversationId);
+
+@override
+String toString() {
+  return 'DeleteConversationRequestDto(conversationId: $conversationId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$DeleteConversationRequestDtoCopyWith<$Res> implements $DeleteConversationRequestDtoCopyWith<$Res> {
+  factory _$DeleteConversationRequestDtoCopyWith(_DeleteConversationRequestDto value, $Res Function(_DeleteConversationRequestDto) _then) = __$DeleteConversationRequestDtoCopyWithImpl;
+@override @useResult
+$Res call({
+@JsonKey(name: 'conversation_id') String conversationId
+});
+
+
+
+
+}
+/// @nodoc
+class __$DeleteConversationRequestDtoCopyWithImpl<$Res>
+    implements _$DeleteConversationRequestDtoCopyWith<$Res> {
+  __$DeleteConversationRequestDtoCopyWithImpl(this._self, this._then);
+
+  final _DeleteConversationRequestDto _self;
+  final $Res Function(_DeleteConversationRequestDto) _then;
+
+/// Create a copy of DeleteConversationRequestDto
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? conversationId = null,}) {
+  return _then(_DeleteConversationRequestDto(
+conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
 // dart format on

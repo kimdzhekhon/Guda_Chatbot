@@ -25,10 +25,10 @@ class SelectedHexagramDisplay extends StatelessWidget {
                     ? GudaColors.surfaceVariantDark
                     : GudaColors.surfaceVariantLight)
                 .withValues(alpha: 0.5),
-        borderRadius: GudaRadius.mdAll,
+        borderRadius: GudaRadius.smAll,
         border: Border.all(
           color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
-              .withValues(alpha: 0.3),
+              .withValues(alpha: 0.5),
         ),
       ),
       child: Row(
