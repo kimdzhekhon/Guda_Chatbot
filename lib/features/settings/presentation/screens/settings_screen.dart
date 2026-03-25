@@ -15,6 +15,7 @@ import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guda_chatbot/app/router/route_paths.dart';
+import 'package:guda_chatbot/app/theme/theme_viewmodel.dart';
 
 /// SCR_SETTINGS — 설정 화면
 class SettingsScreen extends ConsumerWidget {
@@ -100,7 +101,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           onTap: () => context.push(RoutePaths.fontSize),
         ),
-        const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+        const GudaDivider(alpha: 1.0),
+        _ThemeSelectionTile(),
+        const GudaDivider(alpha: 1.0),
 
         // ── 앱 정보 ─────────────────────────────
         const GudaSectionHeader(title: AppStrings.appInfoSection),
@@ -114,7 +117,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+        const GudaDivider(alpha: 1.0),
         GudaTile(
           leading: const Icon(Icons.description_outlined),
           title: AppStrings.licenseLabel,
@@ -124,7 +127,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           onTap: () => context.push(RoutePaths.license),
         ),
-        const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+        const GudaDivider(alpha: 1.0),
 
         // ── 계정 관리 ─────────────────────────────
         const GudaSectionHeader(title: AppStrings.accountSection),
@@ -164,6 +167,145 @@ class SettingsScreen extends ConsumerWidget {
         ),
         const SizedBox(height: GudaSpacing.xxl),
       ],
+    );
+  }
+}
+
+class _ThemeSelectionTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeViewModelProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final currentMode = themeMode.maybeWhen(
+      data: (mode) => mode,
+      orElse: () => ThemeMode.system,
+    );
+
+    final modeLabel = switch (currentMode) {
+      ThemeMode.system => AppStrings.systemThemeLabel,
+      ThemeMode.light => AppStrings.lightThemeLabel,
+      ThemeMode.dark => AppStrings.darkThemeLabel,
+    };
+
+    return GudaTile(
+      leading: Icon(
+        currentMode == ThemeMode.dark
+            ? Icons.dark_mode_rounded
+            : Icons.light_mode_rounded,
+      ),
+      title: AppStrings.themeLabel,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            modeLabel,
+            style: GudaTypography.caption(
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(width: GudaSpacing.xs),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+        ],
+      ),
+      onTap: () => _showThemeSelectionDialog(context, ref, currentMode),
+    );
+  }
+
+  void _showThemeSelectionDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeMode currentMode,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => GudaDialog(
+        title: AppStrings.themeLabel,
+        contentWidget: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _ThemeOption(
+              label: AppStrings.systemThemeLabel,
+              value: ThemeMode.system,
+              groupValue: currentMode,
+              onChanged: (mode) {
+                ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+                Navigator.pop(context);
+              },
+            ),
+            _ThemeOption(
+              label: AppStrings.lightThemeLabel,
+              value: ThemeMode.light,
+              groupValue: currentMode,
+              onChanged: (mode) {
+                ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+                Navigator.pop(context);
+              },
+            ),
+            _ThemeOption(
+              label: AppStrings.darkThemeLabel,
+              value: ThemeMode.dark,
+              groupValue: currentMode,
+              onChanged: (mode) {
+                ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+        showConfirm: false,
+        cancelLabel: AppStrings.closeLabel,
+      ),
+    );
+  }
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.label,
+    required this.value,
+    required this.groupValue,
+    required this.onChanged,
+  });
+
+  final String label;
+  final ThemeMode value;
+  final ThemeMode groupValue;
+  final ValueChanged<ThemeMode?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isSelected = value == groupValue;
+
+    return InkWell(
+      onTap: () => onChanged(value),
+      borderRadius: GudaRadius.smAll,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: GudaSpacing.md,
+          horizontal: GudaSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: GudaTypography.body1(
+                  color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                ).copyWith(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_rounded, color: colorScheme.primary),
+          ],
+        ),
+      ),
     );
   }
 }

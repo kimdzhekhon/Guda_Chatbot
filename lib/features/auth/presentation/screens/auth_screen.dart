@@ -94,7 +94,7 @@ class AuthLoginCard extends StatelessWidget {
 
     return GudaCard(
       padding: const EdgeInsets.all(GudaSpacing.xl),
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
