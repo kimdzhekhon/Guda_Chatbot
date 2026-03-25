@@ -6,6 +6,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question/selected_hexagram_display.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question/suggested_question_chips.dart';
 
 class InputPhaseView extends StatelessWidget {
   const InputPhaseView({
@@ -62,6 +63,18 @@ class InputPhaseView extends StatelessWidget {
             ),
           ),
         if (selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
+        
+        // ── 추천 질문 칩들 (Approved Proposal) ──────────
+        SuggestedQuestionChips(
+          type: type,
+          isDark: isDark,
+          onTap: (text) {
+            controller.text = text;
+            // 텍스트 입력 후 버튼 클릭 유도 또는 즉시 시작 가능
+          },
+        ),
+        const SizedBox(height: GudaSpacing.md),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
           child: GudaTextInputField(

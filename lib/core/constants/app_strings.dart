@@ -124,4 +124,23 @@ abstract final class AppStrings {
   static const String fontSizeSmall = '작게';
   static const String fontSizeNormal = '보통';
   static const String fontSizeLarge = '크게';
+
+  // ── 추천 질문 ──────────────────────────────────
+  static const List<String> ichingSuggestions = [
+    '오늘의 전체적인 운세는?',
+    '사업 확장이나 투자 시기로 좋을까?',
+    '새로운 프로젝트를 시작해도 될까?',
+    '금전운이 궁금해요',
+    '학업운/취업운이 어떨까?',
+    '대인관계 고민이 있어요',
+  ];
+
+  static const List<String> tripitakaSuggestions = [
+    '마음이 불안할 때 읽기 좋은 구절',
+    '사업을 할 때 가져야 할 올바른 마음가짐',
+    '지혜로운 삶이란 무엇인가요?',
+    '고통에서 벗어나는 법',
+    '인간관계에 대한 부처님의 조언',
+    '진정한 행복을 찾는 법',
+  ];
 }
