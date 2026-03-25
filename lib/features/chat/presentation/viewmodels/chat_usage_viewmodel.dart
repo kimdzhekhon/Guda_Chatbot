@@ -8,10 +8,11 @@ part 'chat_usage_viewmodel.g.dart';
 class ChatUsageViewModel extends _$ChatUsageViewModel {
   @override
   ChatUsage build() {
-    // 초기값: 총 20회 중 0회 사용
+    // 초기값: 무료 플랜, 총 20회 중 0회 사용
     return const ChatUsage(
       usedCount: 0,
       totalLimit: 20,
+      planName: 'Guda Free',
     );
   }
 

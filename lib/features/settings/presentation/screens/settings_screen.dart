@@ -16,6 +16,7 @@ import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmode
 import 'package:go_router/go_router.dart';
 import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/app/theme/theme_viewmodel.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 
 /// SCR_SETTINGS — 설정 화면
 class SettingsScreen extends ConsumerWidget {
@@ -55,6 +56,9 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final usage = ref.watch(chatUsageViewModelProvider);
+    final progress = usage.totalLimit > 0 ? usage.usedCount / usage.totalLimit : 0.0;
 
     return ListView(
       children: [
@@ -66,32 +70,98 @@ class SettingsScreen extends ConsumerWidget {
               horizontal: GudaSpacing.xl,
               vertical: GudaSpacing.md,
             ),
-            child: Row(
-              children: [
-                GudaLottie(
-                  path: AppAssets.lotusLottie,
-                  size: 60,
-                ),
-                const SizedBox(width: GudaSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.email,
-                        style: GudaTypography.heading3(color: colorScheme.onSurface),
-                      ),
-                    ],
+            child: Container(
+              padding: const EdgeInsets.all(GudaSpacing.lg),
+              decoration: BoxDecoration(
+                color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
+                borderRadius: GudaRadius.lgAll,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-              ],
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GudaLottie(
+                    path: AppAssets.lotusLottie,
+                    size: 60,
+                  ),
+                  const SizedBox(width: GudaSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: GudaSpacing.sm,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.1),
+                            borderRadius: GudaRadius.smAll,
+                          ),
+                          child: Text(
+                            usage.planName,
+                            style: GudaTypography.captionBold(color: colorScheme.primary),
+                          ),
+                        ),
+                        const SizedBox(height: GudaSpacing.xs),
+                        Text(
+                          user.email,
+                          style: GudaTypography.heading3(color: colorScheme.onSurface),
+                        ),
+                        const SizedBox(height: GudaSpacing.md),
+                        ClipRRect(
+                          borderRadius: GudaRadius.smAll,
+                          child: LinearProgressIndicator(
+                            value: progress,
+                          backgroundColor: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
+                            color: GudaColors.accent,
+                            minHeight: 8,
+                          ),
+                        ),
+                        const SizedBox(height: GudaSpacing.xs),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '대화 사용량',
+                              style: GudaTypography.tiny(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            Text(
+                              '${usage.usedCount} / ${usage.totalLimit}',
+                              style: GudaTypography.tiny(
+                                color: colorScheme.onSurfaceVariant,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const GudaDivider(),
+          const SizedBox(height: GudaSpacing.xs),
         ],
 
         // ── 결제 및 이용 ───────────────────────────
-        const GudaSectionHeader(title: AppStrings.billingSection),
+        const GudaSectionHeader(
+          title: AppStrings.billingSection,
+          padding: EdgeInsets.fromLTRB(
+            GudaSpacing.xl,
+            GudaSpacing.md,
+            GudaSpacing.xl,
+            GudaSpacing.sm,
+          ),
+        ),
         GudaTile(
           leading: const Icon(Icons.receipt_long_rounded),
           title: AppStrings.purchaseHistoryLabel,

@@ -138,7 +138,6 @@ class _HexagramItem extends StatelessWidget {
           HexagramWidget(
             lines: hexagram.lines,
             size: 48,
-            color: GudaColors.accent,
           ),
           const SizedBox(height: GudaSpacing.sm),
           Text(
