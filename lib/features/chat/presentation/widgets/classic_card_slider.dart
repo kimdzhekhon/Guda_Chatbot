@@ -113,6 +113,12 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
             icon: _isLoading ? null : Icons.chat_bubble_outline,
             isLoading: _isLoading,
             isFullWidth: true,
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? GudaColors.accent
+                : null, // null defaults to cs.primary (Indigo)
+            foregroundColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : null,
           ),
         )
             .gudaFadeIn(delay: const Duration(milliseconds: 200))

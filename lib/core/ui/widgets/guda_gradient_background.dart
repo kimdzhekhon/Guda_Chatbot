@@ -17,6 +17,7 @@ class GudaGradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -26,7 +27,7 @@ class GudaGradientBackground extends StatelessWidget {
               [
                 GudaColors.primary,
                 GudaColors.primaryLight,
-                GudaColors.backgroundLight,
+                colorScheme.surface,
               ],
           stops: stops ?? const [0.0, 0.4, 1.0],
         ),

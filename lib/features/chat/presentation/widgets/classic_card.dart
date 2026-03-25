@@ -50,7 +50,9 @@ class ClassicCard extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: GudaColors.iching.withValues(alpha: 0.1),
+              color: isDark
+                  ? GudaColors.accent
+                  : GudaColors.iching.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(

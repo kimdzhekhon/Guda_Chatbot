@@ -11,6 +11,7 @@ class StorageService {
   StorageService(this._storage);
 
   static const String _fontScaleKey = 'font_scale';
+  static const String _themeModeKey = 'theme_mode';
 
   /// 폰트 배율 저장
   Future<void> setFontScale(double scale) async {
@@ -21,6 +22,17 @@ class StorageService {
   Future<double> getFontScale() async {
     final value = await _storage.read(key: _fontScaleKey);
     return value != null ? double.parse(value) : 1.0;
+  }
+
+  /// 테마 모드 저장
+  Future<void> setThemeMode(String mode) async {
+    await _storage.write(key: _themeModeKey, value: mode);
+  }
+
+  /// 테마 모드 불러오기 (기본값 'system')
+  Future<String> getThemeMode() async {
+    final value = await _storage.read(key: _themeModeKey);
+    return value ?? 'system';
   }
 }
 

@@ -23,9 +23,10 @@ class GudaDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDark ? GudaColors.dividerDark : GudaColors.dividerLight;
-    final finalColor = color ?? defaultColor;
+    final theme = Theme.of(context);
+    final defaultColor = color ?? theme.dividerTheme.color ?? 
+        (theme.brightness == Brightness.dark ? GudaColors.dividerDark : GudaColors.dividerLight);
+    final finalColor = defaultColor;
 
     return Divider(
       height: height,

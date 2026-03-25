@@ -98,7 +98,11 @@ class _SelectionBox extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 32, color: GudaColors.primary),
+            Icon(
+              icon,
+              size: 32,
+              color: isDark ? GudaColors.accent : GudaColors.primary,
+            ),
             const SizedBox(height: GudaSpacing.sm),
             Text(
               label,

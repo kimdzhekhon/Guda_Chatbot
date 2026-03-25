@@ -27,7 +27,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: GudaColors.backgroundLight,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: Column(

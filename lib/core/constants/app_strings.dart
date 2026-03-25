@@ -110,6 +110,11 @@ abstract final class AppStrings {
   static const String logoutConfirmMessage = '로그아웃 하시겠습니까?';
   static const String confirmLabel = '확인';
   static const String licenseLabel = '오픈소스 라이선스';
+  static const String themeLabel = '다크 모드 설정';
+  static const String systemThemeLabel = '시스템 설정';
+  static const String lightThemeLabel = '라이트 모드';
+  static const String darkThemeLabel = '다크 모드';
+  static const String closeLabel = '닫기';
 
   // 섹션 헤더
   static const String profileSection = '프로필';
