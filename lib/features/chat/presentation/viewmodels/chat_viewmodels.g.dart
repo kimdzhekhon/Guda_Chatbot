@@ -140,7 +140,7 @@ final class ChatListViewModelProvider
   }
 }
 
-String _$chatListViewModelHash() => r'a2664593c60887ead5b8f9658839eae9b6458093';
+String _$chatListViewModelHash() => r'd87c1d0c13b4cdc4ed5b50bbb81ee20600fb16d1';
 
 /// 대화 목록 상태 관리
 
@@ -221,7 +221,7 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'3cebf6a3ada0531a3cc3f60c87a6e3a913cd6f13';
+String _$chatRoomViewModelHash() => r'd85035ee0f32915b1e4ecde993f92132b5f4a75e';
 
 /// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
 

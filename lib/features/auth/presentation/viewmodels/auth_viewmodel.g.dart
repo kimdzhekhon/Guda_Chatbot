@@ -108,6 +108,102 @@ final class AuthRepositoryProvider
 
 String _$authRepositoryHash() => r'519da6b15afb088cfb679a4ff821d9dd0247b7ce';
 
+@ProviderFor(signInWithEmailUseCase)
+final signInWithEmailUseCaseProvider = SignInWithEmailUseCaseProvider._();
+
+final class SignInWithEmailUseCaseProvider
+    extends
+        $FunctionalProvider<
+          SignInWithEmailUseCase,
+          SignInWithEmailUseCase,
+          SignInWithEmailUseCase
+        >
+    with $Provider<SignInWithEmailUseCase> {
+  SignInWithEmailUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'signInWithEmailUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$signInWithEmailUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<SignInWithEmailUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SignInWithEmailUseCase create(Ref ref) {
+    return signInWithEmailUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SignInWithEmailUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SignInWithEmailUseCase>(value),
+    );
+  }
+}
+
+String _$signInWithEmailUseCaseHash() =>
+    r'85d655e9de2bf12757b0d8f231d4406e4290e12c';
+
+@ProviderFor(signUpWithEmailUseCase)
+final signUpWithEmailUseCaseProvider = SignUpWithEmailUseCaseProvider._();
+
+final class SignUpWithEmailUseCaseProvider
+    extends
+        $FunctionalProvider<
+          SignUpWithEmailUseCase,
+          SignUpWithEmailUseCase,
+          SignUpWithEmailUseCase
+        >
+    with $Provider<SignUpWithEmailUseCase> {
+  SignUpWithEmailUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'signUpWithEmailUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$signUpWithEmailUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<SignUpWithEmailUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SignUpWithEmailUseCase create(Ref ref) {
+    return signUpWithEmailUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SignUpWithEmailUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SignUpWithEmailUseCase>(value),
+    );
+  }
+}
+
+String _$signUpWithEmailUseCaseHash() =>
+    r'b14fd6122f7136248c6577581d96f08de1f78692';
+
 @ProviderFor(signInWithGoogleUseCase)
 final signInWithGoogleUseCaseProvider = SignInWithGoogleUseCaseProvider._();
 
@@ -155,6 +251,54 @@ final class SignInWithGoogleUseCaseProvider
 
 String _$signInWithGoogleUseCaseHash() =>
     r'e677af0f5be96979b5ffb65257967d4357e7eb4d';
+
+@ProviderFor(signInWithAppleUseCase)
+final signInWithAppleUseCaseProvider = SignInWithAppleUseCaseProvider._();
+
+final class SignInWithAppleUseCaseProvider
+    extends
+        $FunctionalProvider<
+          SignInWithAppleUseCase,
+          SignInWithAppleUseCase,
+          SignInWithAppleUseCase
+        >
+    with $Provider<SignInWithAppleUseCase> {
+  SignInWithAppleUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'signInWithAppleUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$signInWithAppleUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<SignInWithAppleUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SignInWithAppleUseCase create(Ref ref) {
+    return signInWithAppleUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SignInWithAppleUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SignInWithAppleUseCase>(value),
+    );
+  }
+}
+
+String _$signInWithAppleUseCaseHash() =>
+    r'02473e2aeeccd4a8f5a50840048f6eb8f6675797';
 
 @ProviderFor(signOutUseCase)
 final signOutUseCaseProvider = SignOutUseCaseProvider._();
@@ -245,15 +389,15 @@ final class GetCurrentUserUseCaseProvider
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
 
-/// Auth ViewModel — Google 로그인/로그아웃 및 인증 상태 관리
+/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
 
 @ProviderFor(AuthViewModel)
 final authViewModelProvider = AuthViewModelProvider._();
 
-/// Auth ViewModel — Google 로그인/로그아웃 및 인증 상태 관리
+/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
 final class AuthViewModelProvider
     extends $NotifierProvider<AuthViewModel, UiState<GudaUser?>> {
-  /// Auth ViewModel — Google 로그인/로그아웃 및 인증 상태 관리
+  /// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
   AuthViewModelProvider._()
     : super(
         from: null,
@@ -281,9 +425,9 @@ final class AuthViewModelProvider
   }
 }
 
-String _$authViewModelHash() => r'6a13c0905d791f034a1422ec9315870897095fc3';
+String _$authViewModelHash() => r'2a974f000c76491ce9ad957fca0d54c666783820';
 
-/// Auth ViewModel — Google 로그인/로그아웃 및 인증 상태 관리
+/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
 
 abstract class _$AuthViewModel extends $Notifier<UiState<GudaUser?>> {
   UiState<GudaUser?> build();
