@@ -43,3 +43,20 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated code (Freezed, Riverpod, etc.)
+*.g.dart
+*.freezed.dart
+
+# Sensitive files
+.env*
+android/key.properties
+ios/Runner/GoogleService-Info.plist
+
+# Flutter related
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/ephemeral/

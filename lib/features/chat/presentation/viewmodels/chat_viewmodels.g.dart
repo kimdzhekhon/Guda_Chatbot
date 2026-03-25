@@ -370,9 +370,7 @@ final class ChatListViewModelProvider
   }
 }
 
-String _$chatListViewModelHash() => r'd87c1d0c13b4cdc4ed5b50bbb81ee20600fb16d1';
-
-/// 대화 목록 상태 관리
+String _$chatListViewModelHash() => r'ab4d97b6fe1ea8fb4a9f990eb6ca87fad7afee3e';
 
 abstract class _$ChatListViewModel
     extends $Notifier<UiState<List<Conversation>>> {
@@ -447,9 +445,8 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'd85035ee0f32915b1e4ecde993f92132b5f4a75e';
+String _$chatRoomViewModelHash() => r'4c89f78c6cf7beaf9b9414abe354a6a31992d0ae';
 
-/// 특정 대화 세션 상태 관리 — 메시지 목록 + 스트리밍 응답 처리
 final class ChatRoomViewModelFamily extends $Family
     with
         $ClassFamilyOverride<
