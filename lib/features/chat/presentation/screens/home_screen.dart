@@ -7,6 +7,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/guda_drawer.dart';
@@ -83,6 +84,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: AppResponsiveLayout(
         useSafeArea: false,
         mobile: (context, data) => _buildBody(activeId, homeState, isDark),
+        tablet: (context, data) => Center(
+          child: SizedBox(
+            width: 768,
+            child: _buildBody(activeId, homeState, isDark),
+          ),
+        ),
+        desktop: (context, data) => Center(
+          child: SizedBox(
+            width: 1024,
+            child: _buildBody(activeId, homeState, isDark),
+          ),
+        ),
       ),
       bottomNavigationBar: activeId == null
           ? null
@@ -128,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Expanded(
                     child: switch (chatState) {
                       UiLoading() => const GudaLoadingWidget(
-                        message: '불러오는 중...',
+                        message: AppStrings.processing,
                       ),
                       UiError(message: final msg) => GudaErrorWidget(
                         message: msg,

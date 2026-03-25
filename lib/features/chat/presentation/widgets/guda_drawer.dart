@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_lottie.dart';
 import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
@@ -11,6 +10,8 @@ import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_brand_header.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
@@ -44,8 +45,15 @@ class GudaDrawer extends ConsumerWidget {
                     onRetry: () =>
                         ref.read(chatListViewModelProvider.notifier).refresh(),
                   ),
-                  UiSuccess(data: final conversations) => GudaDrawerList(
-                    conversations: conversations,
+                  UiSuccess(data: final conversations) => Column(
+                    children: [
+                      const GudaDivider(),
+                      Expanded(
+                        child: GudaDrawerList(
+                          conversations: conversations,
+                        ),
+                      ),
+                    ],
                   ),
                 },
               ),
@@ -105,25 +113,10 @@ class GudaDrawerList extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (conversations.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GudaLottie(
-              path: AppAssets.lotusLottie,
-              size: 160,
-            ),
-            const SizedBox(height: GudaSpacing.md),
-            Text(
-              AppStrings.noConversations,
-              style: GudaTypography.body2(
-                color: isDark
-                    ? GudaColors.onSurfaceVariantDark
-                    : GudaColors.onSurfaceVariantLight,
-              ),
-            ),
-          ],
-        ),
+      return GudaEmptyState(
+        lottiePath: AppAssets.lotusLottie,
+        lottieSize: 160,
+        title: AppStrings.noConversations,
       );
     }
 
@@ -239,28 +232,15 @@ class GudaDrawerFooter extends ConsumerWidget {
               ),
               const SizedBox(width: GudaSpacing.md),
               Expanded(
-                child: OutlinedButton.icon(
+                child: GudaButton.outlined(
                   onPressed: () {
                     ref
                         .read(homeViewModelProvider.notifier)
                         .clearActiveConversation();
                     Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.add_rounded, size: 20),
-                  label: const Text(AppStrings.newChat),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: isDark
-                        ? GudaColors.onSurfaceDark
-                        : GudaColors.onSurfaceLight,
-                    side: BorderSide(
-                      color: (isDark
-                              ? GudaColors.dividerDark
-                              : GudaColors.dividerLight)
-                          .withValues(alpha: 0.8),
-                    ),
-                    shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
-                    padding: const EdgeInsets.symmetric(vertical: GudaSpacing.md),
-                  ),
+                  icon: Icons.add_rounded,
+                  label: AppStrings.newChat,
                 ),
               ),
             ],

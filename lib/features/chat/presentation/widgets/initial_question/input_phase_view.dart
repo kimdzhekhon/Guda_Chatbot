@@ -3,6 +3,7 @@ import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_action_layout.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question/selected_hexagram_display.dart';
@@ -28,86 +29,56 @@ class InputPhaseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: GudaSpacing.md),
-        Text(
-          type == ClassicType.tripitaka
-              ? AppStrings.tripitakaName
-              : AppStrings.initialQuestionTitle,
-          style: GudaTypography.heading3(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
-          ).copyWith(fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: GudaSpacing.lg),
-        Text(
-          type == ClassicType.tripitaka
-              ? '고려대장경의 불교 경전에 대해 질문해보세요. 금강경, 반야심경,\n법화경 등 다양한 경전에 대해 대화할 수 있습니다.'
-              : AppStrings.initialQuestionSubtitle,
-          style: GudaTypography.body2(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: GudaSpacing.lg),
-        if (selectedHexagram != null)
+    return GudaActionLayout(
+      isDark: isDark,
+      title: type == ClassicType.tripitaka
+          ? AppStrings.tripitakaName
+          : AppStrings.initialQuestionTitle,
+      subtitle: type == ClassicType.tripitaka
+          ? AppStrings.tripitakaDetailedGuide
+          : AppStrings.initialQuestionSubtitle,
+      child: Column(
+        children: [
+          if (selectedHexagram != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
+              child: SelectedHexagramDisplay(
+                isDark: isDark,
+                hexagram: selectedHexagram!,
+                onReset: onResetHexagram,
+              ),
+            ),
+          if (selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
+          if (type != ClassicType.tripitaka)
+            Padding(
+              padding: const EdgeInsets.only(bottom: GudaSpacing.md),
+              child: SuggestedQuestionChips(
+                type: type,
+                isDark: isDark,
+                onTap: (text) => controller.text = text,
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
-            child: SelectedHexagramDisplay(
+            child: GudaTextInputField(
+              controller: controller,
               isDark: isDark,
-              hexagram: selectedHexagram!,
-              onReset: onResetHexagram,
+              autofocus: true,
+              hintText: type == ClassicType.tripitaka
+                  ? AppStrings.tripitakaQuestionHint
+                  : AppStrings.initialQuestionHint,
             ),
           ),
-        if (selectedHexagram != null) const SizedBox(height: GudaSpacing.lg),
-        
-        // ── 추천 질문 칩들 (I Ching 전용) ──────────
-        if (type != ClassicType.tripitaka)
-          Padding(
-            padding: const EdgeInsets.only(bottom: GudaSpacing.md),
-            child: SuggestedQuestionChips(
-              type: type,
-              isDark: isDark,
-              onTap: (text) {
-                controller.text = text;
-              },
-            ),
+          const SizedBox(height: GudaSpacing.lg),
+          GudaButton.filled(
+            label: type == ClassicType.tripitaka
+                ? AppStrings.tripitakaStartButton
+                : AppStrings.startDivinationButton,
+            onPressed: () => onStart(controller.text),
+            isFullWidth: true,
           ),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
-          child: GudaTextInputField(
-            controller: controller,
-            isDark: isDark,
-            autofocus: true,
-            hintText: type == ClassicType.tripitaka
-                ? '경전에 대해 궁금한 점을 적어주세요'
-                : AppStrings.initialQuestionHint,
-            backgroundColor:
-                isDark ? GudaColors.backgroundDark : GudaColors.backgroundLight,
-            borderRadius: GudaRadius.smAll,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: GudaSpacing.md,
-              vertical: GudaSpacing.md,
-            ),
-            style: GudaTypography.input(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
-            ),
-          ),
-        ),
-        const SizedBox(height: GudaSpacing.lg),
-        GudaButton.filled(
-          label: type == ClassicType.tripitaka
-              ? '대화 시작하기'
-              : AppStrings.startDivinationButton,
-          onPressed: () => onStart(controller.text),
-          isFullWidth: true,
-        ),
-        const SizedBox(height: GudaSpacing.md),
-      ],
+        ],
+      ),
     );
   }
 }

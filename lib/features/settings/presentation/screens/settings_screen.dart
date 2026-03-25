@@ -75,13 +75,7 @@ class SettingsScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
                 borderRadius: GudaRadius.lgAll,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: GudaShadows.card,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,45 +326,43 @@ class _ThemeSelectionTile extends ConsumerWidget {
     WidgetRef ref,
     ThemeMode currentMode,
   ) {
-    showDialog(
-      context: context,
-      builder: (context) => GudaDialog(
-        title: AppStrings.themeLabel,
-        contentWidget: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _ThemeOption(
-              label: AppStrings.systemThemeLabel,
-              value: ThemeMode.system,
-              groupValue: currentMode,
-              onChanged: (mode) {
-                ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
-                Navigator.pop(context);
-              },
-            ),
-            _ThemeOption(
-              label: AppStrings.lightThemeLabel,
-              value: ThemeMode.light,
-              groupValue: currentMode,
-              onChanged: (mode) {
-                ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
-                Navigator.pop(context);
-              },
-            ),
-            _ThemeOption(
-              label: AppStrings.darkThemeLabel,
-              value: ThemeMode.dark,
-              groupValue: currentMode,
-              onChanged: (mode) {
-                ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-        showConfirm: false,
-        cancelLabel: AppStrings.closeLabel,
+    GudaDialog.show(
+      context,
+      title: AppStrings.themeLabel,
+      contentWidget: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ThemeOption(
+            label: AppStrings.systemThemeLabel,
+            value: ThemeMode.system,
+            groupValue: currentMode,
+            onChanged: (mode) {
+              ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+              Navigator.pop(context);
+            },
+          ),
+          _ThemeOption(
+            label: AppStrings.lightThemeLabel,
+            value: ThemeMode.light,
+            groupValue: currentMode,
+            onChanged: (mode) {
+              ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+              Navigator.pop(context);
+            },
+          ),
+          _ThemeOption(
+            label: AppStrings.darkThemeLabel,
+            value: ThemeMode.dark,
+            groupValue: currentMode,
+            onChanged: (mode) {
+              ref.read(themeViewModelProvider.notifier).setThemeMode(mode!);
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
+      showConfirm: false,
+      cancelLabel: AppStrings.closeLabel,
     );
   }
 }

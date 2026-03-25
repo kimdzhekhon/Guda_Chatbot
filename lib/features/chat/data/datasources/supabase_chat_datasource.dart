@@ -1,8 +1,7 @@
 import 'dart:async';
+import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
+import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
-import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
-import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
-import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 
 /// Supabase 채팅 데이터 소스
 class SupabaseChatDataSource {
@@ -12,47 +11,48 @@ class SupabaseChatDataSource {
 
 
   // ── 대화(Conversation) 관리 ───────────────────────
-  Future<List<Conversation>> getConversations() async {
+  // ── 대화(Conversation) 관리 ───────────────────────
+  Future<List<ConversationDto>> getConversations() async {
     // 테스트를 위한 Mock 데이터 반환
     return [
-      Conversation(
+      ConversationDto(
         id: 'mock-1',
         title: '부처님의 지혜에 대하여',
-        classicType: ClassicType.tripitaka,
+        classicType: 'tripitaka',
         userId: 'mock-user',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        updatedAt: DateTime.now().subtract(const Duration(hours: 2)),
+        createdAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+        updatedAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
         lastMessagePreview: '제행무상(諸行無常)의 의미는 무엇인가요?',
       ),
-      Conversation(
+      ConversationDto(
         id: 'mock-2',
         title: '오늘의 운세와 주역',
-        classicType: ClassicType.iching,
+        classicType: 'iching',
         userId: 'mock-user',
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        updatedAt: DateTime.now().subtract(const Duration(days: 1)),
+        createdAt: DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
         lastMessagePreview: '건괘가 나왔습니다. 아주 좋은 기운입니다.',
       ),
     ];
   }
 
   /// 특정 대화의 메시지 목록 조회
-  Future<List<Message>> getMessages(GetMessagesRequestDto request) async {
+  Future<List<MessageDto>> getMessages(GetMessagesRequestDto request) async {
     if (request.conversationId == 'mock-1') {
       return [
-        Message(
+        MessageDto(
           id: 'msg-1',
           conversationId: 'mock-1',
-          role: MessageRole.user,
+          role: 'user',
           content: '제행무상(諸行無常)의 의미는 무엇인가요?',
-          createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+          createdAt: DateTime.now().subtract(const Duration(hours: 3)).toIso8601String(),
         ),
-        Message(
+        MessageDto(
           id: 'msg-2',
           conversationId: 'mock-1',
-          role: MessageRole.assistant,
+          role: 'assistant',
           content: '## 제행무상의 의미\n\n모든 형성된 것들은 영원하지 않다는 뜻입니다. 세상의 모든 고통은 변하는 것을 변하지 않게 잡으려는 집착에서 비롯됩니다.',
-          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+          createdAt: DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
         ),
       ];
     }
@@ -60,17 +60,14 @@ class SupabaseChatDataSource {
   }
 
   /// 새 대화 세션 생성
-  Future<Conversation> createConversation(CreateConversationRequestDto request) async {
-    return Conversation(
+  Future<ConversationDto> createConversation(CreateConversationRequestDto request) async {
+    return ConversationDto(
       id: 'mock-new-${DateTime.now().millisecondsSinceEpoch}',
       title: request.title,
-      classicType: ClassicType.values.firstWhere(
-        (e) => e.name == request.classicType,
-        orElse: () => ClassicType.tripitaka,
-      ),
+      classicType: request.classicType,
       userId: 'mock-user',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      createdAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
     );
   }
 
@@ -79,13 +76,13 @@ class SupabaseChatDataSource {
     // Mock에서는 아무 작업도 하지 않음
   }
 
-  Future<Message> saveMessage(SaveMessageRequestDto request) async {
-    return Message(
+  Future<MessageDto> saveMessage(SaveMessageRequestDto request) async {
+    return MessageDto(
       id: 'msg-${DateTime.now().millisecondsSinceEpoch}',
       conversationId: request.conversationId,
-      role: MessageRole.values.firstWhere((e) => e.name == request.role),
+      role: request.role,
       content: request.content,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toIso8601String(),
     );
   }
 

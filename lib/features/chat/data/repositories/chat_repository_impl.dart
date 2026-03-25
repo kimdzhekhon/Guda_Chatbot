@@ -10,24 +10,28 @@ class ChatRepositoryImpl implements ChatRepository {
   final SupabaseChatDataSource _dataSource;
 
   @override
-  Future<List<Conversation>> getConversations() =>
-      _dataSource.getConversations();
-
+  Future<List<Conversation>> getConversations() async {
+    final dtos = await _dataSource.getConversations();
+    return dtos.map((dto) => dto.toDomain()).toList();
+  }
   @override
-  Future<List<Message>> getMessages(GetMessagesRequestDto request) =>
-      _dataSource.getMessages(request);
-
+  Future<List<Message>> getMessages(GetMessagesRequestDto request) async {
+    final dtos = await _dataSource.getMessages(request);
+    return dtos.map((dto) => dto.toDomain()).toList();
+  }
   @override
-  Future<Conversation> createConversation(CreateConversationRequestDto request) => 
-      _dataSource.createConversation(request);
-
+  Future<Conversation> createConversation(CreateConversationRequestDto request) async {
+    final dto = await _dataSource.createConversation(request);
+    return dto.toDomain();
+  }
   @override
   Future<void> deleteConversation(DeleteConversationRequestDto request) =>
       _dataSource.deleteConversation(request);
-
   @override
-  Future<Message> saveMessage(SaveMessageRequestDto request) => 
-      _dataSource.saveMessage(request);
+  Future<Message> saveMessage(SaveMessageRequestDto request) async {
+    final dto = await _dataSource.saveMessage(request);
+    return dto.toDomain();
+  }
 
   @override
   Stream<String> streamResponse({
