@@ -41,7 +41,7 @@ final class PaymentViewModelProvider
   }
 }
 
-String _$paymentViewModelHash() => r'20d9cca82df025ee1fdfa932e2ab474fa2962ad1';
+String _$paymentViewModelHash() => r'5d32beec0f88da2077bcc7b68567b496e5553c23';
 
 abstract class _$PaymentViewModel extends $Notifier<PaymentState> {
   PaymentState build();
