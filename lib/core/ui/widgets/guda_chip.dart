@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 칩 위젯
 /// 제안된 질문, 태그 등에 사용됩니다.
@@ -22,10 +24,13 @@ class GudaChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       child: Container(
         padding: padding,
         decoration: BoxDecoration(

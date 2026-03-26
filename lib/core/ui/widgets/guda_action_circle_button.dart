@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 
 /// Guda 원형 액션 버튼 (전송 버튼 등)
@@ -31,7 +32,12 @@ class GudaActionCircleButton extends StatelessWidget {
             : colorScheme.surfaceContainerHighest,
         borderRadius: GudaRadius.fullAll,
         child: InkWell(
-          onTap: isEnabled && !isLoading ? onPressed : null,
+          onTap: isEnabled && !isLoading
+              ? () {
+                  HapticFeedback.lightImpact();
+                  onPressed();
+                }
+              : null,
           borderRadius: GudaRadius.fullAll,
           child: Container(
             width: size,

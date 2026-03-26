@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 페이지 인디케이터
 /// 가로형 캐러셀이나 페이지 뷰의 현재 위치를 시각적으로 보여줍니다.
@@ -27,7 +28,7 @@ class GudaPageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final effectiveActiveColor = activeColor ?? GudaColors.accent;
     final effectiveInactiveColor = inactiveColor ?? 
         (isDark ? GudaColors.dividerDark : GudaColors.dividerLight);

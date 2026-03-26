@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:guda_chatbot/core/design_system/design_system.dart';
-import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
-import 'package:guda_chatbot/features/bookmarks/domain/entities/bookmark.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/features/bookmarks/presentation/viewmodels/bookmark_providers.dart';
-import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_bookmark_tile.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
+
+import 'package:guda_chatbot/features/bookmarks/presentation/widgets/bookmark_list.dart';
 
 class BookmarkScreen extends ConsumerWidget {
   const BookmarkScreen({super.key});
@@ -18,74 +15,19 @@ class BookmarkScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarksAsync = ref.watch(bookmarksProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
+    return GudaScaffold(
       appBar: const GudaAppBar(
         title: '보관함',
       ),
-      body: AppResponsiveLayout(
-        useSafeArea: false,
-        mobile: (context, data) => _buildBookmarkList(bookmarksAsync, isDark, ref),
-        tablet: (context, data) => Center(
-          child: SizedBox(
-            width: 600,
-            child: _buildBookmarkList(bookmarksAsync, isDark, ref),
-          ),
-        ),
-        desktop: (context, data) => Center(
-          child: SizedBox(
-            width: 800,
-            child: _buildBookmarkList(bookmarksAsync, isDark, ref),
-          ),
+      body: bookmarksAsync.when(
+        data: (bookmarks) => BookmarkList(bookmarks: bookmarks),
+        loading: () => const GudaLoadingWidget(),
+        error: (e, st) => GudaErrorWidget(
+          message: '${AppStrings.errorPrefix} $e',
+          onRetry: () => ref.refresh(bookmarksProvider),
         ),
       ),
     );
   }
-
-  Widget _buildBookmarkList(AsyncValue<List<Bookmark>> bookmarksAsync, bool isDark, WidgetRef ref) {
-    return bookmarksAsync.when(
-      data: (bookmarks) {
-        if (bookmarks.isEmpty) {
-          return const GudaEmptyState(
-            lottiePath: AppAssets.lotusLottie,
-            title: AppStrings.noBookmarksMessage,
-          );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.all(GudaSpacing.md),
-          itemCount: bookmarks.length,
-          separatorBuilder: (context, index) => const SizedBox(height: GudaSpacing.md),
-          itemBuilder: (context, index) {
-            final bookmark = bookmarks[index];
-            final cleanContent = bookmark.content
-                .replaceAll(RegExp(r'^#+ ', multiLine: true), '')
-                .trim();
-            final cleanTitle = bookmark.title.replaceAll(RegExp(r'^#+ '), '');
-            final formattedDate =
-                '${bookmark.createdAt.year}.${bookmark.createdAt.month}.${bookmark.createdAt.day}';
-
-            return GudaBookmarkTile(
-              title: cleanTitle,
-              content: cleanContent,
-              date: formattedDate,
-              onDelete: () {
-                ref.read(bookmarksProvider.notifier).removeBookmark(bookmark.id);
-              },
-            );
-          },
-        );
-      },
-      loading: () => const GudaLoadingWidget(),
-      error: (e, st) => GudaErrorWidget(
-        message: '${AppStrings.errorPrefix} $e',
-        onRetry: () => ref.refresh(bookmarksProvider),
-      ),
-    );
-  }
-}
-
-// Fixed typo in mainAxisAlignment
-extension on BookmarkScreen {
 }

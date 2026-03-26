@@ -14,8 +14,6 @@ class GudaBulletList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,7 +21,6 @@ class GudaBulletList extends StatelessWidget {
           .map(
             (item) => GudaBulletItem(
               content: item,
-              isDark: isDark,
               bulletColor: bulletColor,
             ),
           )

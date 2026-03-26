@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 바텀 시트 컨테이너
 class GudaBottomSheet extends StatelessWidget {
@@ -14,7 +15,7 @@ class GudaBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       height: MediaQuery.of(context).size.height * heightFactor,

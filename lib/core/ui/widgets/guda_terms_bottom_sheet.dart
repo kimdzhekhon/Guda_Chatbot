@@ -62,7 +62,7 @@ class _GudaTermsBottomSheetState extends State<GudaTermsBottomSheet> {
               ),
               const SizedBox(height: GudaSpacing.xs),
               Text(
-                '약관을 펼쳐서 내용을 확인하면 체크박스가 활성화됩니다.',
+                '약관을 펼쳐서 확인해야 동의할 수 있습니다.',
                 style: GudaTypography.caption(color: colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: GudaSpacing.lg),
@@ -133,7 +133,7 @@ class _GudaTermsBottomSheetState extends State<GudaTermsBottomSheet> {
                 title: Text(label, style: GudaTypography.body2(color: colorScheme.onSurface)),
                 value: value,
                 activeColor: GudaColors.primary,
-                onChanged: isExpanded ? onChanged : null, // 펼쳐야만 체크 가능
+                onChanged: (isExpanded || value) ? onChanged : null, // 펼쳐져 있거나 이미 동의한 상태면 체크 해제 가능
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
               ),

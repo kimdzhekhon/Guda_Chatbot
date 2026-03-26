@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// 보관함 및 기록용 카드 위젯
 /// 왼쪽에 브랜드 컬러 포인트 바가 있는 것이 특징입니다.
@@ -21,7 +22,7 @@ class GudaBookmarkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       decoration: BoxDecoration(

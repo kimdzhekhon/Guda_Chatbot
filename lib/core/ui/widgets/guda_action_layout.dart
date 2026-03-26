@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 액션/질문 레이아웃
 /// 대화 시작 전 단계별 뷰(InitialQuestion)의 일관된 타이틀, 간격, 정렬을 제공합니다.
@@ -9,13 +10,11 @@ class GudaActionLayout extends StatelessWidget {
     required this.title,
     this.subtitle,
     required this.child,
-    this.isDark = false,
   });
 
   final String title;
   final String? subtitle;
   final Widget child;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class GudaActionLayout extends StatelessWidget {
         Text(
           title,
           style: GudaTypography.heading3(
-            color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+            color: context.onSurfaceColor,
           ).copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
@@ -38,7 +37,7 @@ class GudaActionLayout extends StatelessWidget {
           Text(
             subtitle!,
             style: GudaTypography.body2(
-              color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+              color: context.onSurfaceColor,
             ),
             textAlign: TextAlign.center,
           ),

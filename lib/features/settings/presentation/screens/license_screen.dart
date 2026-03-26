@@ -6,47 +6,49 @@ import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_section_header.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 class LicenseScreen extends StatelessWidget {
   const LicenseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GudaScaffold(
       appBar: const GudaAppBar(title: AppStrings.licenseLabel),
       body: ListView(
         children: [
           const GudaSectionHeader(title: '디자인 자산 (Design Assets)'),
           _buildLicenseTile(context, 'Noto Serif KR', 'SIL Open Font License 1.1'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Inter Font Family', 'SIL Open Font License 1.1'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Lottie Animations', 'MIT License'),
           
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           const GudaSectionHeader(title: '프레임워크 및 상태 관리 (Framework)'),
           _buildLicenseTile(context, 'Flutter SDK', 'BSD 3-Clause License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Riverpod / riverpod_annotation', 'MIT License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'GoRouter', 'MIT License'),
           
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           const GudaSectionHeader(title: '인프라 및 유틸리티 (Infrastructure)'),
           _buildLicenseTile(context, 'Supabase Flutter SDK', 'MIT License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Dio (HTTP Client)', 'MIT License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Google Fonts', 'Apache License 2.0'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Flutter Markdown', 'BSD 3-Clause License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Freezed / Json Serializable', 'MIT License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Flutter Secure Storage', 'BSD 3-Clause License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Share Plus / UUID', 'BSD / MIT License'),
-          const GudaDivider(color: GudaColors.surfaceLight, alpha: 1.0),
+          const GudaDivider(),
           _buildLicenseTile(context, 'Google / Apple / Kakao SignIn', 'Mixed Licenses'),
           
           const SizedBox(height: GudaSpacing.xxl),
@@ -56,14 +58,12 @@ class LicenseScreen extends StatelessWidget {
   }
 
   Widget _buildLicenseTile(BuildContext context, String name, String licenseType) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
     return GudaTile(
       title: name,
       subtitle: licenseType,
       trailing: Icon(
         Icons.chevron_right_rounded,
-        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+        color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
       ),
       onTap: () {
         _showLicenseDetail(context, name, licenseType);

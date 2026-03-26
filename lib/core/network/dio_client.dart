@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guda_chatbot/core/network/retry_interceptor.dart';
 
 /// Guda 인증 인터셉터 — 모든 요청에 Supabase 세션 토큰 자동 첨부
 class AuthInterceptor extends Interceptor {
@@ -40,20 +41,23 @@ class DioClient {
 
   /// 클라이언트 초기화 (앱 부트스트랩 시 1회 호출)
   void initialize({required String baseUrl}) {
-    _dio =
-        Dio(
-            BaseOptions(
-              baseUrl: baseUrl,
-              connectTimeout: const Duration(seconds: 15),
-              receiveTimeout: const Duration(seconds: 60),
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-              },
-            ),
-          )
-          ..interceptors.add(AuthInterceptor())
-          ..interceptors.add(LoggingInterceptor());
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 60),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    _dio.interceptors.addAll([
+      AuthInterceptor(),
+      RetryInterceptor(dio: _dio),
+      LoggingInterceptor(),
+    ]);
   }
 
   Dio get dio => _dio;

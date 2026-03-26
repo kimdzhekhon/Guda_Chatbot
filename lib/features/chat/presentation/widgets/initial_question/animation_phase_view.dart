@@ -6,17 +6,13 @@ import 'package:guda_chatbot/core/constants/app_strings.dart';
 class AnimationPhaseView extends StatelessWidget {
   const AnimationPhaseView({
     super.key,
-    required this.isDark,
   });
-
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    return GudaActionLayout(
-      isDark: isDark,
+    return const GudaActionLayout(
       title: AppStrings.ichingThrowingMsg,
-      child: const Center(
+      child: Center(
         child: GudaLottie(
           path: 'assets/lottie/Dice Roll Purple.json',
           size: 150,

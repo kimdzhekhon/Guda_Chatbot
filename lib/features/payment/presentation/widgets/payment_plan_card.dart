@@ -5,6 +5,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_price_display.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 class PaymentPlanCard extends StatelessWidget {
   final PaymentPlan plan;
@@ -20,13 +21,11 @@ class PaymentPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return GudaCard(
       margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.sm),
       padding: EdgeInsets.zero,
       showBorder: true,
-      backgroundColor: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
+      backgroundColor: context.surfaceColor,
       borderRadius: GudaRadius.lgAll,
       child: InkWell(
         onTap: onTap,
@@ -35,7 +34,7 @@ class PaymentPlanCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: GudaRadius.lgAll,
             border: isSelected 
-                ? Border.all(color: GudaColors.accent, width: 2)
+                ? Border.all(color: context.accentColor, width: 2)
                 : null,
           ),
           padding: const EdgeInsets.all(GudaSpacing.lg),
@@ -46,14 +45,14 @@ class PaymentPlanCard extends StatelessWidget {
               Text(
                 plan.name,
                 style: GudaTypography.heading3(
-                  color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+                  color: context.onSurfaceColor,
                 ).copyWith(fontWeight: FontWeight.bold),
               ),
               Text(
                 plan.description,
                 textAlign: TextAlign.center,
                 style: GudaTypography.caption(
-                  color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+                  color: context.onSurfaceVariantColor,
                 ),
               ),
               const Spacer(),
@@ -61,13 +60,13 @@ class PaymentPlanCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(GudaSpacing.md),
                 decoration: BoxDecoration(
-                  color: isDark ? GudaColors.surfaceVariantDark : GudaColors.surfaceVariantLight,
+                  color: context.onSurfaceVariantColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   plan.icon,
                   size: 60,
-                  color: GudaColors.accent,
+                  color: context.accentColor,
                 ),
               ),
               const Spacer(),
@@ -80,14 +79,14 @@ class PaymentPlanCard extends StatelessWidget {
                   ? '월 ${plan.chatLimit}회 제공' 
                   : '${plan.chatLimit}회 충전',
                 style: GudaTypography.body2Bold(
-                  color: isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight,
+                  color: context.onSurfaceColor,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: GudaSpacing.xs),
               Text(
                 '회당 약 ${GudaPriceDisplay.format(plan.pricePerChat)}원',
                 style: GudaTypography.caption(
-                  color: isDark ? GudaColors.onSurfaceVariantDark : GudaColors.onSurfaceVariantLight,
+                  color: context.onSurfaceVariantColor,
                 ).copyWith(fontSize: 13),
               ),
               const Spacer(),

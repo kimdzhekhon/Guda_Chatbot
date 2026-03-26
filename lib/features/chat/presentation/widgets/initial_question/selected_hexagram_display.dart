@@ -3,15 +3,15 @@ import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_widgets.dart';
 
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+
 class SelectedHexagramDisplay extends StatelessWidget {
   const SelectedHexagramDisplay({
     super.key,
-    required this.isDark,
     required this.hexagram,
     required this.onReset,
   });
 
-  final bool isDark;
   final Hexagram hexagram;
   final VoidCallback onReset;
 
@@ -20,15 +20,10 @@ class SelectedHexagramDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(GudaSpacing.md),
       decoration: BoxDecoration(
-        color:
-            (isDark
-                    ? GudaColors.surfaceVariantDark
-                    : GudaColors.surfaceVariantLight)
-                .withValues(alpha: 0.5),
+        color: context.cardColor.withValues(alpha: 0.5),
         borderRadius: GudaRadius.smAll,
         border: Border.all(
-          color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
-              .withValues(alpha: 0.5),
+          color: context.dividerColor.withValues(alpha: 0.5),
         ),
       ),
       child: Row(
@@ -49,18 +44,14 @@ class SelectedHexagramDisplay extends StatelessWidget {
                     Text(
                       hexagram.name,
                       style: GudaTypography.body1(
-                        color: isDark
-                            ? GudaColors.onSurfaceDark
-                            : GudaColors.onSurfaceLight,
+                        color: context.onSurfaceColor,
                       ).copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: GudaSpacing.xs),
                     Text(
                       '(${hexagram.hanja})',
                       style: GudaTypography.caption(
-                        color: (isDark
-                            ? GudaColors.onSurfaceVariantDark
-                            : GudaColors.onSurfaceVariantLight),
+                        color: context.onSurfaceVariantColor,
                       ),
                     ),
                   ],
@@ -68,9 +59,7 @@ class SelectedHexagramDisplay extends StatelessWidget {
                 Text(
                   hexagram.summary,
                   style: GudaTypography.caption(
-                    color: (isDark
-                        ? GudaColors.onSurfaceVariantDark
-                        : GudaColors.onSurfaceVariantLight),
+                    color: context.onSurfaceVariantColor,
                   ),
                 ),
               ],

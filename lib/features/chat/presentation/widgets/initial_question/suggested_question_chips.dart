@@ -8,12 +8,10 @@ class SuggestedQuestionChips extends StatelessWidget {
   const SuggestedQuestionChips({
     super.key,
     required this.type,
-    required this.isDark,
     required this.onTap,
   });
 
   final ClassicType type;
-  final bool isDark;
   final Function(String) onTap;
 
   @override

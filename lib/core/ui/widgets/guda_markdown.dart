@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 마크다운 위젯
 /// 디자인 시스템의 타이포그래피와 색상을 일관되게 적용합니다.
@@ -8,16 +9,15 @@ class GudaMarkdown extends StatelessWidget {
   const GudaMarkdown({
     super.key,
     required this.data,
-    required this.isDark,
     this.selectable = false,
   });
 
   final String data;
-  final bool isDark;
   final bool selectable;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     final textColor = isDark
         ? GudaColors.onAssistantBubbleDark
         : GudaColors.onAssistantBubbleLight;
