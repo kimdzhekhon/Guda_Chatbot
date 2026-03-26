@@ -96,4 +96,17 @@ abstract final class GudaColors {
 
   /// 구사론 — 사프란 황색
   static const Color abhidharma = Color(0xFFA36D1D);
+
+  // ── 소셜 브랜드 ──────────────────────────────
+  /// Google 브랜드 색상 (텍스트/아이콘용)
+  static const Color google = Color(0xFF141033); // Guda 테마에 맞춘 다크 인디고
+  
+  /// Google 배경색 (라이트 그레이 - 사용자 요청 사양)
+  static const Color googleBackground = Color(0xFFF2F2F2);
+
+  /// Apple 브랜드 색상 (배경용)
+  static const Color apple = Color(0xFF000000);
+
+  /// Apple 텍스트색 (화이트)
+  static const Color onApple = Color(0xFFFFFFFF);
 }

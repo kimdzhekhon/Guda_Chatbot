@@ -110,6 +110,12 @@ abstract final class AppStrings {
   static const String authDesc = '고전 AI 챗봇 Guda와 함께\n불교의 가르침을 탐구합니다.';
   static const String continueWithGoogle = 'Google로 계속하기';
   static const String continueWithApple = 'Apple로 계속하기';
+  static const String termsOfService = '이용약관';
+  static const String privacyPolicy = '개인정보처리방침';
+  static const String agreeToAll = '전체 동의하기';
+  static const String termsRequired = '(필수) 이용약관';
+  static const String privacyRequired = '(필수) 개인정보처리방침';
+  static const String startWithGuda = 'Guda 시작하기';
   static const String version = 'Guda v1.0.0';
 
   // 주역 관련
