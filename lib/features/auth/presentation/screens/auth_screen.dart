@@ -8,11 +8,11 @@ import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_social_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_gradient_background.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_brand_header.dart';
-import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_snack_bar.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_terms_bottom_sheet.dart';
 
 /// 로그인/회원가입 화면 — 이메일 + 소셜 로그인
 class AuthScreen extends ConsumerStatefulWidget {
@@ -64,16 +64,19 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     hasScrollBody: false,
                     child: Column(
                       children: [
-                        if (!isKeyboardOpen) const Spacer(flex: 2),
+                        if (!isKeyboardOpen) const Spacer(flex: 1),
                         const GudaBrandHeader(
                           subtitle: AppStrings.authSubtitle,
                         ),
-                        if (!isKeyboardOpen) const Spacer(flex: 2),
-                        const SizedBox(height: GudaSpacing.xl),
+                        if (!isKeyboardOpen) const Spacer(flex: 1),
+                        const SizedBox(height: GudaSpacing.md),
                         
                         // Auth Card (Email + Social)
                         GudaCard(
-                          padding: const EdgeInsets.all(GudaSpacing.xl),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: GudaSpacing.lg,
+                            vertical: GudaSpacing.xl,
+                          ),
                           backgroundColor: colorScheme.surface,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +87,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   color: colorScheme.onSurface,
                                 ),
                               ),
-                              const SizedBox(height: GudaSpacing.sm),
+                              const SizedBox(height: GudaSpacing.xs),
                               Text(
                                 _isSignUp 
                                     ? '지혜의 여정을 시작해보세요'
@@ -93,7 +96,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
-                              const SizedBox(height: GudaSpacing.xl),
+                              const SizedBox(height: GudaSpacing.lg),
 
                               // Email field
                               TextField(
@@ -102,6 +105,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 decoration: InputDecoration(
                                   labelText: '이메일',
                                   hintText: 'example@email.com',
+                                  isDense: true,
                                   border: OutlineInputBorder(
                                     borderRadius: GudaRadius.mdAll,
                                   ),
@@ -116,18 +120,19 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 decoration: InputDecoration(
                                   labelText: '비밀번호',
                                   hintText: '6자 이상',
+                                  isDense: true,
                                   border: OutlineInputBorder(
                                     borderRadius: GudaRadius.mdAll,
                                   ),
                                 ),
                                 onSubmitted: (_) => _handleEmailAuth(),
                               ),
-                              const SizedBox(height: GudaSpacing.lg),
+                              const SizedBox(height: GudaSpacing.md),
 
                               // Email Action Button
                               SizedBox(
                                 width: double.infinity,
-                                height: 54,
+                                height: 50,
                                 child: ElevatedButton(
                                   onPressed: isLoading ? null : _handleEmailAuth,
                                   style: ElevatedButton.styleFrom(
@@ -136,6 +141,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: GudaRadius.mdAll,
                                     ),
+                                    elevation: 0,
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
@@ -162,61 +168,61 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   onPressed: () => setState(() => _isSignUp = !_isSignUp),
                                   child: Text(
                                     _isSignUp ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 회원가입',
-                                    style: TextStyle(color: GudaColors.primary),
+                                    style: TextStyle(
+                                      color: GudaColors.primary,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                               ),
 
-                              const SizedBox(height: GudaSpacing.md),
+                              const SizedBox(height: GudaSpacing.sm),
                               
                               // Divider
                               Row(
                                 children: [
-                                  Expanded(child: Divider(color: colorScheme.outlineVariant)),
+                                  Expanded(child: Divider(color: colorScheme.outlineVariant, thickness: 0.5)),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
-                                    child: Text('또는', style: GudaTypography.caption(color: colorScheme.onSurfaceVariant)),
+                                    child: Text('또는', style: GudaTypography.caption2(color: colorScheme.onSurfaceVariant)),
                                   ),
-                                  Expanded(child: Divider(color: colorScheme.outlineVariant)),
+                                  Expanded(child: Divider(color: colorScheme.outlineVariant, thickness: 0.5)),
                                 ],
                               ),
-                              const SizedBox(height: GudaSpacing.lg),
+                              const SizedBox(height: GudaSpacing.md),
 
                               // Social Buttons
-                              GudaSocialButton(
-                                onPressed: () => ref.read(authViewModelProvider.notifier).signInWithGoogle(),
-                                isLoading: isLoading,
-                                iconPath: AppAssets.googleIcon,
-                                label: AppStrings.continueWithGoogle,
-                                backgroundColor: Colors.white,
-                                foregroundColor: GudaColors.onSurfaceLight,
-                              ),
-                              const SizedBox(height: GudaSpacing.md),
-                              GudaSocialButton(
-                                onPressed: () => ref.read(authViewModelProvider.notifier).signInWithApple(),
-                                isLoading: isLoading,
-                                iconPath: AppAssets.appleIcon,
-                                label: AppStrings.continueWithApple,
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                              ),
+                                GudaSocialButton(
+                                  onPressed: () async {
+                                    final agreed = await GudaTermsBottomSheet.show(context);
+                                    if (agreed == true) {
+                                      ref.read(authViewModelProvider.notifier).signInWithGoogle();
+                                    }
+                                  },
+                                  isLoading: isLoading,
+                                  provider: GudaSocialProvider.google,
+                                ),
+                                const SizedBox(height: GudaSpacing.md),
+                                GudaSocialButton(
+                                  onPressed: () async {
+                                    final agreed = await GudaTermsBottomSheet.show(context);
+                                    if (agreed == true) {
+                                      ref.read(authViewModelProvider.notifier).signInWithApple();
+                                    }
+                                  },
+                                  isLoading: isLoading,
+                                  provider: GudaSocialProvider.apple,
+                                ),
                             ],
                           ),
                         ).gudaSlideIn(
-                          begin: const Offset(0, 0.1),
-                          delay: const Duration(milliseconds: 400),
+                          begin: const Offset(0, 0.05),
+                          delay: const Duration(milliseconds: 300),
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeOut,
                         ),
                         
-                        const Spacer(flex: 1),
-                        Text(
-                          AppStrings.version,
-                          style: GudaTypography.caption2(
-                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                          ),
-                        ).gudaFadeIn(delay: const Duration(milliseconds: 600)),
-                        const SizedBox(height: GudaSpacing.lg),
+                        const Spacer(flex: 2),
                       ],
                     ),
                   ),
@@ -236,7 +242,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     if (email.isEmpty || password.isEmpty) return;
 
     if (_isSignUp) {
-      ref.read(authViewModelProvider.notifier).signUpWithEmail(email, password);
+      GudaTermsBottomSheet.show(context).then((agreed) {
+        if (agreed == true) {
+          ref.read(authViewModelProvider.notifier).signUpWithEmail(email, password);
+        }
+      });
     } else {
       ref.read(authViewModelProvider.notifier).signInWithEmail(email, password);
     }

@@ -12,6 +12,8 @@ class GudaMenuButton extends StatelessWidget {
     this.iconPath,
     this.backgroundColor,
     this.foregroundColor,
+    this.borderColor,
+    this.iconSize = GudaSpacing.md20,
     this.isLoading = false,
     this.height = 54,
   });
@@ -22,6 +24,8 @@ class GudaMenuButton extends StatelessWidget {
   final String? iconPath;
   final Color? backgroundColor;
   final Color? foregroundColor;
+  final Color? borderColor;
+  final double iconSize;
   final bool isLoading;
   final double height;
 
@@ -35,28 +39,28 @@ class GudaMenuButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: backgroundColor ?? (isDark ? Colors.black : Colors.white),
-          foregroundColor: foregroundColor ?? (isDark ? Colors.white : GudaColors.onSurfaceLight),
+          backgroundColor: backgroundColor ?? (isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight),
+          foregroundColor: foregroundColor ?? (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight),
           side: BorderSide(
-            color: (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
-                .withValues(alpha: 0.1),
+            color: borderColor ?? (isDark ? GudaColors.dividerDark : GudaColors.dividerLight)
+                .withValues(alpha: isDark ? 0.2 : 0.5),
           ),
-          shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
+          shape: const RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
           elevation: 0,
         ),
         child: isLoading
             ? const SizedBox(
-                width: 20,
-                height: 20,
+                width: GudaSpacing.md20,
+                height: GudaSpacing.md20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (iconPath != null)
-                    Image.asset(iconPath!, width: 20, height: 20)
+                    Image.asset(iconPath!, width: iconSize, height: iconSize)
                   else if (icon != null)
-                    Icon(icon, size: 20),
+                    Icon(icon, size: iconSize),
                   const SizedBox(width: GudaSpacing.md),
                   Text(
                     label,
