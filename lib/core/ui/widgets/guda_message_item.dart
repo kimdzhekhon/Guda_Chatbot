@@ -10,13 +10,11 @@ class GudaMessageItem extends StatelessWidget {
     super.key,
     required this.child,
     required this.isUser,
-    required this.isDark,
     this.isStreaming = false,
   });
 
   final Widget child;
   final bool isUser;
-  final bool isDark;
   final bool isStreaming;
 
   @override
@@ -34,13 +32,12 @@ class GudaMessageItem extends StatelessWidget {
         children: [
           GudaChatBubble(
             isUser: isUser,
-            isDark: isDark,
             child: child,
           ),
           if (isStreaming)
-            Padding(
-              padding: const EdgeInsets.only(top: GudaSpacing.xs),
-              child: const GudaStreamingDots(),
+            const Padding(
+              padding: EdgeInsets.only(top: GudaSpacing.xs),
+              child: GudaStreamingDots(),
             ),
         ],
       ),

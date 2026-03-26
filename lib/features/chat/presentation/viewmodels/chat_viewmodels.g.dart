@@ -396,6 +396,54 @@ abstract class _$ChatListViewModel
   }
 }
 
+@ProviderFor(sortedConversations)
+final sortedConversationsProvider = SortedConversationsProvider._();
+
+final class SortedConversationsProvider
+    extends
+        $FunctionalProvider<
+          List<Conversation>,
+          List<Conversation>,
+          List<Conversation>
+        >
+    with $Provider<List<Conversation>> {
+  SortedConversationsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sortedConversationsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sortedConversationsHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<Conversation>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  List<Conversation> create(Ref ref) {
+    return sortedConversations(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Conversation> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Conversation>>(value),
+    );
+  }
+}
+
+String _$sortedConversationsHash() =>
+    r'9f9bfa5574fb16c033db47d85f698ce4eb4d0286';
+
 @ProviderFor(ChatRoomViewModel)
 final chatRoomViewModelProvider = ChatRoomViewModelFamily._();
 

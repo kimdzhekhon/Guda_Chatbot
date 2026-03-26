@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 선택 박스 위젯 (주역 궤 선택 등에서 사용)
 class GudaSelectionBox extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onTap;
-  final bool isDark;
 
   const GudaSelectionBox({
     super.key,
     required this.label,
     required this.icon,
     required this.onTap,
-    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     return InkWell(
       onTap: onTap,
       borderRadius: GudaRadius.mdAll,

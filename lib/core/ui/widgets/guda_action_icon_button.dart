@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// 하단 푸터 등에 사용되는 사각형 모양의 액션 아이콘 버튼
 class GudaActionIconButton extends StatelessWidget {
@@ -16,7 +17,7 @@ class GudaActionIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return IconButton(
       onPressed: onPressed,

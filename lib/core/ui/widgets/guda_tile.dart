@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 리스트 타일 위젯
 /// 디자인 시스템에 따른 타이포그래피와 일관된 패딩, 아이콘 스타일을 제공합니다.
@@ -31,7 +32,7 @@ class GudaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colorScheme = Theme.of(context).colorScheme;
 
     // 기본 색상 설정

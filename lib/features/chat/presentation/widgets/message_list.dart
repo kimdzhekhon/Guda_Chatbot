@@ -10,7 +10,6 @@ class MessageList extends StatelessWidget {
   const MessageList({
     super.key,
     required this.messages,
-    required this.isDark,
     required this.type,
     required this.scrollController,
     required this.onSendMessage,
@@ -18,7 +17,6 @@ class MessageList extends StatelessWidget {
   });
 
   final List<Message> messages;
-  final bool isDark;
   final ClassicType type;
   final ScrollController scrollController;
   final Function(String) onSendMessage;
@@ -28,21 +26,13 @@ class MessageList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (messages.isEmpty) {
       if (type == ClassicType.tripitaka) {
-        // 팔만대장경은 채팅 형식으로 시작
         return ListView(
           controller: scrollController,
           padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
           children: [
-            MessageBubble(
-              message: Message(
-                id: 'tripitaka-guidance',
-                conversationId: activeConversationId,
-                content: type.guidanceMessage,
-                role: MessageRole.assistant,
-                createdAt: DateTime.now(),
-              ),
-              isDark: isDark,
-              showActions: false,
+            _StaticGuidanceBubble(
+              content: type.guidanceMessage,
+              conversationId: activeConversationId,
             ),
           ],
         );
@@ -68,7 +58,31 @@ class MessageList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
       itemCount: messages.length,
       itemBuilder: (context, index) =>
-          MessageBubble(message: messages[index], isDark: isDark),
+          MessageBubble(message: messages[index]),
+    );
+  }
+}
+
+class _StaticGuidanceBubble extends StatelessWidget {
+  const _StaticGuidanceBubble({
+    required this.content,
+    required this.conversationId,
+  });
+
+  final String content;
+  final String conversationId;
+
+  @override
+  Widget build(BuildContext context) {
+    return MessageBubble(
+      message: Message(
+        id: 'guidance',
+        conversationId: conversationId,
+        content: content,
+        role: MessageRole.assistant,
+        createdAt: DateTime(2024), // Use static date to avoid rebuild comparisons
+      ),
+      showActions: false,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 메뉴 버튼 위젯
 /// 아이콘과 텍스트가 포함된 전폭(Full-width) 버튼입니다.
@@ -16,6 +17,7 @@ class GudaMenuButton extends StatelessWidget {
     this.iconSize = GudaSpacing.md20,
     this.isLoading = false,
     this.height = 54,
+    this.isIconLeftAligned = false,
   });
 
   final VoidCallback? onPressed;
@@ -28,10 +30,11 @@ class GudaMenuButton extends StatelessWidget {
   final double iconSize;
   final bool isLoading;
   final double height;
+  final bool isIconLeftAligned;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SizedBox(
       width: double.infinity,
@@ -54,21 +57,28 @@ class GudaMenuButton extends StatelessWidget {
                 height: GudaSpacing.md20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (iconPath != null)
-                    Image.asset(iconPath!, width: iconSize, height: iconSize)
-                  else if (icon != null)
-                    Icon(icon, size: iconSize),
-                  const SizedBox(width: GudaSpacing.md),
-                  Text(
-                    label,
-                    style: GudaTypography.button(
-                      color: foregroundColor,
+            : Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isIconLeftAligned ? 10 : GudaSpacing.md,
+                ),
+                child: Row(
+                  mainAxisAlignment: isIconLeftAligned
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
+                  children: [
+                    if (iconPath != null)
+                      Image.asset(iconPath!, width: iconSize, height: iconSize)
+                    else if (icon != null)
+                      Icon(icon, size: iconSize),
+                    const SizedBox(width: GudaSpacing.md),
+                    Text(
+                      label,
+                      style: GudaTypography.button(
+                        color: foregroundColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
     );

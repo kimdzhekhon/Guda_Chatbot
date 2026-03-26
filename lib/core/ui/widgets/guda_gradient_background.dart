@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:guda_chatbot/core/design_system/design_system.dart';
 
 /// Guda 공통 그라데이션 배경 컨테이너
 /// 앱의 시그니처 색상을 활용한 그라데이션 배경을 제공합니다.
@@ -25,8 +24,8 @@ class GudaGradientBackground extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: colors ??
               [
-                GudaColors.primary,
-                GudaColors.primaryLight,
+                colorScheme.primary,
+                colorScheme.primary.withValues(alpha: 0.7),
                 colorScheme.surface,
               ],
           stops: stops ?? const [0.0, 0.4, 1.0],

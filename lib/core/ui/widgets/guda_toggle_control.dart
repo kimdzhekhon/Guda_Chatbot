@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 토글/세그먼트 컨트롤 위젯
 /// 두 개 이상의 옵션 중 하나를 선택할 때 사용하며, 애니메이션 전환 효과를 제공합니다.
@@ -9,16 +10,15 @@ class GudaToggleControl<T> extends StatelessWidget {
     required this.options,
     required this.selectedValue,
     required this.onChanged,
-    this.isDark = false,
   });
 
   final List<GudaToggleOption<T>> options;
   final T selectedValue;
   final ValueChanged<T> onChanged;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     return Container(
       padding: const EdgeInsets.all(GudaSpacing.xs),
       decoration: BoxDecoration(
@@ -33,7 +33,6 @@ class GudaToggleControl<T> extends StatelessWidget {
             title: option.label,
             isSelected: isSelected,
             onTap: () => onChanged(option.value),
-            isDark: isDark,
           );
         }).toList(),
       ),
@@ -55,17 +54,16 @@ class _ToggleItem extends StatelessWidget {
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isDark;
 
   const _ToggleItem({
     required this.title,
     required this.isSelected,
     required this.onTap,
-    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

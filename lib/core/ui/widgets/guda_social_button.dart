@@ -15,11 +15,13 @@ class GudaSocialButton extends StatelessWidget {
     required this.onPressed,
     required this.provider,
     this.isLoading = false,
+    this.height = 54,
   });
 
   final VoidCallback? onPressed;
   final GudaSocialProvider provider;
   final bool isLoading;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +55,10 @@ class GudaSocialButton extends StatelessWidget {
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       borderColor: borderColor,
-      iconSize: GudaSpacing.lg,
+      iconSize: 24, // Increased from default
       isLoading: isLoading,
+      height: height,
+      isIconLeftAligned: true,
     );
   }
 }

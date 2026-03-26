@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
+import 'package:guda_chatbot/features/chat/domain/orchestrations/chat_flow_orchestrator.dart';
 
 part 'home_viewmodel.g.dart';
 
@@ -50,9 +51,17 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   void selectClassicType(ClassicType type) {
+    _initializeByClassicType(type, clearActiveConversation: true);
+  }
+
+  void _initializeByClassicType(ClassicType type,
+      {bool clearActiveConversation = false}) {
+    final config = ChatFlowOrchestrator.prepareNewChat(type: type);
     state = state.copyWith(
       selectedClassicType: type,
-      clearActiveConversation: true,
+      clearActiveConversation: clearActiveConversation,
+      phase: config['phase'] == 'input' ? CardPhase.input : CardPhase.selection,
+      selectedHexagram: null,
     );
   }
 
@@ -66,15 +75,11 @@ class HomeViewModel extends _$HomeViewModel {
 
   void startNewChat() {
     final type = state.selectedClassicType;
-    final mockConv = Conversation(
-      id: 'mock-new-${DateTime.now().millisecondsSinceEpoch}',
-      title: '${type.displayName} 새로운 시작',
-      classicType: type,
-      userId: 'mock-user',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    state = state.copyWith(activeConversationId: mockConv.id);
+    _initializeByClassicType(type);
+    
+    // Note: In a real app, we might want to keep the mock ID generation 
+    // or call the repository to create a new conversation.
+    // For now, focusing on state initialization consistency.
   }
 
   void clearActiveConversation() {
@@ -94,11 +99,6 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   void resetInitialPhase() {
-    state = state.copyWith(
-      phase: state.selectedClassicType == ClassicType.tripitaka
-          ? CardPhase.input
-          : CardPhase.selection,
-      selectedHexagram: null,
-    );
+    _initializeByClassicType(state.selectedClassicType);
   }
 }

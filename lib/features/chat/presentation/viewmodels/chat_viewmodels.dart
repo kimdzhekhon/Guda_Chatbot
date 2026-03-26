@@ -98,6 +98,15 @@ class ChatListViewModel extends _$ChatListViewModel {
   }
 }
 
+// ── Sorted Conversations Provider (Optimization) ──────────────────
+
+@riverpod
+List<Conversation> sortedConversations(Ref ref) {
+  final chatListState = ref.watch(chatListViewModelProvider);
+  final data = chatListState.dataOrNull ?? [];
+  return [...data]..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+}
+
 // ── Chat Room ViewModel ────────────────────────────
 
 @riverpod

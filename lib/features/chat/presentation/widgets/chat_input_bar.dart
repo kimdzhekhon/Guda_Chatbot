@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_action_circle_button.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+
+import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_text_field.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/chat_send_button.dart';
 
 /// 채팅 입력창 위젯
 class ChatInputBar extends StatefulWidget {
@@ -44,12 +46,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
+        color: context.surfaceColor,
         boxShadow: GudaShadows.inputBar,
       ),
       child: SafeArea(
@@ -64,11 +63,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
             children: [
               // ── 텍스트 입력 영역 ────────────────────
               Expanded(
-                child: GudaTextInputField(
+                child: ChatInputTextField(
                   controller: _controller,
-                  isDark: isDark,
-                  hintText: '메시지를 입력하세요...',
-                  maxLines: null,
                   enabled: !widget.isLoading,
                   onSubmitted: (_) => _send(),
                 ),
@@ -76,9 +72,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
               const SizedBox(width: GudaSpacing.sm),
 
               // ── 전송 버튼 ─────────────────────────
-              GudaActionCircleButton(
+              ChatSendButton(
                 onPressed: _send,
-                icon: Icons.arrow_upward_rounded,
                 isLoading: widget.isLoading,
                 isEnabled: _hasText,
               ),
