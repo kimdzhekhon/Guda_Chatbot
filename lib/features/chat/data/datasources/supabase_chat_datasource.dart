@@ -6,6 +6,7 @@ import 'package:guda_chatbot/app/config/app_config.dart';
 import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
+import 'package:guda_chatbot/core/constants/app_personas.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 
 /// Supabase 채팅 데이터 소스
@@ -98,13 +99,14 @@ class SupabaseChatDataSource {
     required String conversationId,
     required String userMessage,
     required String classicType,
+    String? personaId,
   }) {
     final controller = StreamController<String>();
 
     final type = ClassicType.values.firstWhere((e) => e.name == classicType);
     final apiUrl = '${AppConfig.webApiBaseUrl}${type.apiPath}';
 
-    _streamFromApi(apiUrl, conversationId, userMessage, controller);
+    _streamFromApi(apiUrl, conversationId, userMessage, controller, personaId: personaId);
 
     return controller.stream;
   }
@@ -114,10 +116,15 @@ class SupabaseChatDataSource {
     String apiUrl,
     String conversationId,
     String userMessage,
-    StreamController<String> controller,
-  ) async {
+    StreamController<String> controller, {
+    String? personaId,
+  }) async {
     try {
-      final messagesForApi = await _buildMessagesForApi(conversationId, userMessage);
+      final messagesForApi = await _buildMessagesForApi(
+        conversationId,
+        userMessage,
+        personaId: personaId,
+      );
 
       final request = http.Request('POST', Uri.parse(apiUrl));
       request.headers['Content-Type'] = 'application/json';
@@ -176,17 +183,32 @@ class SupabaseChatDataSource {
   /// 대화 기록을 API 포맷으로 변환
   Future<List<Map<String, String>>> _buildMessagesForApi(
     String conversationId,
-    String userMessage,
-  ) async {
+    String userMessage, {
+    String? personaId,
+  }) async {
     final history = await getMessages(GetMessagesRequestDto(conversationId: conversationId));
 
-    final messages = history
-        .map((m) => {
-              'role': m.role,
-              'content': m.content,
-            })
-        .toList();
+    final List<Map<String, String>> messages = [];
 
+    // 1. 페르소나 추가 지침이 있는 경우 첫 번째 시스템 메시지로 삽입
+    if (personaId != null) {
+      String? addedPrompt;
+      if (personaId == 'wise') addedPrompt = AppPersonas.wisePrompt;
+      if (personaId == 'friendly') addedPrompt = AppPersonas.friendlyPrompt;
+      if (personaId == 'strict') addedPrompt = AppPersonas.strictPrompt;
+
+      if (addedPrompt != null) {
+        messages.add({'role': 'system', 'content': addedPrompt});
+      }
+    }
+
+    // 2. 대화 기록 추가
+    messages.addAll(history.map((m) => {
+          'role': m.role,
+          'content': m.content,
+        }));
+
+    // 3. 현재 사용자 메시지 추가
     messages.add({'role': 'user', 'content': userMessage});
 
     return messages;

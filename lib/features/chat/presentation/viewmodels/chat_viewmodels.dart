@@ -12,6 +12,7 @@ import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_use
 import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
+import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 part 'chat_viewmodels.g.dart';
@@ -160,12 +161,17 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
     try {
       final useCase = ref.read(sendMessageUseCaseProvider);
+      final personaId = ref.read(personaProvider).maybeWhen(
+            data: (id) => id,
+            orElse: () => null,
+          );
       String accumulatedContent = '';
       
       await for (final chunk in useCase(
         conversationId: conversationId,
         content: content,
         classicType: classicType.name,
+        personaId: personaId,
       )) {
         accumulatedContent += chunk;
         

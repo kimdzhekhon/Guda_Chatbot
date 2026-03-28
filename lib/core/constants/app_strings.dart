@@ -165,6 +165,16 @@ abstract final class AppStrings {
   static const String chargeTypeLabel = '단일 충전형';
   static const String planSelectionSuffix = '선택 완료';
 
+  // 페르소나 설정
+  static const String personaSettingTitle = '페르소나 설정';
+  static const String personaSettingDesc = 'AI의 대화 스타일을 선택하세요';
+  static const String personaWiseName = '기본';
+  static const String personaWiseDesc = '차분하고 격식 있는 어조로 깊이 있는 지혜를 전합니다.';
+  static const String personaFriendlyName = '친절한';
+  static const String personaFriendlyDesc = '다정하고 따뜻한 어조로 위로와 격려를 건넵니다.';
+  static const String personaStrictName = '직설적인';
+  static const String personaStrictDesc = '핵심을 짚어 간결하고 명확하게 상황을 분석합니다.';
+
   // ── 추천 질문 ──────────────────────────────────
   static const List<String> ichingSuggestions = [
     '오늘의 전체적인 운세는?',

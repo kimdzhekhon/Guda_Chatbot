@@ -74,9 +74,10 @@ class GudaTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: isSelected
-                        ? GudaTypography.body1Bold(color: effectiveTextColor)
-                        : GudaTypography.body1(color: effectiveTextColor),
+                    style: (isSelected
+                            ? GudaTypography.body1Bold(color: effectiveTextColor)
+                            : GudaTypography.body1(color: effectiveTextColor))
+                        .copyWith(height: 1.2),
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
