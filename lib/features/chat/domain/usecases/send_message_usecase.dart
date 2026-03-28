@@ -11,6 +11,7 @@ class SendMessageUseCase {
     required String conversationId,
     required String content,
     required String classicType,
+    String? personaId,
   }) async* {
     // 1. 사용자 메시지 저장
     await _repository.saveMessage(
@@ -26,6 +27,7 @@ class SendMessageUseCase {
       conversationId: conversationId,
       userMessage: content,
       classicType: classicType,
+      personaId: personaId,
     );
   }
 }

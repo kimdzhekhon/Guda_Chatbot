@@ -17,6 +17,7 @@ import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/app/theme/theme_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guda_chatbot/features/settings/presentation/widgets/user_profile_card.dart';
+import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 
 /// SCR_SETTINGS — 설정 화면
 class SettingsScreen extends ConsumerWidget {
@@ -116,6 +117,8 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => context.push(RoutePaths.fontSize),
               ),
               const GudaDivider(alpha: 1.0),
+              _PersonaSelectionTile(),
+              const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.bookmark_outline_rounded),
                 title: '보관함',
@@ -144,7 +147,7 @@ class SettingsScreen extends ConsumerWidget {
                   AppStrings.version.split(' ').last,
                   style: GudaTypography.caption(
                     color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                  ),
+                  ).copyWith(height: 1.2),
                 ),
               ),
               const GudaDivider(alpha: 1.0),
@@ -210,6 +213,47 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+class _PersonaSelectionTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final personaState = ref.watch(personaProvider);
+    final personaNotifier = ref.read(personaProvider.notifier);
+
+    final currentId = personaState.maybeWhen(
+      data: (id) => id,
+      orElse: () => 'wise',
+    );
+
+    final persona = personaNotifier.personas.firstWhere(
+      (p) => p.id == currentId,
+      orElse: () => personaNotifier.personas.first,
+    );
+
+    return GudaTile(
+      leading: const Icon(Icons.psychology_outlined),
+      title: AppStrings.personaSettingTitle,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            persona.name.split(' ').first, // '기본' 또는 '친절한' 등 앞단어만 표시
+            style: GudaTypography.caption(
+              color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+            ).copyWith(height: 1.2),
+          ),
+          const SizedBox(width: GudaSpacing.xs),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+        ],
+      ),
+      onTap: () => context.push(RoutePaths.persona),
+    );
+  }
+}
+
 class _ThemeSelectionTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -241,7 +285,7 @@ class _ThemeSelectionTile extends ConsumerWidget {
             modeLabel,
             style: GudaTypography.caption(
               color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ).copyWith(height: 1.3),
+            ).copyWith(height: 1.2),
           ),
           const SizedBox(width: GudaSpacing.xs),
           Icon(

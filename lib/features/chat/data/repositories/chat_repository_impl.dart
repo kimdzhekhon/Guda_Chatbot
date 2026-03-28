@@ -38,9 +38,11 @@ class ChatRepositoryImpl implements ChatRepository {
     required String conversationId,
     required String userMessage,
     required String classicType,
+    String? personaId,
   }) => _dataSource.streamResponse(
     conversationId: conversationId,
     userMessage: userMessage,
     classicType: classicType,
+    personaId: personaId,
   );
 }

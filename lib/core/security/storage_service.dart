@@ -12,6 +12,7 @@ class StorageService {
 
   static const String _fontScaleKey = 'font_scale';
   static const String _themeModeKey = 'theme_mode';
+  static const String _personaIdKey = 'persona_id';
 
   /// 폰트 배율 저장
   Future<void> setFontScale(double scale) async {
@@ -33,6 +34,17 @@ class StorageService {
   Future<String> getThemeMode() async {
     final value = await _storage.read(key: _themeModeKey);
     return value ?? 'system';
+  }
+
+  /// 페르소나 ID 저장
+  Future<void> setPersonaId(String id) async {
+    await _storage.write(key: _personaIdKey, value: id);
+  }
+
+  /// 페르소나 ID 불러오기 (기본값 'wise')
+  Future<String> getPersonaId() async {
+    final value = await _storage.read(key: _personaIdKey);
+    return value ?? 'wise';
   }
 }
 
