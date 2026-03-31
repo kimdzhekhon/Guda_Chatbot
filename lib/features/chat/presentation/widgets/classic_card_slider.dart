@@ -49,10 +49,12 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
 
   Future<void> _handleStart() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (mounted) {
-      ref.read(homeViewModelProvider.notifier).startNewChat();
-      setState(() => _isLoading = false);
+    try {
+      await ref.read(homeViewModelProvider.notifier).startNewChat();
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 part 'persona_update_dto.freezed.dart';
 part 'persona_update_dto.g.dart';
@@ -7,8 +8,8 @@ part 'persona_update_dto.g.dart';
 @freezed
 abstract class PersonaUpdateDto with _$PersonaUpdateDto {
   const factory PersonaUpdateDto({
-    @JsonKey(name: 'user_id') required String userId,
-    required String persona,
+    @JsonKey(name: 'p_user_id') required String userId,
+    @JsonKey(name: 'p_persona') required PersonaType persona,
   }) = _PersonaUpdateDto;
 
   factory PersonaUpdateDto.fromJson(Map<String, dynamic> json) =>

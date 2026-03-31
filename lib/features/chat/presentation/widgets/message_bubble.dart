@@ -18,7 +18,7 @@ class MessageBubble extends ConsumerWidget {
   final bool showActions;
   final GlobalKey _shareKey = GlobalKey();
 
-  bool get isUser => message.role == MessageRole.user;
+  bool get isUser => message.senderRole == MessageRole.user;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

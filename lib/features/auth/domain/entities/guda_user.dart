@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 part 'guda_user.freezed.dart';
 
@@ -25,8 +26,8 @@ abstract class GudaUser with _$GudaUser {
     /// 생년월일
     DateTime? birthDate,
 
-    /// 페르소나 (wise, friendly, strict 등)
-    String? persona,
+    /// 페르소나 (PersonaType: wise, friendly, strict)
+    PersonaType? persona,
 
     /// 약관 동의 여부
     @Default(false) bool termsAgreed,

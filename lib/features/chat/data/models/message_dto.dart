@@ -8,9 +8,9 @@ part 'message_dto.g.dart';
 @freezed
 abstract class MessageDto with _$MessageDto {
   const factory MessageDto({
-    required String id,
-    @JsonKey(name: 'conversation_id') required String conversationId,
-    required String role,
+    required int id,
+    @JsonKey(name: 'chat_rooms_id') required String chatRoomId,
+    @JsonKey(name: 'sender_role') required String senderRole,
     required String content,
     @JsonKey(name: 'created_at') required String createdAt,
   }) = _MessageDto;
@@ -22,8 +22,8 @@ abstract class MessageDto with _$MessageDto {
 
   Message toDomain() => Message(
     id: id,
-    conversationId: conversationId,
-    role: role == 'user' ? MessageRole.user : MessageRole.assistant,
+    chatRoomId: chatRoomId,
+    senderRole: senderRole == 'user' ? MessageRole.user : MessageRole.assistant,
     content: content,
     createdAt: DateTime.parse(createdAt),
   );

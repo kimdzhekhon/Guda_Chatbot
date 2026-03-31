@@ -1,5 +1,6 @@
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 
 /// Chat 리포지토리 추상 인터페이스
@@ -19,11 +20,11 @@ abstract interface class ChatRepository {
   /// 사용자 메시지 저장
   Future<Message> saveMessage(SaveMessageRequestDto request);
 
-  /// Edge Function 스트리밍 호출
+  /// AI 응답 스트리밍
   Stream<String> streamResponse({
-    required String conversationId,
+    required String chatRoomId,
     required String userMessage,
-    required String classicType,
-    String? personaId,
+    required String topicCode,
+    PersonaType? personaId,
   });
 }

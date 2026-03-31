@@ -44,7 +44,7 @@ class DrawerUserFooter extends ConsumerWidget {
                   onPressed: () {
                     ref
                         .read(homeViewModelProvider.notifier)
-                        .clearActiveConversation();
+                        .clearActiveChatRoom();
                     Navigator.pop(context);
                   },
                   icon: Icons.add_rounded,

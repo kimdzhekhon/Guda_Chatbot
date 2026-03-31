@@ -23,9 +23,10 @@ GoRouter appRouter(Ref ref) {
     initialLocation: RoutePaths.splash,
     redirect: (context, state) {
       final authState = ref.read(authViewModelProvider);
-      final isSplash = state.matchedLocation == RoutePaths.splash;
-      final isAuth = state.matchedLocation == RoutePaths.auth;
-      final isOnboarding = state.matchedLocation == RoutePaths.onboarding;
+      final matchedLocation = state.matchedLocation;
+      final isSplash = matchedLocation == RoutePaths.splash;
+      final isAuth = matchedLocation == RoutePaths.auth;
+      final isOnboarding = matchedLocation == RoutePaths.onboarding;
 
       // 로딩 중에는 기존 화면 유지 (Auth, Onboarding) 혹은 스플래시로
       if (authState is UiLoading) {
@@ -43,18 +44,24 @@ GoRouter appRouter(Ref ref) {
       final isLoggedIn = user != null;
 
       // 미인증 시 로그인 화면으로
-      if (!isLoggedIn && !isAuth) return RoutePaths.auth;
+      if (!isLoggedIn) {
+        if (isAuth || isSplash) return null;
+        return RoutePaths.auth;
+      }
 
       // 인증 완료 시 상태 체크
       if (isLoggedIn) {
-        // 프로필 미완성 시 온보딩으로
+        // 프로필 미완성 시 온보딩으로 (이미 온보딩 화면이면 유지)
         if (!user.isProfileComplete) {
-          if (!isOnboarding) return RoutePaths.onboarding;
-          return null;
+          if (isOnboarding) return null;
+          return RoutePaths.onboarding;
         }
         
-        // 인증/스플래시/온보딩 화면에서 로그인 된 상태면 홈으로
-        if (isAuth || isSplash || isOnboarding) return RoutePaths.chatList;
+        // 인증/스플래시/온보딩 화면에서 로그인 된 상태면 홈(채팅 목록)으로 이동
+        // 그 외의 화면(설정, 다이얼로그 등)에서는 현재 위치를 절대 바꾸지 않음
+        if (isAuth || isSplash || isOnboarding) {
+          return RoutePaths.chatList;
+        }
       }
 
       return null;

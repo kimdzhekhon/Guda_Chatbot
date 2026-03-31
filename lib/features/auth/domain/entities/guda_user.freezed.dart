@@ -20,8 +20,8 @@ mixin _$GudaUser {
  String? get displayName;/// Google 프로필 사진 URL
  String? get photoUrl;/// 닉네임 (사용자 설정)
  String? get nickname;/// 생년월일
- DateTime? get birthDate;/// 페르소나 (wise, friendly, strict 등)
- String? get persona;/// 약관 동의 여부
+ DateTime? get birthDate;/// 페르소나 (PersonaType: wise, friendly, strict)
+ PersonaType? get persona;/// 약관 동의 여부
  bool get termsAgreed;/// 계정 생성 일시
  DateTime get createdAt;
 /// Create a copy of GudaUser
@@ -54,7 +54,7 @@ abstract mixin class $GudaUserCopyWith<$Res>  {
   factory $GudaUserCopyWith(GudaUser value, $Res Function(GudaUser) _then) = _$GudaUserCopyWithImpl;
 @useResult
 $Res call({
- String id, String email, String? displayName, String? photoUrl, String? nickname, DateTime? birthDate, String? persona, bool termsAgreed, DateTime createdAt
+ String id, String email, String? displayName, String? photoUrl, String? nickname, DateTime? birthDate, PersonaType? persona, bool termsAgreed, DateTime createdAt
 });
 
 
@@ -80,7 +80,7 @@ as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: 
 as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
 as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
-as String?,termsAgreed: null == termsAgreed ? _self.termsAgreed : termsAgreed // ignore: cast_nullable_to_non_nullable
+as PersonaType?,termsAgreed: null == termsAgreed ? _self.termsAgreed : termsAgreed // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -167,7 +167,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  String? persona,  bool termsAgreed,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GudaUser() when $default != null:
 return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreed,_that.createdAt);case _:
@@ -188,7 +188,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  String? persona,  bool termsAgreed,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _GudaUser():
 return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreed,_that.createdAt);case _:
@@ -208,7 +208,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  String? persona,  bool termsAgreed,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _GudaUser() when $default != null:
 return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreed,_that.createdAt);case _:
@@ -238,8 +238,8 @@ class _GudaUser extends GudaUser {
 @override final  String? nickname;
 /// 생년월일
 @override final  DateTime? birthDate;
-/// 페르소나 (wise, friendly, strict 등)
-@override final  String? persona;
+/// 페르소나 (PersonaType: wise, friendly, strict)
+@override final  PersonaType? persona;
 /// 약관 동의 여부
 @override@JsonKey() final  bool termsAgreed;
 /// 계정 생성 일시
@@ -275,7 +275,7 @@ abstract mixin class _$GudaUserCopyWith<$Res> implements $GudaUserCopyWith<$Res>
   factory _$GudaUserCopyWith(_GudaUser value, $Res Function(_GudaUser) _then) = __$GudaUserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email, String? displayName, String? photoUrl, String? nickname, DateTime? birthDate, String? persona, bool termsAgreed, DateTime createdAt
+ String id, String email, String? displayName, String? photoUrl, String? nickname, DateTime? birthDate, PersonaType? persona, bool termsAgreed, DateTime createdAt
 });
 
 
@@ -301,7 +301,7 @@ as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: 
 as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
 as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
-as String?,termsAgreed: null == termsAgreed ? _self.termsAgreed : termsAgreed // ignore: cast_nullable_to_non_nullable
+as PersonaType?,termsAgreed: null == termsAgreed ? _self.termsAgreed : termsAgreed // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

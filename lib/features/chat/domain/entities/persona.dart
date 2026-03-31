@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 part 'persona.freezed.dart';
 
@@ -6,8 +7,8 @@ part 'persona.freezed.dart';
 @freezed
 abstract class Persona with _$Persona {
   const factory Persona({
-    /// 식별자 (wise, friendly, strict 등)
-    required String id,
+    /// 식별자 (PersonaType: wise, friendly, strict)
+    required PersonaType id,
 
     /// 페르소나 이름
     required String name,

@@ -5,8 +5,8 @@ class DeleteConversationUseCase {
   const DeleteConversationUseCase(this._repository);
   final ChatRepository _repository;
 
-  Future<void> call(String conversationId) =>
+  Future<void> call(String chatRoomId) =>
       _repository.deleteConversation(
-        DeleteConversationRequestDto(conversationId: conversationId),
+        DeleteConversationRequestDto(chatRoomId: chatRoomId),
       );
 }

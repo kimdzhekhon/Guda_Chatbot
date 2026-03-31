@@ -34,14 +34,14 @@ class ConversationHistoryItem extends StatelessWidget {
       leading: ClipRRect(
         borderRadius: GudaRadius.smAll,
         child: Image.asset(
-          _typeIcon(conversation.classicType),
+          _typeIcon(conversation.topicCode),
           width: 28,
           height: 28,
           fit: BoxFit.cover,
         ),
       ),
       title: conversation.title,
-      subtitle: conversation.updatedAt.toLocal().toMmDd(),
+      subtitle: conversation.lastMessageAt.toLocal().toMmDd(),
       trailing: IconButton(
         icon: const Icon(Icons.delete_outline_rounded, size: 16),
         onPressed: onDelete,

@@ -2,6 +2,7 @@ import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_dataso
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 
 /// ChatRepository 구현체 — data 레이어
@@ -35,14 +36,14 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Stream<String> streamResponse({
-    required String conversationId,
+    required String chatRoomId,
     required String userMessage,
-    required String classicType,
-    String? personaId,
+    required String topicCode,
+    PersonaType? personaId,
   }) => _dataSource.streamResponse(
-    conversationId: conversationId,
+    chatRoomId: chatRoomId,
     userMessage: userMessage,
-    classicType: classicType,
-    personaId: personaId,
+    topicCode: topicCode,
+    personaId: personaId?.name,
   );
 }

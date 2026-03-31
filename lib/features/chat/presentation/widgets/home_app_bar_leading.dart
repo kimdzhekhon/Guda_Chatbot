@@ -16,7 +16,7 @@ class HomeAppBarLeading extends ConsumerWidget {
       icon: Icon(showBackButton ? Icons.arrow_back : Icons.menu),
       onPressed: () {
         if (showBackButton) {
-          ref.read(homeViewModelProvider.notifier).clearActiveConversation();
+          ref.read(homeViewModelProvider.notifier).clearActiveChatRoom();
         } else {
           Scaffold.of(context).openDrawer();
         }

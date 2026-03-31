@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CreateConversationRequestDto {
 
- String get title;@JsonKey(name: 'classic_type') String get classicType;@JsonKey(name: 'user_id') String get userId;
+ String get title;@JsonKey(name: 'topic_code') String get topicCode;@JsonKey(name: 'user_id') String get userId;
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CreateConversationRequestDtoCopyWith<CreateConversationRequestDto> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.classicType, classicType) || other.classicType == classicType)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,classicType,userId);
+int get hashCode => Object.hash(runtimeType,title,topicCode,userId);
 
 @override
 String toString() {
-  return 'CreateConversationRequestDto(title: $title, classicType: $classicType, userId: $userId)';
+  return 'CreateConversationRequestDto(title: $title, topicCode: $topicCode, userId: $userId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CreateConversationRequestDtoCopyWith<$Res>  {
   factory $CreateConversationRequestDtoCopyWith(CreateConversationRequestDto value, $Res Function(CreateConversationRequestDto) _then) = _$CreateConversationRequestDtoCopyWithImpl;
 @useResult
 $Res call({
- String title,@JsonKey(name: 'classic_type') String classicType,@JsonKey(name: 'user_id') String userId
+ String title,@JsonKey(name: 'topic_code') String topicCode,@JsonKey(name: 'user_id') String userId
 });
 
 
@@ -65,10 +65,10 @@ class _$CreateConversationRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? classicType = null,Object? userId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? topicCode = null,Object? userId = null,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,classicType: null == classicType ? _self.classicType : classicType // ignore: cast_nullable_to_non_nullable
+as String,topicCode: null == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -155,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'classic_type')  String classicType, @JsonKey(name: 'user_id')  String userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateConversationRequestDto() when $default != null:
-return $default(_that.title,_that.classicType,_that.userId);case _:
+return $default(_that.title,_that.topicCode,_that.userId);case _:
   return orElse();
 
 }
@@ -176,10 +176,10 @@ return $default(_that.title,_that.classicType,_that.userId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'classic_type')  String classicType, @JsonKey(name: 'user_id')  String userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId)  $default,) {final _that = this;
 switch (_that) {
 case _CreateConversationRequestDto():
-return $default(_that.title,_that.classicType,_that.userId);case _:
+return $default(_that.title,_that.topicCode,_that.userId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +196,10 @@ return $default(_that.title,_that.classicType,_that.userId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title, @JsonKey(name: 'classic_type')  String classicType, @JsonKey(name: 'user_id')  String userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateConversationRequestDto() when $default != null:
-return $default(_that.title,_that.classicType,_that.userId);case _:
+return $default(_that.title,_that.topicCode,_that.userId);case _:
   return null;
 
 }
@@ -211,11 +211,11 @@ return $default(_that.title,_that.classicType,_that.userId);case _:
 @JsonSerializable()
 
 class _CreateConversationRequestDto implements CreateConversationRequestDto {
-  const _CreateConversationRequestDto({required this.title, @JsonKey(name: 'classic_type') required this.classicType, @JsonKey(name: 'user_id') required this.userId});
+  const _CreateConversationRequestDto({required this.title, @JsonKey(name: 'topic_code') required this.topicCode, @JsonKey(name: 'user_id') required this.userId});
   factory _CreateConversationRequestDto.fromJson(Map<String, dynamic> json) => _$CreateConversationRequestDtoFromJson(json);
 
 @override final  String title;
-@override@JsonKey(name: 'classic_type') final  String classicType;
+@override@JsonKey(name: 'topic_code') final  String topicCode;
 @override@JsonKey(name: 'user_id') final  String userId;
 
 /// Create a copy of CreateConversationRequestDto
@@ -231,16 +231,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.classicType, classicType) || other.classicType == classicType)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,classicType,userId);
+int get hashCode => Object.hash(runtimeType,title,topicCode,userId);
 
 @override
 String toString() {
-  return 'CreateConversationRequestDto(title: $title, classicType: $classicType, userId: $userId)';
+  return 'CreateConversationRequestDto(title: $title, topicCode: $topicCode, userId: $userId)';
 }
 
 
@@ -251,7 +251,7 @@ abstract mixin class _$CreateConversationRequestDtoCopyWith<$Res> implements $Cr
   factory _$CreateConversationRequestDtoCopyWith(_CreateConversationRequestDto value, $Res Function(_CreateConversationRequestDto) _then) = __$CreateConversationRequestDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String title,@JsonKey(name: 'classic_type') String classicType,@JsonKey(name: 'user_id') String userId
+ String title,@JsonKey(name: 'topic_code') String topicCode,@JsonKey(name: 'user_id') String userId
 });
 
 
@@ -268,10 +268,10 @@ class __$CreateConversationRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? classicType = null,Object? userId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? topicCode = null,Object? userId = null,}) {
   return _then(_CreateConversationRequestDto(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,classicType: null == classicType ? _self.classicType : classicType // ignore: cast_nullable_to_non_nullable
+as String,topicCode: null == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -284,7 +284,7 @@ as String,
 /// @nodoc
 mixin _$SaveMessageRequestDto {
 
-@JsonKey(name: 'conversation_id') String get conversationId; String get content; String get role;
+@JsonKey(name: 'chat_rooms_id') String get chatRoomId; String get content;@JsonKey(name: 'sender_role') String get senderRole;
 /// Create a copy of SaveMessageRequestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -297,16 +297,16 @@ $SaveMessageRequestDtoCopyWith<SaveMessageRequestDto> get copyWith => _$SaveMess
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SaveMessageRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.content, content) || other.content == content)&&(identical(other.role, role) || other.role == role));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SaveMessageRequestDto&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.content, content) || other.content == content)&&(identical(other.senderRole, senderRole) || other.senderRole == senderRole));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,conversationId,content,role);
+int get hashCode => Object.hash(runtimeType,chatRoomId,content,senderRole);
 
 @override
 String toString() {
-  return 'SaveMessageRequestDto(conversationId: $conversationId, content: $content, role: $role)';
+  return 'SaveMessageRequestDto(chatRoomId: $chatRoomId, content: $content, senderRole: $senderRole)';
 }
 
 
@@ -317,7 +317,7 @@ abstract mixin class $SaveMessageRequestDtoCopyWith<$Res>  {
   factory $SaveMessageRequestDtoCopyWith(SaveMessageRequestDto value, $Res Function(SaveMessageRequestDto) _then) = _$SaveMessageRequestDtoCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'conversation_id') String conversationId, String content, String role
+@JsonKey(name: 'chat_rooms_id') String chatRoomId, String content,@JsonKey(name: 'sender_role') String senderRole
 });
 
 
@@ -334,11 +334,11 @@ class _$SaveMessageRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of SaveMessageRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? conversationId = null,Object? content = null,Object? role = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? chatRoomId = null,Object? content = null,Object? senderRole = null,}) {
   return _then(_self.copyWith(
-conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as String,senderRole: null == senderRole ? _self.senderRole : senderRole // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -424,10 +424,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId,  String content,  String role)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId,  String content, @JsonKey(name: 'sender_role')  String senderRole)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SaveMessageRequestDto() when $default != null:
-return $default(_that.conversationId,_that.content,_that.role);case _:
+return $default(_that.chatRoomId,_that.content,_that.senderRole);case _:
   return orElse();
 
 }
@@ -445,10 +445,10 @@ return $default(_that.conversationId,_that.content,_that.role);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId,  String content,  String role)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId,  String content, @JsonKey(name: 'sender_role')  String senderRole)  $default,) {final _that = this;
 switch (_that) {
 case _SaveMessageRequestDto():
-return $default(_that.conversationId,_that.content,_that.role);case _:
+return $default(_that.chatRoomId,_that.content,_that.senderRole);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -465,10 +465,10 @@ return $default(_that.conversationId,_that.content,_that.role);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'conversation_id')  String conversationId,  String content,  String role)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId,  String content, @JsonKey(name: 'sender_role')  String senderRole)?  $default,) {final _that = this;
 switch (_that) {
 case _SaveMessageRequestDto() when $default != null:
-return $default(_that.conversationId,_that.content,_that.role);case _:
+return $default(_that.chatRoomId,_that.content,_that.senderRole);case _:
   return null;
 
 }
@@ -480,12 +480,12 @@ return $default(_that.conversationId,_that.content,_that.role);case _:
 @JsonSerializable()
 
 class _SaveMessageRequestDto implements SaveMessageRequestDto {
-  const _SaveMessageRequestDto({@JsonKey(name: 'conversation_id') required this.conversationId, required this.content, required this.role});
+  const _SaveMessageRequestDto({@JsonKey(name: 'chat_rooms_id') required this.chatRoomId, required this.content, @JsonKey(name: 'sender_role') required this.senderRole});
   factory _SaveMessageRequestDto.fromJson(Map<String, dynamic> json) => _$SaveMessageRequestDtoFromJson(json);
 
-@override@JsonKey(name: 'conversation_id') final  String conversationId;
+@override@JsonKey(name: 'chat_rooms_id') final  String chatRoomId;
 @override final  String content;
-@override final  String role;
+@override@JsonKey(name: 'sender_role') final  String senderRole;
 
 /// Create a copy of SaveMessageRequestDto
 /// with the given fields replaced by the non-null parameter values.
@@ -500,16 +500,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SaveMessageRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.content, content) || other.content == content)&&(identical(other.role, role) || other.role == role));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SaveMessageRequestDto&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.content, content) || other.content == content)&&(identical(other.senderRole, senderRole) || other.senderRole == senderRole));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,conversationId,content,role);
+int get hashCode => Object.hash(runtimeType,chatRoomId,content,senderRole);
 
 @override
 String toString() {
-  return 'SaveMessageRequestDto(conversationId: $conversationId, content: $content, role: $role)';
+  return 'SaveMessageRequestDto(chatRoomId: $chatRoomId, content: $content, senderRole: $senderRole)';
 }
 
 
@@ -520,7 +520,7 @@ abstract mixin class _$SaveMessageRequestDtoCopyWith<$Res> implements $SaveMessa
   factory _$SaveMessageRequestDtoCopyWith(_SaveMessageRequestDto value, $Res Function(_SaveMessageRequestDto) _then) = __$SaveMessageRequestDtoCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'conversation_id') String conversationId, String content, String role
+@JsonKey(name: 'chat_rooms_id') String chatRoomId, String content,@JsonKey(name: 'sender_role') String senderRole
 });
 
 
@@ -537,11 +537,11 @@ class __$SaveMessageRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of SaveMessageRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? conversationId = null,Object? content = null,Object? role = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? chatRoomId = null,Object? content = null,Object? senderRole = null,}) {
   return _then(_SaveMessageRequestDto(
-conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as String,senderRole: null == senderRole ? _self.senderRole : senderRole // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -553,7 +553,7 @@ as String,
 /// @nodoc
 mixin _$GetMessagesRequestDto {
 
-@JsonKey(name: 'conversation_id') String get conversationId;
+@JsonKey(name: 'chat_rooms_id') String get chatRoomId;
 /// Create a copy of GetMessagesRequestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -566,16 +566,16 @@ $GetMessagesRequestDtoCopyWith<GetMessagesRequestDto> get copyWith => _$GetMessa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetMessagesRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GetMessagesRequestDto&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,conversationId);
+int get hashCode => Object.hash(runtimeType,chatRoomId);
 
 @override
 String toString() {
-  return 'GetMessagesRequestDto(conversationId: $conversationId)';
+  return 'GetMessagesRequestDto(chatRoomId: $chatRoomId)';
 }
 
 
@@ -586,7 +586,7 @@ abstract mixin class $GetMessagesRequestDtoCopyWith<$Res>  {
   factory $GetMessagesRequestDtoCopyWith(GetMessagesRequestDto value, $Res Function(GetMessagesRequestDto) _then) = _$GetMessagesRequestDtoCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'conversation_id') String conversationId
+@JsonKey(name: 'chat_rooms_id') String chatRoomId
 });
 
 
@@ -603,9 +603,9 @@ class _$GetMessagesRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of GetMessagesRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? conversationId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? chatRoomId = null,}) {
   return _then(_self.copyWith(
-conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -691,10 +691,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GetMessagesRequestDto() when $default != null:
-return $default(_that.conversationId);case _:
+return $default(_that.chatRoomId);case _:
   return orElse();
 
 }
@@ -712,10 +712,10 @@ return $default(_that.conversationId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId)  $default,) {final _that = this;
 switch (_that) {
 case _GetMessagesRequestDto():
-return $default(_that.conversationId);case _:
+return $default(_that.chatRoomId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -732,10 +732,10 @@ return $default(_that.conversationId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId)?  $default,) {final _that = this;
 switch (_that) {
 case _GetMessagesRequestDto() when $default != null:
-return $default(_that.conversationId);case _:
+return $default(_that.chatRoomId);case _:
   return null;
 
 }
@@ -747,10 +747,10 @@ return $default(_that.conversationId);case _:
 @JsonSerializable()
 
 class _GetMessagesRequestDto implements GetMessagesRequestDto {
-  const _GetMessagesRequestDto({@JsonKey(name: 'conversation_id') required this.conversationId});
+  const _GetMessagesRequestDto({@JsonKey(name: 'chat_rooms_id') required this.chatRoomId});
   factory _GetMessagesRequestDto.fromJson(Map<String, dynamic> json) => _$GetMessagesRequestDtoFromJson(json);
 
-@override@JsonKey(name: 'conversation_id') final  String conversationId;
+@override@JsonKey(name: 'chat_rooms_id') final  String chatRoomId;
 
 /// Create a copy of GetMessagesRequestDto
 /// with the given fields replaced by the non-null parameter values.
@@ -765,16 +765,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GetMessagesRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GetMessagesRequestDto&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,conversationId);
+int get hashCode => Object.hash(runtimeType,chatRoomId);
 
 @override
 String toString() {
-  return 'GetMessagesRequestDto(conversationId: $conversationId)';
+  return 'GetMessagesRequestDto(chatRoomId: $chatRoomId)';
 }
 
 
@@ -785,7 +785,7 @@ abstract mixin class _$GetMessagesRequestDtoCopyWith<$Res> implements $GetMessag
   factory _$GetMessagesRequestDtoCopyWith(_GetMessagesRequestDto value, $Res Function(_GetMessagesRequestDto) _then) = __$GetMessagesRequestDtoCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'conversation_id') String conversationId
+@JsonKey(name: 'chat_rooms_id') String chatRoomId
 });
 
 
@@ -802,9 +802,9 @@ class __$GetMessagesRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of GetMessagesRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? conversationId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? chatRoomId = null,}) {
   return _then(_GetMessagesRequestDto(
-conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -816,7 +816,7 @@ as String,
 /// @nodoc
 mixin _$DeleteConversationRequestDto {
 
-@JsonKey(name: 'conversation_id') String get conversationId;
+@JsonKey(name: 'chat_rooms_id') String get chatRoomId;
 /// Create a copy of DeleteConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -829,16 +829,16 @@ $DeleteConversationRequestDtoCopyWith<DeleteConversationRequestDto> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteConversationRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteConversationRequestDto&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,conversationId);
+int get hashCode => Object.hash(runtimeType,chatRoomId);
 
 @override
 String toString() {
-  return 'DeleteConversationRequestDto(conversationId: $conversationId)';
+  return 'DeleteConversationRequestDto(chatRoomId: $chatRoomId)';
 }
 
 
@@ -849,7 +849,7 @@ abstract mixin class $DeleteConversationRequestDtoCopyWith<$Res>  {
   factory $DeleteConversationRequestDtoCopyWith(DeleteConversationRequestDto value, $Res Function(DeleteConversationRequestDto) _then) = _$DeleteConversationRequestDtoCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'conversation_id') String conversationId
+@JsonKey(name: 'chat_rooms_id') String chatRoomId
 });
 
 
@@ -866,9 +866,9 @@ class _$DeleteConversationRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of DeleteConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? conversationId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? chatRoomId = null,}) {
   return _then(_self.copyWith(
-conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -954,10 +954,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DeleteConversationRequestDto() when $default != null:
-return $default(_that.conversationId);case _:
+return $default(_that.chatRoomId);case _:
   return orElse();
 
 }
@@ -975,10 +975,10 @@ return $default(_that.conversationId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'conversation_id')  String conversationId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId)  $default,) {final _that = this;
 switch (_that) {
 case _DeleteConversationRequestDto():
-return $default(_that.conversationId);case _:
+return $default(_that.chatRoomId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -995,10 +995,10 @@ return $default(_that.conversationId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'conversation_id')  String conversationId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'chat_rooms_id')  String chatRoomId)?  $default,) {final _that = this;
 switch (_that) {
 case _DeleteConversationRequestDto() when $default != null:
-return $default(_that.conversationId);case _:
+return $default(_that.chatRoomId);case _:
   return null;
 
 }
@@ -1010,10 +1010,10 @@ return $default(_that.conversationId);case _:
 @JsonSerializable()
 
 class _DeleteConversationRequestDto implements DeleteConversationRequestDto {
-  const _DeleteConversationRequestDto({@JsonKey(name: 'conversation_id') required this.conversationId});
+  const _DeleteConversationRequestDto({@JsonKey(name: 'chat_rooms_id') required this.chatRoomId});
   factory _DeleteConversationRequestDto.fromJson(Map<String, dynamic> json) => _$DeleteConversationRequestDtoFromJson(json);
 
-@override@JsonKey(name: 'conversation_id') final  String conversationId;
+@override@JsonKey(name: 'chat_rooms_id') final  String chatRoomId;
 
 /// Create a copy of DeleteConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
@@ -1028,16 +1028,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteConversationRequestDto&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteConversationRequestDto&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,conversationId);
+int get hashCode => Object.hash(runtimeType,chatRoomId);
 
 @override
 String toString() {
-  return 'DeleteConversationRequestDto(conversationId: $conversationId)';
+  return 'DeleteConversationRequestDto(chatRoomId: $chatRoomId)';
 }
 
 
@@ -1048,7 +1048,7 @@ abstract mixin class _$DeleteConversationRequestDtoCopyWith<$Res> implements $De
   factory _$DeleteConversationRequestDtoCopyWith(_DeleteConversationRequestDto value, $Res Function(_DeleteConversationRequestDto) _then) = __$DeleteConversationRequestDtoCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'conversation_id') String conversationId
+@JsonKey(name: 'chat_rooms_id') String chatRoomId
 });
 
 
@@ -1065,9 +1065,9 @@ class __$DeleteConversationRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of DeleteConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? conversationId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? chatRoomId = null,}) {
   return _then(_DeleteConversationRequestDto(
-conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
+chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

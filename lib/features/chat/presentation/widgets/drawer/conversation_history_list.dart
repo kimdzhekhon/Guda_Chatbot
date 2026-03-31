@@ -19,7 +19,7 @@ class ConversationHistoryList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sorted = ref.watch(sortedConversationsProvider);
-    final activeId = ref.watch(homeViewModelProvider.select((s) => s.activeConversationId));
+    final activeId = ref.watch(homeViewModelProvider.select((s) => s.activeChatRoomId));
 
     if (sorted.isEmpty) {
       return GudaEmptyState(

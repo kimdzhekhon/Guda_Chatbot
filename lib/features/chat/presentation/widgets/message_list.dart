@@ -13,14 +13,14 @@ class MessageList extends StatelessWidget {
     required this.type,
     required this.scrollController,
     required this.onSendMessage,
-    required this.activeConversationId,
+    required this.activeChatRoomId,
   });
 
   final List<Message> messages;
   final ClassicType type;
   final ScrollController scrollController;
   final Function(String) onSendMessage;
-  final String activeConversationId;
+  final String activeChatRoomId;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class MessageList extends StatelessWidget {
           children: [
             _StaticGuidanceBubble(
               content: type.guidanceMessage,
-              conversationId: activeConversationId,
+              chatRoomId: activeChatRoomId,
             ),
           ],
         );
@@ -66,20 +66,20 @@ class MessageList extends StatelessWidget {
 class _StaticGuidanceBubble extends StatelessWidget {
   const _StaticGuidanceBubble({
     required this.content,
-    required this.conversationId,
+    required this.chatRoomId,
   });
 
   final String content;
-  final String conversationId;
+  final String chatRoomId;
 
   @override
   Widget build(BuildContext context) {
     return MessageBubble(
       message: Message(
-        id: 'guidance',
-        conversationId: conversationId,
+        id: 0,
+        chatRoomId: chatRoomId,
         content: content,
-        role: MessageRole.assistant,
+        senderRole: MessageRole.assistant,
         createdAt: DateTime(2024), // Use static date to avoid rebuild comparisons
       ),
       showActions: false,

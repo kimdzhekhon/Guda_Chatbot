@@ -1,4 +1,5 @@
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 /// Auth 리포지토리 추상 인터페이스 — 도메인 레이어
 /// 구현체는 data 레이어에 위치
@@ -25,10 +26,10 @@ abstract interface class AuthRepository {
   Future<void> updateProfile({
     required String nickname,
     required DateTime birthDate,
-    required String persona,
+    required PersonaType persona,
     required bool termsAgreed,
   });
 
   /// 페르소나 단일 업데이트
-  Future<void> updatePersona(String persona);
+  Future<void> updatePersona(PersonaType persona);
 }

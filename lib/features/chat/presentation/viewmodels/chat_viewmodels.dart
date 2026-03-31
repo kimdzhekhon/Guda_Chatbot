@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_datasource.dart';
+import 'package:guda_chatbot/core/network/rpc_invoker.dart';
 import 'package:guda_chatbot/features/chat/data/repositories/chat_repository_impl.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
@@ -20,8 +21,11 @@ part 'chat_viewmodels.g.dart';
 // ── Provider 의존성 (DI) ──────────────────────────────
 
 @riverpod
+RpcInvoker rpcInvoker(Ref ref) => SupabaseRpcInvoker();
+
+@riverpod
 SupabaseChatDataSource supabaseChatDataSource(Ref ref) =>
-    SupabaseChatDataSource();
+    SupabaseChatDataSource(ref.watch(rpcInvokerProvider));
 
 @riverpod
 ChatRepository chatRepository(Ref ref) =>
@@ -70,13 +74,13 @@ class ChatListViewModel extends _$ChatListViewModel {
   }
 
   Future<Conversation?> createConversation({
-    required ClassicType classicType,
+    required ClassicType topicCode,
   }) async {
     try {
       final useCase = ref.read(createConversationUseCaseProvider);
       final newConv = await useCase(
-        title: '${classicType.displayName} 새 대화',
-        classicType: classicType.name,
+        title: '${topicCode.displayName} 새 대화',
+        topicCode: topicCode.name,
       );
       
       // 목록 갱신
@@ -88,10 +92,10 @@ class ChatListViewModel extends _$ChatListViewModel {
     }
   }
 
-  Future<void> deleteConversation(String conversationId) async {
+  Future<void> deleteConversation(String chatRoomId) async {
     try {
       final useCase = ref.read(deleteConversationUseCaseProvider);
-      await useCase(conversationId);
+      await useCase(chatRoomId);
       await refresh();
     } catch (e) {
       state = UiError('${AppStrings.conversationDeleteFail}: ${e.toString()}');
@@ -105,7 +109,7 @@ class ChatListViewModel extends _$ChatListViewModel {
 List<Conversation> sortedConversations(Ref ref) {
   final chatListState = ref.watch(chatListViewModelProvider);
   final data = chatListState.dataOrNull ?? [];
-  return [...data]..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+  return [...data]..sort((a, b) => b.lastMessageAt.compareTo(a.lastMessageAt));
 }
 
 // ── Chat Room ViewModel ────────────────────────────
@@ -113,7 +117,7 @@ List<Conversation> sortedConversations(Ref ref) {
 @riverpod
 class ChatRoomViewModel extends _$ChatRoomViewModel {
   @override
-  UiState<List<Message>> build(String conversationId) {
+  UiState<List<Message>> build(String chatRoomId) {
     Future.microtask(() => _loadMessages());
     return const UiLoading();
   }
@@ -122,7 +126,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     state = const UiLoading();
     try {
       final useCase = ref.read(getMessagesUseCaseProvider);
-      final messages = await useCase(conversationId);
+      final messages = await useCase(chatRoomId);
       state = UiSuccess(messages);
     } catch (e) {
       state = UiError('${AppStrings.messageLoadFail} ${e.toString()}');
@@ -131,7 +135,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
   Future<void> sendMessage({
     required String content,
-    required ClassicType classicType,
+    required ClassicType topicCode,
   }) async {
     final currentMessages = state.dataOrNull ?? [];
     
@@ -140,18 +144,18 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     
     // 1. 임시 사용자 메시지 추가 (반응성)
     final tempUserMsg = Message(
-      id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
-      conversationId: conversationId,
-      role: MessageRole.user,
+      id: DateTime.now().millisecondsSinceEpoch,
+      chatRoomId: chatRoomId,
+      senderRole: MessageRole.user,
       content: content,
       createdAt: DateTime.now(),
     );
     
     // AI 스트리밍용 빈 메시지 추가
     final aiStreamingMsg = Message(
-      id: 'ai-streaming',
-      conversationId: conversationId,
-      role: MessageRole.assistant,
+      id: DateTime.now().millisecondsSinceEpoch + 1,
+      chatRoomId: chatRoomId,
+      senderRole: MessageRole.assistant,
       content: '',
       createdAt: DateTime.now(),
       isStreaming: true,
@@ -168,9 +172,9 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       String accumulatedContent = '';
       
       await for (final chunk in useCase(
-        conversationId: conversationId,
+        chatRoomId: chatRoomId,
         content: content,
-        classicType: classicType.name,
+        topicCode: topicCode.name,
         personaId: personaId,
       )) {
         accumulatedContent += chunk;

@@ -15,14 +15,14 @@ enum MessageRole {
 @freezed
 abstract class Message with _$Message {
   const factory Message({
-    /// 메시지 UUID
-    required String id,
+    /// 메시지 고유 ID (PK)
+    required int id,
 
-    /// 소속 대화 세션 ID
-    required String conversationId,
+    /// 소속 채팅방 ID
+    required String chatRoomId,
 
     /// 발신자 역할
-    required MessageRole role,
+    required MessageRole senderRole,
 
     /// 메시지 내용 (마크다운 지원)
     required String content,
