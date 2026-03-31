@@ -7,8 +7,8 @@ import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmode
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_bar.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/message_list.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
-
 /// Pending 상태의 새 대화 뷰
 /// DB에 방이 아직 생성되지 않았으며, 사용자의 첫 메시지를 기다립니다.
 /// 첫 메시지 전송 시 대화방을 생성하고 즉시 메시지를 전송합니다.
@@ -25,70 +25,101 @@ class PendingChatRoomView extends ConsumerStatefulWidget {
 }
 
 class _PendingChatRoomViewState extends ConsumerState<PendingChatRoomView> {
+  final _scrollController = ScrollController();
   bool _isSending = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   /// 첫 메시지 전송 시:
   /// 1. 현재 페르소나로 대화방 생성
-  /// 2. 생성된 방 ID로 메시지 전송 시작
-  /// 3. HomeViewModel 상태를 실제 방 ID로 업데이트
+  /// 2. HomeViewModel 상태를 실제 방 ID로 즉시 전환 (UI 교체 트리거)
+  /// 3. ChatRoomViewModel이 이어받아 메시지를 전송
   Future<void> _handleFirstMessage(String text) async {
     if (_isSending) return;
-    setState(() => _isSending = true);
+    if (mounted) setState(() => _isSending = true);
 
     try {
-      // 1. 현재 페르소나 조회
+      // 1. 페르소나 조회
       final personaState = ref.read(personaProvider);
       final personaType = personaState.when(
         loading: () => PersonaType.basic,
         success: (p) => p,
-        error: (_, __) => PersonaType.basic,
+        error: (error, stackTrace) => PersonaType.basic,
       );
       final personaId = personaType.name;
 
-      // 2. 대화방 생성 (첫 메시지 내용을 제목으로 사용)
+      // 2. 주역 괘 이름 캡처
+      String finalContent = text;
+      String? hexagramId;
+      if (widget.topicCode == ClassicType.iching) {
+        final hexagram = ref.read(homeViewModelProvider).selectedHexagram;
+        if (hexagram != null) {
+          // 괘 정보(이름+한자)를 DB 전용 컬럼에 저장
+          hexagramId = '${hexagram.name}(${hexagram.hanja})'; 
+        }
+      }
+
+      // 3. 대화방 생성
       final title = text.length > 20 ? '${text.substring(0, 20)}…' : text;
       final createUseCase = ref.read(createConversationUseCaseProvider);
       final newConversation = await createUseCase(
         title: title,
         topicCode: widget.topicCode.name,
         personaId: personaId,
+        hexagramId: hexagramId,
       );
-
-      // 3. HomeViewModel에 방 ID 등록 (Pending → Active 전환 및 목록 갱신)
-      ref.read(homeViewModelProvider.notifier).setActiveChatRoomId(newConversation.id);
 
       // 4. 사용량 증가
       ref.read(chatUsageViewModelProvider.notifier).incrementUsedCount();
 
-      // 5. ChatRoomViewModel을 통해 메시지 전송
-      await ref
+      // 5. HomeViewModel에 방 ID 등록 → 즉시 PendingChatRoomView가 unmount되고
+      //    ChatRoomView가 마운트됨. 이 시점 이후로 _isSending setState를 호출하면 안 됨.
+      ref.read(homeViewModelProvider.notifier).setActiveChatRoomId(newConversation.id);
+
+      // 6. ChatRoomViewModel을 통해 메시지 전송 (fire-and-forget)
+      //    Pending 위젯은 이미 unmount 되었으므로 await하지 않음.
+      ref
           .read(chatRoomViewModelProvider(newConversation.id).notifier)
           .sendMessage(
-            content: text,
+            content: finalContent,
             topicCode: widget.topicCode,
           );
     } catch (e) {
-      // 에러 시 Pending 상태 유지, 사용자에게 알림
+      // 에러 시 위젯이 아직 살아있는 경우에만 상태 복원
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('대화방 생성에 실패했습니다: $e')),
         );
+        setState(() => _isSending = false);
       }
-      setState(() => _isSending = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Show input bar only if type is tripitaka (same logic as ChatRoomView for empty messages)
+    final showInput = widget.topicCode == ClassicType.tripitaka;
+
     return Column(
       children: [
-        // 메시지 목록 영역 (아직 비어 있음 → 빈 공간)
-        const Expanded(child: SizedBox.shrink()),
-        // 입력창
-        ChatInputBar(
-          isLoading: _isSending,
-          onSend: _handleFirstMessage,
+        Expanded(
+          child: MessageList(
+            messages: const [],
+            type: widget.topicCode,
+            scrollController: _scrollController,
+            onSendMessage: _handleFirstMessage,
+            activeChatRoomId: 'mock-new-pending',
+          ),
         ),
+        if (showInput)
+          ChatInputBar(
+            isLoading: _isSending,
+            onSend: _handleFirstMessage,
+          ),
       ],
     );
   }

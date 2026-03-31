@@ -22,6 +22,9 @@ abstract class Conversation with _$Conversation {
     /// 페르소나 ID
     String? personaId,
 
+    /// 주역 괘 번호 (이름)
+    String? hexagramId,
+
     /// 마지막 메시지 미리보기
     String? lastMessagePreview,
 
