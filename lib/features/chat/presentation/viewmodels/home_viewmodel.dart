@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/domain/orchestrations/chat_flow_orchestrator.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
@@ -19,11 +20,15 @@ class HomeState {
   final CardPhase phase;
   final Hexagram? selectedHexagram;
 
+  /// 첫 메시지 전송 전 대기 상태 (DB에 방이 아직 없음)
+  final bool isPendingNewChat;
+
   HomeState({
     this.activeChatRoomId,
     required this.selectedClassicType,
     this.phase = CardPhase.selection,
     this.selectedHexagram,
+    this.isPendingNewChat = false,
   });
 
   HomeState copyWith({
@@ -32,6 +37,7 @@ class HomeState {
     CardPhase? phase,
     Hexagram? selectedHexagram,
     bool clearActiveChatRoom = false,
+    bool? isPendingNewChat,
   }) {
     return HomeState(
       activeChatRoomId: clearActiveChatRoom
@@ -40,6 +46,7 @@ class HomeState {
       selectedClassicType: selectedClassicType ?? this.selectedClassicType,
       phase: phase ?? this.phase,
       selectedHexagram: selectedHexagram ?? this.selectedHexagram,
+      isPendingNewChat: isPendingNewChat ?? (clearActiveChatRoom ? false : this.isPendingNewChat),
     );
   }
 }
@@ -76,23 +83,28 @@ class HomeViewModel extends _$HomeViewModel {
 
   Future<void> startNewChat() async {
     final type = state.selectedClassicType;
-    
-    try {
-      final useCase = ref.read(createConversationUseCaseProvider);
-      final newConv = await useCase(
-        title: '${type.displayName} 새 대화',
-        topicCode: type.name,
-      );
-      
-      _initializeByClassicType(type);
-      state = state.copyWith(activeChatRoomId: newConv.id);
-      
-      // 목록 갱신 트리거 (Side effect)
-      ref.read(chatListViewModelProvider.notifier).refresh();
-    } catch (e) {
-       // 에러 처리 (필요시 UiState 활용)
-    }
+    // 대화방은 첫 메시지 전송 시 생성됩니다.
+    // 여기서는 클라이언트 상태만 Pending 모드로 전환합니다.
+    _initializeByClassicType(type);
+    state = state.copyWith(
+      activeChatRoomId: null,
+      isPendingNewChat: true,
+      phase: CardPhase.input,
+    );
   }
+
+  /// 첫 메시지 전송 성공 후 실제 생성된 방 ID로 상태 업데이트
+  void setActiveChatRoomId(String chatRoomId) {
+    state = state.copyWith(
+      activeChatRoomId: chatRoomId,
+      isPendingNewChat: false,
+    );
+    // 목록 갱신 트리거
+    ref.read(chatListViewModelProvider.notifier).refresh();
+  }
+
+  /// Pending 상태에서 현재 페르소나 ID를 반환 (기본값: basic)
+  String currentPersonaId(PersonaType personaType) => personaType.name;
 
   void clearActiveChatRoom() {
     state = state.copyWith(clearActiveChatRoom: true);

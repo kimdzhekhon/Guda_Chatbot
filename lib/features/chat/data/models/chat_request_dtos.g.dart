@@ -12,6 +12,7 @@ _CreateConversationRequestDto _$CreateConversationRequestDtoFromJson(
   title: json['title'] as String,
   topicCode: json['topic_code'] as String,
   userId: json['user_id'] as String,
+  personaId: json['persona_id'] as String,
 );
 
 Map<String, dynamic> _$CreateConversationRequestDtoToJson(
@@ -20,6 +21,7 @@ Map<String, dynamic> _$CreateConversationRequestDtoToJson(
   'title': instance.title,
   'topic_code': instance.topicCode,
   'user_id': instance.userId,
+  'persona_id': instance.personaId,
 };
 
 _SaveMessageRequestDto _$SaveMessageRequestDtoFromJson(

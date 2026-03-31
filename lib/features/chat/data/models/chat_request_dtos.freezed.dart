@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CreateConversationRequestDto {
 
- String get title;@JsonKey(name: 'topic_code') String get topicCode;@JsonKey(name: 'user_id') String get userId;
+ String get title;@JsonKey(name: 'topic_code') String get topicCode;@JsonKey(name: 'user_id') String get userId;@JsonKey(name: 'persona_id') String get personaId;
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CreateConversationRequestDtoCopyWith<CreateConversationRequestDto> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.personaId, personaId) || other.personaId == personaId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,topicCode,userId);
+int get hashCode => Object.hash(runtimeType,title,topicCode,userId,personaId);
 
 @override
 String toString() {
-  return 'CreateConversationRequestDto(title: $title, topicCode: $topicCode, userId: $userId)';
+  return 'CreateConversationRequestDto(title: $title, topicCode: $topicCode, userId: $userId, personaId: $personaId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CreateConversationRequestDtoCopyWith<$Res>  {
   factory $CreateConversationRequestDtoCopyWith(CreateConversationRequestDto value, $Res Function(CreateConversationRequestDto) _then) = _$CreateConversationRequestDtoCopyWithImpl;
 @useResult
 $Res call({
- String title,@JsonKey(name: 'topic_code') String topicCode,@JsonKey(name: 'user_id') String userId
+ String title,@JsonKey(name: 'topic_code') String topicCode,@JsonKey(name: 'user_id') String userId,@JsonKey(name: 'persona_id') String personaId
 });
 
 
@@ -65,11 +65,12 @@ class _$CreateConversationRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? topicCode = null,Object? userId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? topicCode = null,Object? userId = null,Object? personaId = null,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,topicCode: null == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,personaId: null == personaId ? _self.personaId : personaId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'persona_id')  String personaId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateConversationRequestDto() when $default != null:
-return $default(_that.title,_that.topicCode,_that.userId);case _:
+return $default(_that.title,_that.topicCode,_that.userId,_that.personaId);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.title,_that.topicCode,_that.userId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'persona_id')  String personaId)  $default,) {final _that = this;
 switch (_that) {
 case _CreateConversationRequestDto():
-return $default(_that.title,_that.topicCode,_that.userId);case _:
+return $default(_that.title,_that.topicCode,_that.userId,_that.personaId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.title,_that.topicCode,_that.userId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title, @JsonKey(name: 'topic_code')  String topicCode, @JsonKey(name: 'user_id')  String userId, @JsonKey(name: 'persona_id')  String personaId)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateConversationRequestDto() when $default != null:
-return $default(_that.title,_that.topicCode,_that.userId);case _:
+return $default(_that.title,_that.topicCode,_that.userId,_that.personaId);case _:
   return null;
 
 }
@@ -211,12 +212,13 @@ return $default(_that.title,_that.topicCode,_that.userId);case _:
 @JsonSerializable()
 
 class _CreateConversationRequestDto implements CreateConversationRequestDto {
-  const _CreateConversationRequestDto({required this.title, @JsonKey(name: 'topic_code') required this.topicCode, @JsonKey(name: 'user_id') required this.userId});
+  const _CreateConversationRequestDto({required this.title, @JsonKey(name: 'topic_code') required this.topicCode, @JsonKey(name: 'user_id') required this.userId, @JsonKey(name: 'persona_id') required this.personaId});
   factory _CreateConversationRequestDto.fromJson(Map<String, dynamic> json) => _$CreateConversationRequestDtoFromJson(json);
 
 @override final  String title;
 @override@JsonKey(name: 'topic_code') final  String topicCode;
 @override@JsonKey(name: 'user_id') final  String userId;
+@override@JsonKey(name: 'persona_id') final  String personaId;
 
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateConversationRequestDto&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.personaId, personaId) || other.personaId == personaId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,topicCode,userId);
+int get hashCode => Object.hash(runtimeType,title,topicCode,userId,personaId);
 
 @override
 String toString() {
-  return 'CreateConversationRequestDto(title: $title, topicCode: $topicCode, userId: $userId)';
+  return 'CreateConversationRequestDto(title: $title, topicCode: $topicCode, userId: $userId, personaId: $personaId)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$CreateConversationRequestDtoCopyWith<$Res> implements $Cr
   factory _$CreateConversationRequestDtoCopyWith(_CreateConversationRequestDto value, $Res Function(_CreateConversationRequestDto) _then) = __$CreateConversationRequestDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String title,@JsonKey(name: 'topic_code') String topicCode,@JsonKey(name: 'user_id') String userId
+ String title,@JsonKey(name: 'topic_code') String topicCode,@JsonKey(name: 'user_id') String userId,@JsonKey(name: 'persona_id') String personaId
 });
 
 
@@ -268,11 +270,12 @@ class __$CreateConversationRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of CreateConversationRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? topicCode = null,Object? userId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? topicCode = null,Object? userId = null,Object? personaId = null,}) {
   return _then(_CreateConversationRequestDto(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,topicCode: null == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,personaId: null == personaId ? _self.personaId : personaId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

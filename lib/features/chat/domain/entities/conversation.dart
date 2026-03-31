@@ -19,6 +19,9 @@ abstract class Conversation with _$Conversation {
     /// 소유자 사용자 ID
     required String userId,
 
+    /// 페르소나 ID
+    String? personaId,
+
     /// 마지막 메시지 미리보기
     String? lastMessagePreview,
 

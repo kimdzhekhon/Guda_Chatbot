@@ -75,12 +75,14 @@ class ChatListViewModel extends _$ChatListViewModel {
 
   Future<Conversation?> createConversation({
     required ClassicType topicCode,
+    required String personaId,
   }) async {
     try {
       final useCase = ref.read(createConversationUseCaseProvider);
       final newConv = await useCase(
         title: '${topicCode.displayName} 새 대화',
         topicCode: topicCode.name,
+        personaId: personaId,
       );
       
       // 목록 갱신

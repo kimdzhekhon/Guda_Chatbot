@@ -10,6 +10,7 @@ class CreateConversationUseCase {
   Future<Conversation> call({
     required String title,
     required String topicCode,
+    required String personaId,
   }) {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
@@ -21,6 +22,7 @@ class CreateConversationUseCase {
         title: title,
         topicCode: topicCode,
         userId: user.id,
+        personaId: personaId,
       ),
     );
   }
