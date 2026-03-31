@@ -12,6 +12,11 @@ abstract final class AppConfig {
   /// Next.js 웹앱 베이스 URL (채팅 API 호출용)
   static const String webApiBaseUrl = 'https://guda-chatbot.vercel.app';
 
+  // ── 구글 로그인 설정 ────────────────────────────────
+  /// iOS용 Google Client ID
+  static const String googleIosClientId =
+      '90732925068-p2nvl1s50cota35lftdcukv1kq317cfp.apps.googleusercontent.com';
+
   // ── 앱 메타데이터 ─────────────────────────────────
   static const String appName = 'Guda';
   static const String appVersion = '1.0.0';

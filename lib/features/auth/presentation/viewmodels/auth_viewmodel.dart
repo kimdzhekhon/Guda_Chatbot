@@ -17,14 +17,6 @@ AuthRepositoryImpl authRepository(Ref ref) =>
     AuthRepositoryImpl(ref.watch(supabaseAuthDataSourceProvider));
 
 @riverpod
-SignInWithEmailUseCase signInWithEmailUseCase(Ref ref) =>
-    SignInWithEmailUseCase(ref.watch(authRepositoryProvider));
-
-@riverpod
-SignUpWithEmailUseCase signUpWithEmailUseCase(Ref ref) =>
-    SignUpWithEmailUseCase(ref.watch(authRepositoryProvider));
-
-@riverpod
 SignInWithGoogleUseCase signInWithGoogleUseCase(Ref ref) =>
     SignInWithGoogleUseCase(ref.watch(authRepositoryProvider));
 
@@ -44,7 +36,7 @@ DeleteAccountUseCase deleteAccountUseCase(Ref ref) =>
 GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) =>
     GetCurrentUserUseCase(ref.watch(authRepositoryProvider));
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 @riverpod
 class AuthViewModel extends _$AuthViewModel {
   @override
@@ -59,37 +51,6 @@ class AuthViewModel extends _$AuthViewModel {
       state = UiSuccess(user);
     } catch (e) {
       state = const UiSuccess(null);
-    }
-  }
-
-  /// 이메일/비밀번호 로그인
-  Future<void> signInWithEmail(String email, String password) async {
-    state = const UiLoading();
-    try {
-      final user = await ref.read(signInWithEmailUseCaseProvider).call(email, password);
-      state = UiSuccess(user);
-    } catch (e) {
-      final message = e.toString().contains('Invalid login credentials')
-          ? '이메일 또는 비밀번호가 틀렸습니다'
-          : '로그인 중 오류가 발생했습니다';
-      state = UiError(message);
-    }
-  }
-
-  /// 이메일/비밀번호 회원가입
-  Future<void> signUpWithEmail(String email, String password) async {
-    state = const UiLoading();
-    try {
-      final user = await ref.read(signUpWithEmailUseCaseProvider).call(email, password);
-      state = UiSuccess(user);
-    } catch (e) {
-      final msg = e.toString();
-      final message = msg.contains('already registered')
-          ? '이미 가입된 이메일입니다'
-          : msg.contains('Password should be at least')
-              ? '비밀번호는 6자 이상이어야 합니다'
-              : '회원가입 중 오류가 발생했습니다';
-      state = UiError(message);
     }
   }
 

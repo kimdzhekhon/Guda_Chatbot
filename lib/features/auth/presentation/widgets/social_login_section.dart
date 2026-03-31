@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_social_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_terms_bottom_sheet.dart';
-import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 
 class SocialLoginSection extends ConsumerWidget {
@@ -20,32 +19,6 @@ class SocialLoginSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Divider(
-                color: context.colorScheme.outlineVariant,
-                thickness: 0.5,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
-              child: Text(
-                '또는',
-                style: GudaTypography.caption2(
-                  color: context.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Divider(
-                color: context.colorScheme.outlineVariant,
-                thickness: 0.5,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: GudaSpacing.md),
         GudaSocialButton(
           onPressed: () async {
             bool agreed = true;

@@ -108,102 +108,6 @@ final class AuthRepositoryProvider
 
 String _$authRepositoryHash() => r'519da6b15afb088cfb679a4ff821d9dd0247b7ce';
 
-@ProviderFor(signInWithEmailUseCase)
-final signInWithEmailUseCaseProvider = SignInWithEmailUseCaseProvider._();
-
-final class SignInWithEmailUseCaseProvider
-    extends
-        $FunctionalProvider<
-          SignInWithEmailUseCase,
-          SignInWithEmailUseCase,
-          SignInWithEmailUseCase
-        >
-    with $Provider<SignInWithEmailUseCase> {
-  SignInWithEmailUseCaseProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'signInWithEmailUseCaseProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$signInWithEmailUseCaseHash();
-
-  @$internal
-  @override
-  $ProviderElement<SignInWithEmailUseCase> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  SignInWithEmailUseCase create(Ref ref) {
-    return signInWithEmailUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SignInWithEmailUseCase value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SignInWithEmailUseCase>(value),
-    );
-  }
-}
-
-String _$signInWithEmailUseCaseHash() =>
-    r'85d655e9de2bf12757b0d8f231d4406e4290e12c';
-
-@ProviderFor(signUpWithEmailUseCase)
-final signUpWithEmailUseCaseProvider = SignUpWithEmailUseCaseProvider._();
-
-final class SignUpWithEmailUseCaseProvider
-    extends
-        $FunctionalProvider<
-          SignUpWithEmailUseCase,
-          SignUpWithEmailUseCase,
-          SignUpWithEmailUseCase
-        >
-    with $Provider<SignUpWithEmailUseCase> {
-  SignUpWithEmailUseCaseProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'signUpWithEmailUseCaseProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$signUpWithEmailUseCaseHash();
-
-  @$internal
-  @override
-  $ProviderElement<SignUpWithEmailUseCase> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  SignUpWithEmailUseCase create(Ref ref) {
-    return signUpWithEmailUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SignUpWithEmailUseCase value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SignUpWithEmailUseCase>(value),
-    );
-  }
-}
-
-String _$signUpWithEmailUseCaseHash() =>
-    r'b14fd6122f7136248c6577581d96f08de1f78692';
-
 @ProviderFor(signInWithGoogleUseCase)
 final signInWithGoogleUseCaseProvider = SignInWithGoogleUseCaseProvider._();
 
@@ -437,15 +341,15 @@ final class GetCurrentUserUseCaseProvider
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 
 @ProviderFor(AuthViewModel)
 final authViewModelProvider = AuthViewModelProvider._();
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 final class AuthViewModelProvider
     extends $NotifierProvider<AuthViewModel, UiState<GudaUser?>> {
-  /// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+  /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
   AuthViewModelProvider._()
     : super(
         from: null,
@@ -473,9 +377,9 @@ final class AuthViewModelProvider
   }
 }
 
-String _$authViewModelHash() => r'f698da113c29cee2e38e76f5930aa71bc5cf60b4';
+String _$authViewModelHash() => r'11ec3e4977c4912e9f99eaccb2ad580d75c7406b';
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 
 abstract class _$AuthViewModel extends $Notifier<UiState<GudaUser?>> {
   UiState<GudaUser?> build();
