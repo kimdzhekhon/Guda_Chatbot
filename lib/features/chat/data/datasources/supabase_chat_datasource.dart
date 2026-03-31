@@ -46,6 +46,7 @@ class SupabaseChatDataSource {
         'p_title': request.title,
         'p_topic_code': request.topicCode,
         'p_user_id': request.userId,
+        'p_persona_id': request.personaId,
       },
       fromJson: ConversationDto.fromJson,
     );

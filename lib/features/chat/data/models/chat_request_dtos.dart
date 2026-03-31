@@ -10,6 +10,7 @@ abstract class CreateConversationRequestDto with _$CreateConversationRequestDto 
     required String title,
     @JsonKey(name: 'topic_code') required String topicCode,
     @JsonKey(name: 'user_id') required String userId,
+    @JsonKey(name: 'persona_id') required String personaId,
   }) = _CreateConversationRequestDto;
 
   factory CreateConversationRequestDto.fromJson(Map<String, dynamic> json) =>
