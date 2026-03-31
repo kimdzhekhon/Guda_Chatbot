@@ -36,6 +36,10 @@ DeleteAccountUseCase deleteAccountUseCase(Ref ref) =>
 GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) =>
     GetCurrentUserUseCase(ref.watch(authRepositoryProvider));
 
+@riverpod
+UpdateProfileUseCase updateProfileUseCase(Ref ref) =>
+    UpdateProfileUseCase(ref.watch(authRepositoryProvider));
+
 /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 @riverpod
 class AuthViewModel extends _$AuthViewModel {
@@ -54,25 +58,85 @@ class AuthViewModel extends _$AuthViewModel {
     }
   }
 
-  /// Google 로그인
-  Future<void> signInWithGoogle() async {
+  /// Google 로그인/회원가입
+  Future<void> signInWithGoogle({
+    bool isSignUp = false,
+    String? nickname,
+    DateTime? birthDate,
+    String? persona,
+  }) async {
     state = const UiLoading();
     try {
       final user = await ref.read(signInWithGoogleUseCaseProvider).call();
-      state = UiSuccess(user);
+      
+      // 회원가입 전용 정보가 있는 경우 프로필 업데이트 수행
+      if (isSignUp && nickname != null && birthDate != null && persona != null) {
+        await ref.read(updateProfileUseCaseProvider).call(
+          nickname: nickname,
+          birthDate: birthDate,
+          persona: persona,
+          termsAgreed: true, // 소셜 로그인 페이지에서 가입 시 이미 동의한 것으로 간주
+        );
+        // 업데이트된 정보로 다시 조회 (캐시 갱신 효과)
+        final updatedUser = await ref.read(getCurrentUserUseCaseProvider).call();
+        state = UiSuccess(updatedUser);
+      } else {
+        state = UiSuccess(user);
+      }
     } catch (e) {
       state = UiError('Google 로그인에 실패했습니다: ${e.toString()}');
     }
   }
 
-  /// Apple 로그인
-  Future<void> signInWithApple() async {
+  /// Apple 로그인/회원가입
+  Future<void> signInWithApple({
+    bool isSignUp = false,
+    String? nickname,
+    DateTime? birthDate,
+    String? persona,
+  }) async {
     state = const UiLoading();
     try {
       final user = await ref.read(signInWithAppleUseCaseProvider).call();
-      state = UiSuccess(user);
+      
+      if (isSignUp && nickname != null && birthDate != null && persona != null) {
+        await ref.read(updateProfileUseCaseProvider).call(
+          nickname: nickname,
+          birthDate: birthDate,
+          persona: persona,
+          termsAgreed: true,
+        );
+        final updatedUser = await ref.read(getCurrentUserUseCaseProvider).call();
+        state = UiSuccess(updatedUser);
+      } else {
+        state = UiSuccess(user);
+      }
     } catch (e) {
       state = UiError('Apple 로그인에 실패했습니다: ${e.toString()}');
+    }
+  }
+
+  /// 프로필 정보 업데이트 (온보딩 최종 단계)
+  Future<void> updateProfile({
+    required String nickname,
+    required DateTime birthDate,
+    required String persona,
+    required bool termsAgreed,
+  }) async {
+    state = const UiLoading();
+    try {
+      await ref.read(updateProfileUseCaseProvider).call(
+        nickname: nickname,
+        birthDate: birthDate,
+        persona: persona,
+        termsAgreed: termsAgreed,
+      );
+      
+      // 업데이트된 정보를 반영하기 위해 유저 정보 재조회
+      final updatedUser = await ref.read(getCurrentUserUseCaseProvider).call();
+      state = UiSuccess(updatedUser);
+    } catch (e) {
+      state = UiError('프로필 업데이트에 실패했습니다: ${e.toString()}');
     }
   }
 

@@ -19,6 +19,9 @@ abstract final class RoutePaths {
   /// 글자 크기 조절 화면 (SCR_FONT_SIZE)
   static const String fontSize = '/settings/font-size';
   
+  /// 온보딩 화면 (SCR_ONBOARDING)
+  static const String onboarding = '/onboarding';
+  
   /// 페르소나 설정 화면 (SCR_PERSONA_SELECTION)
   static const String persona = '/settings/persona';
   

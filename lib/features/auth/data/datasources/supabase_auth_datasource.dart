@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
+import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
 import 'package:guda_chatbot/app/config/app_config.dart';
 
 /// Supabase 인증 데이터 소스 — Google OAuth 연동
@@ -87,5 +88,20 @@ class SupabaseAuthDataSource {
       'created_at': user.createdAt,
     };
     return AuthResponseDto.fromJson(json);
+  }
+
+  /// 프로필 테이블 데이터 업데이트 (RPC 연동)
+  Future<void> updateProfile(ProfileRegistrationDto dto) async {
+    // architecture 규정상 RPC 형식을 준수하여 호출
+    await _supabase.rpc('upsert_profile', params: dto.toJson());
+  }
+
+  /// profiles 테이블에서 추가 정보 조회
+  Future<Map<String, dynamic>?> getProfile(String userId) async {
+    return await _supabase
+        .from('profiles')
+        .select()
+        .eq('id', userId)
+        .maybeSingle();
   }
 }

@@ -341,6 +341,54 @@ final class GetCurrentUserUseCaseProvider
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
 
+@ProviderFor(updateProfileUseCase)
+final updateProfileUseCaseProvider = UpdateProfileUseCaseProvider._();
+
+final class UpdateProfileUseCaseProvider
+    extends
+        $FunctionalProvider<
+          UpdateProfileUseCase,
+          UpdateProfileUseCase,
+          UpdateProfileUseCase
+        >
+    with $Provider<UpdateProfileUseCase> {
+  UpdateProfileUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateProfileUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateProfileUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdateProfileUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UpdateProfileUseCase create(Ref ref) {
+    return updateProfileUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdateProfileUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdateProfileUseCase>(value),
+    );
+  }
+}
+
+String _$updateProfileUseCaseHash() =>
+    r'e5d4e709b8118678f163c741d0d4f3595d788e8a';
+
 /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 
 @ProviderFor(AuthViewModel)
@@ -377,7 +425,7 @@ final class AuthViewModelProvider
   }
 }
 
-String _$authViewModelHash() => r'11ec3e4977c4912e9f99eaccb2ad580d75c7406b';
+String _$authViewModelHash() => r'630292ce95c382d51c81590ef997a86184b4e54e';
 
 /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 

@@ -17,6 +17,7 @@ class GudaTextInputField extends StatelessWidget {
     this.hintStyle,
     this.backgroundColor,
     this.borderRadius,
+    this.border,
     this.contentPadding,
   });
 
@@ -30,6 +31,7 @@ class GudaTextInputField extends StatelessWidget {
   final TextStyle? hintStyle;
   final Color? backgroundColor;
   final BorderRadiusGeometry? borderRadius;
+  final BoxBorder? border;
   final EdgeInsetsGeometry? contentPadding;
 
   @override
@@ -42,6 +44,7 @@ class GudaTextInputField extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? defaultBg,
         borderRadius: borderRadius ?? GudaRadius.lgAll,
+        border: border,
       ),
       child: TextField(
         controller: controller,
