@@ -26,6 +26,12 @@ abstract class RpcInvoker {
     required T Function(Map<String, dynamic> json) fromJson,
   });
 
+  /// 반환값이 없는 RPC 호출 수행 (Request DTO -> void)
+  Future<void> invokeVoid({
+    required String functionName,
+    Map<String, dynamic>? params,
+  });
+
   /// 목록 반환 RPC 호출 수행 (Request DTO → List Response DTO)
   Future<List<T>> invokeList<T>({
     required String functionName,
@@ -81,6 +87,23 @@ class SupabaseRpcInvoker implements RpcInvoker {
     } catch (e) {
       debugPrint('[RPC Unhandled Error] $e');
       debugPrint('[RPC Raw Response Context] ${response.toString()}');
+      throw RpcException('알 수 없는 통신 오류가 발생했습니다: $e');
+    }
+  }
+
+  @override
+  Future<void> invokeVoid({
+    required String functionName,
+    Map<String, dynamic>? params,
+  }) async {
+    try {
+      debugPrint('[RPC Void Call] $functionName with $params');
+      await _supabase.rpc(functionName, params: params);
+    } on PostgrestException catch (e) {
+      debugPrint('[RPC Void Error] $e');
+      throw RpcException(e.message, code: e.code, details: e.details);
+    } catch (e) {
+      debugPrint('[RPC Void Unhandled Error] $e');
       throw RpcException('알 수 없는 통신 오류가 발생했습니다: $e');
     }
   }

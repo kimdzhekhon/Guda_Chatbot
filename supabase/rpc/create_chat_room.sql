@@ -3,6 +3,7 @@
 
 -- 이전 파라미터(TEXT 4개)와의 오버로딩 중복을 피하기 위해 제거
 DROP FUNCTION IF EXISTS public.create_chat_room(TEXT, TEXT, UUID);
+DROP FUNCTION IF EXISTS public.create_chat_room(TEXT, TEXT, UUID, TEXT);
 
 CREATE OR REPLACE FUNCTION public.create_chat_room(
     p_title      TEXT,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 
 /// Guda 공통 다이얼로그
 class GudaDialog extends StatelessWidget {
@@ -63,43 +64,69 @@ class GudaDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return AlertDialog(
+    return Dialog(
       shape: const RoundedRectangleBorder(borderRadius: GudaRadius.lgAll),
       backgroundColor: colorScheme.surface,
-      title: Text(
-        title,
-        style: GudaTypography.heading3(color: colorScheme.onSurface),
-      ),
-      content: contentWidget ?? (content != null ? Text(
-        content!,
-        style: GudaTypography.body1(color: colorScheme.onSurfaceVariant),
-      ) : null),
-      actions: [
-        if (showCancel)
-          TextButton(
-            onPressed: () {
-              onCancel?.call();
-              Navigator.pop(context, false);
-            },
-            child: Text(
-              cancelLabel,
-              style: GudaTypography.button(color: colorScheme.outline),
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
+      child: Padding(
+        padding: const EdgeInsets.all(GudaSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              title,
+              style: GudaTypography.heading3(color: colorScheme.onSurface),
+              textAlign: TextAlign.center,
             ),
-          ),
-        if (showConfirm)
-          TextButton(
-            onPressed: () {
-              onConfirm?.call();
-              Navigator.pop(context, true);
-            },
-            child: Text(
-              confirmLabel,
-              style: GudaTypography.button(
-                color: isDestructive ? colorScheme.error : colorScheme.primary,
+            const SizedBox(height: GudaSpacing.lg),
+            if (contentWidget != null || content != null) ...[
+              Container(
+                padding: const EdgeInsets.all(GudaSpacing.lg),
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurface.withValues(alpha: 0.04),
+                  borderRadius: GudaRadius.mdAll,
+                ),
+                child: contentWidget ?? Text(
+                  content!,
+                  style: GudaTypography.body1(color: colorScheme.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
               ),
+              const SizedBox(height: GudaSpacing.xl),
+            ],
+            Row(
+              children: [
+                if (showCancel)
+                  Expanded(
+                    child: GudaButton.outlined(
+                      label: cancelLabel,
+                      onPressed: () {
+                        onCancel?.call();
+                        Navigator.pop(context, false);
+                      },
+                    ),
+                  ),
+                if (showCancel && showConfirm)
+                  const SizedBox(width: GudaSpacing.md),
+                if (showConfirm)
+                  Expanded(
+                    child: GudaButton.filled(
+                      label: confirmLabel,
+                      onPressed: () {
+                        onConfirm?.call();
+                        Navigator.pop(context, true);
+                      },
+                      backgroundColor: isDestructive ? colorScheme.error : colorScheme.primary,
+                      foregroundColor: isDestructive ? colorScheme.onError : colorScheme.onPrimary,
+                    ),
+                  ),
+              ],
             ),
-          ),
-      ],
+          ],
+        ),
+      ),
     ).gudaScaleIn(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutBack,

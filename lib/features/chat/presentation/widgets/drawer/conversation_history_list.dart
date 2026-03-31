@@ -5,6 +5,7 @@ import 'package:guda_chatbot/core/constants/app_assets.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
@@ -47,9 +48,21 @@ class ConversationHistoryList extends ConsumerWidget {
             ref.read(homeViewModelProvider.notifier).selectConversation(conv);
             Navigator.pop(context);
           },
-          onDelete: () => ref
-              .read(chatListViewModelProvider.notifier)
-              .deleteConversation(conv.id),
+          onDelete: () async {
+            final confirm = await GudaDialog.show(
+              context,
+              title: AppStrings.deleteConversationTitle,
+              content: AppStrings.deleteConversationMessage,
+              confirmLabel: AppStrings.deleteLabel,
+              cancelLabel: AppStrings.cancel,
+              isDestructive: true,
+            );
+            if (confirm == true) {
+              ref
+                  .read(chatListViewModelProvider.notifier)
+                  .deleteConversation(conv.id);
+            }
+          },
         );
       },
     );
