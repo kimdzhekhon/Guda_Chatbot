@@ -8,6 +8,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_section.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 
@@ -20,10 +21,7 @@ class PersonaSelectionScreen extends ConsumerWidget {
     final personaState = ref.watch(personaProvider);
     final personaNotifier = ref.read(personaProvider.notifier);
     
-    final currentPersonaId = personaState.maybeWhen(
-      data: (id) => id,
-      orElse: () => PersonaType.wise,
-    );
+    final currentPersonaId = personaState.dataOrNull ?? PersonaType.basic;
 
     return GudaScaffold(
       appBar: const GudaAppBar(title: AppStrings.personaSettingTitle),

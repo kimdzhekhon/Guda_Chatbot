@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/auth/data/datasources/supabase_auth_datasource.dart';
@@ -168,15 +169,20 @@ class AuthViewModel extends _$AuthViewModel {
   }
 
   /// 페르소나 업데이트 (설정 화면)
+  /// 실패해도 기존 인증 상태를 유지하여 라우터 리다이렉트를 방지합니다.
   Future<void> updatePersona(PersonaType persona) async {
+    final previousState = state;
     try {
       await ref.read(updatePersonaUseCaseProvider).call(persona);
-      
+
       // 업데이트된 정보를 반영하기 위해 유저 정보 재조회하여 상태 갱신
       final updatedUser = await ref.read(getCurrentUserUseCaseProvider).call();
       state = UiSuccess(updatedUser);
-    } catch (e) {
-      state = UiError('페르소나 업데이트에 실패했습니다: ${e.toString()}');
+    } catch (e, st) {
+      log('페르소나 업데이트 실패: $e', stackTrace: st, name: 'AuthViewModel');
+      // 페르소나 변경 실패 시 이전 인증 상태를 복원합니다.
+      // UiError로 설정하면 라우터가 로그인 화면으로 리다이렉트하기 때문입니다.
+      state = previousState;
     }
   }
 }

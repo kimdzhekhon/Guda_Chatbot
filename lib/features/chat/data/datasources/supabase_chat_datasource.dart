@@ -109,8 +109,8 @@ class SupabaseChatDataSource {
       final type = PersonaType.fromString(personaId);
       String? addedPrompt;
       switch (type) {
-        case PersonaType.wise:
-          addedPrompt = AppPersonas.wisePrompt;
+        case PersonaType.basic:
+          addedPrompt = AppPersonas.basicPrompt;
         case PersonaType.friendly:
           addedPrompt = AppPersonas.friendlyPrompt;
         case PersonaType.strict:

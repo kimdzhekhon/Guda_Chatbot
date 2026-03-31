@@ -165,10 +165,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
     try {
       final useCase = ref.read(sendMessageUseCaseProvider);
-      final personaId = ref.read(personaProvider).maybeWhen(
-            data: (id) => id,
-            orElse: () => null,
-          );
+      final personaId = ref.read(personaProvider).dataOrNull;
       String accumulatedContent = '';
       
       await for (final chunk in useCase(

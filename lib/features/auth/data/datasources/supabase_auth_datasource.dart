@@ -44,7 +44,9 @@ class SupabaseAuthDataSource {
     final user = response.user;
     if (user == null) throw const AuthException('Supabase 인증에 실패했습니다.');
 
-    return _mapSupabaseUserToDto(user);
+    // 4. 프로필 정보 조회 및 병합
+    final profile = await getProfile(user.id);
+    return _mapSupabaseUserToDto(user, profile: profile);
   }
 
   /// Apple 계정으로 Supabase 인증 (Placeholder)
@@ -62,7 +64,10 @@ class SupabaseAuthDataSource {
   Future<AuthResponseDto?> getCurrentUser() async {
     final user = _supabase.auth.currentUser;
     if (user == null) return null;
-    return _mapSupabaseUserToDto(user);
+    
+    // 세션 복원 시 프로필 정보도 함께 가져옴
+    final profile = await getProfile(user.id);
+    return _mapSupabaseUserToDto(user, profile: profile);
   }
 
   /// 계정 탈퇴
@@ -81,11 +86,12 @@ class SupabaseAuthDataSource {
   }
 
   /// Supabase User → AuthResponseDto 변환
-  AuthResponseDto _mapSupabaseUserToDto(User user) {
+  AuthResponseDto _mapSupabaseUserToDto(User user, {Map<String, dynamic>? profile}) {
     final json = {
       'id': user.id,
       'email': user.email,
       ...user.userMetadata ?? {},
+      if (profile != null) ...profile,
       'created_at': user.createdAt,
     };
     return AuthResponseDto.fromJson(json);
