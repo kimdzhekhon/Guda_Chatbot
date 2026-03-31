@@ -9,15 +9,18 @@ class CreateConversationUseCase {
 
   Future<Conversation> call({
     required String title,
-    required String classicType,
+    required String topicCode,
   }) {
-    final userId = Supabase.instance.client.auth.currentUser?.id ?? 'mock-1234';
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) {
+      throw Exception('로그인이 필요합니다.');
+    }
 
     return _repository.createConversation(
       CreateConversationRequestDto(
         title: title,
-        classicType: classicType,
-        userId: userId,
+        topicCode: topicCode,
+        userId: user.id,
       ),
     );
   }

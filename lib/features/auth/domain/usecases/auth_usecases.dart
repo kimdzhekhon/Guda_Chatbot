@@ -1,5 +1,6 @@
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/repositories/auth_repository.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 /// Google 소셜 로그인 유즈케이스
 class SignInWithGoogleUseCase {
@@ -55,7 +56,7 @@ class UpdateProfileUseCase {
   Future<void> call({
     required String nickname,
     required DateTime birthDate,
-    required String persona,
+    required PersonaType persona,
     required bool termsAgreed,
   }) =>
       _repository.updateProfile(
@@ -72,5 +73,5 @@ class UpdatePersonaUseCase {
   final AuthRepository _repository;
 
   /// 페르소나 업데이트 실행
-  Future<void> call(String persona) => _repository.updatePersona(persona);
+  Future<void> call(PersonaType persona) => _repository.updatePersona(persona);
 }

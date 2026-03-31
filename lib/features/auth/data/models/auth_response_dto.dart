@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 part 'auth_response_dto.freezed.dart';
 part 'auth_response_dto.g.dart';
@@ -14,7 +15,7 @@ abstract class AuthResponseDto with _$AuthResponseDto {
     @JsonKey(name: 'avatar_url') String? photoUrl,
     String? nickname,
     @JsonKey(name: 'birth_date') String? birthDate,
-    String? persona,
+    PersonaType? persona,
     @JsonKey(name: 'terms_agreed_at') String? termsAgreedAt,
     @JsonKey(name: 'created_at') required String createdAt,
   }) = _AuthResponseDto;

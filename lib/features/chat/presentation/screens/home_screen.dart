@@ -17,7 +17,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final homeState = ref.watch(homeViewModelProvider);
-    final activeId = homeState.activeConversationId;
+    final activeId = homeState.activeChatRoomId;
 
     final isMessagesEmpty = activeId != null
         ? ref.watch(chatRoomViewModelProvider(activeId).select(
@@ -43,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
           ? const Center(
               child: SingleChildScrollView(child: ClassicCardSlider()),
             )
-          : ChatRoomView(activeConversationId: activeId),
+          : ChatRoomView(activeChatRoomId: activeId),
     );
   }
 }

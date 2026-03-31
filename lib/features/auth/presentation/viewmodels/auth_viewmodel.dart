@@ -4,6 +4,7 @@ import 'package:guda_chatbot/features/auth/data/datasources/supabase_auth_dataso
 import 'package:guda_chatbot/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 part 'auth_viewmodel.g.dart';
 
@@ -67,7 +68,7 @@ class AuthViewModel extends _$AuthViewModel {
     bool isSignUp = false,
     String? nickname,
     DateTime? birthDate,
-    String? persona,
+    PersonaType? persona,
   }) async {
     state = const UiLoading();
     try {
@@ -97,7 +98,7 @@ class AuthViewModel extends _$AuthViewModel {
     bool isSignUp = false,
     String? nickname,
     DateTime? birthDate,
-    String? persona,
+    PersonaType? persona,
   }) async {
     state = const UiLoading();
     try {
@@ -124,7 +125,7 @@ class AuthViewModel extends _$AuthViewModel {
   Future<void> updateProfile({
     required String nickname,
     required DateTime birthDate,
-    required String persona,
+    required PersonaType persona,
     required bool termsAgreed,
   }) async {
     state = const UiLoading();
@@ -167,8 +168,7 @@ class AuthViewModel extends _$AuthViewModel {
   }
 
   /// 페르소나 업데이트 (설정 화면)
-  Future<void> updatePersona(String persona) async {
-    // UI 로딩 상태로 변경하지 않음 (페르소나 변경은 백그라운드에서 처리하고 UI는 즉시 반영되는 것이 자연스러움)
+  Future<void> updatePersona(PersonaType persona) async {
     try {
       await ref.read(updatePersonaUseCaseProvider).call(persona);
       
@@ -176,7 +176,7 @@ class AuthViewModel extends _$AuthViewModel {
       final updatedUser = await ref.read(getCurrentUserUseCaseProvider).call();
       state = UiSuccess(updatedUser);
     } catch (e) {
-      // 에러 발생 시 로그만 남기거나 무시 (혹은 필요시 에러 알림)
+      state = UiError('페르소나 업데이트에 실패했습니다: ${e.toString()}');
     }
   }
 }

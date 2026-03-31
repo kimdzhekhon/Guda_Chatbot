@@ -2,6 +2,7 @@ import 'package:guda_chatbot/features/auth/data/datasources/supabase_auth_dataso
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/repositories/auth_repository.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
 import 'package:guda_chatbot/features/auth/data/models/persona_update_dto.dart';
 
@@ -63,7 +64,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> updateProfile({
     required String nickname,
     required DateTime birthDate,
-    required String persona,
+    required PersonaType persona,
     required bool termsAgreed,
   }) async {
     final user = await _dataSource.getCurrentUser();
@@ -83,7 +84,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> updatePersona(String persona) async {
+  Future<void> updatePersona(PersonaType persona) async {
     final user = await _dataSource.getCurrentUser();
     if (user == null) throw Exception('로그인된 사용자가 없습니다.');
 

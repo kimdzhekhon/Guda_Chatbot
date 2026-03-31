@@ -9,6 +9,47 @@ part of 'chat_viewmodels.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(rpcInvoker)
+final rpcInvokerProvider = RpcInvokerProvider._();
+
+final class RpcInvokerProvider
+    extends $FunctionalProvider<RpcInvoker, RpcInvoker, RpcInvoker>
+    with $Provider<RpcInvoker> {
+  RpcInvokerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'rpcInvokerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$rpcInvokerHash();
+
+  @$internal
+  @override
+  $ProviderElement<RpcInvoker> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  RpcInvoker create(Ref ref) {
+    return rpcInvoker(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RpcInvoker value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RpcInvoker>(value),
+    );
+  }
+}
+
+String _$rpcInvokerHash() => r'f54e8985e5a0afc7f9e4b08245e1e8ef2774c37a';
+
 @ProviderFor(supabaseChatDataSource)
 final supabaseChatDataSourceProvider = SupabaseChatDataSourceProvider._();
 
@@ -55,7 +96,7 @@ final class SupabaseChatDataSourceProvider
 }
 
 String _$supabaseChatDataSourceHash() =>
-    r'f6429496d3a5718d9458e929b3d69361dbbdb46e';
+    r'e2df67fb8e5f1b6096879091231132a38e42bbf0';
 
 @ProviderFor(chatRepository)
 final chatRepositoryProvider = ChatRepositoryProvider._();
@@ -370,7 +411,7 @@ final class ChatListViewModelProvider
   }
 }
 
-String _$chatListViewModelHash() => r'ab4d97b6fe1ea8fb4a9f990eb6ca87fad7afee3e';
+String _$chatListViewModelHash() => r'1d4c8d1f00277902ab9756cbc0f76e0833377e88';
 
 abstract class _$ChatListViewModel
     extends $Notifier<UiState<List<Conversation>>> {
@@ -442,7 +483,7 @@ final class SortedConversationsProvider
 }
 
 String _$sortedConversationsHash() =>
-    r'9f9bfa5574fb16c033db47d85f698ce4eb4d0286';
+    r'91168d36a13fb58cf8f30ad5a7d32170db6a2552';
 
 @ProviderFor(ChatRoomViewModel)
 final chatRoomViewModelProvider = ChatRoomViewModelFamily._();
@@ -493,7 +534,7 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'e93ee827626c0725d7070fd15b29e68f5ff8ef7a';
+String _$chatRoomViewModelHash() => r'757ef9914611904133f8bd77d0adbce17d5e0029';
 
 final class ChatRoomViewModelFamily extends $Family
     with
@@ -513,8 +554,8 @@ final class ChatRoomViewModelFamily extends $Family
         isAutoDispose: true,
       );
 
-  ChatRoomViewModelProvider call(String conversationId) =>
-      ChatRoomViewModelProvider._(argument: conversationId, from: this);
+  ChatRoomViewModelProvider call(String chatRoomId) =>
+      ChatRoomViewModelProvider._(argument: chatRoomId, from: this);
 
   @override
   String toString() => r'chatRoomViewModelProvider';
@@ -522,9 +563,9 @@ final class ChatRoomViewModelFamily extends $Family
 
 abstract class _$ChatRoomViewModel extends $Notifier<UiState<List<Message>>> {
   late final _$args = ref.$arg as String;
-  String get conversationId => _$args;
+  String get chatRoomId => _$args;
 
-  UiState<List<Message>> build(String conversationId);
+  UiState<List<Message>> build(String chatRoomId);
   @$mustCallSuper
   @override
   void runBuild() {

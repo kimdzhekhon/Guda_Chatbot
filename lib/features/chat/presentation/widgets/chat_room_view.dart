@@ -13,10 +13,10 @@ import 'package:guda_chatbot/features/chat/presentation/widgets/message_list.dar
 class ChatRoomView extends ConsumerStatefulWidget {
   const ChatRoomView({
     super.key,
-    required this.activeConversationId,
+    required this.activeChatRoomId,
   });
 
-  final String activeConversationId;
+  final String activeChatRoomId;
 
   @override
   ConsumerState<ChatRoomView> createState() => _ChatRoomViewState();
@@ -46,17 +46,17 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
     final selectedType = ref.watch(
       homeViewModelProvider.select((s) => s.selectedClassicType),
     );
-    final chatState = ref.watch(chatRoomViewModelProvider(widget.activeConversationId));
+    final chatState = ref.watch(chatRoomViewModelProvider(widget.activeChatRoomId));
 
     // Listen for new messages to scroll to bottom
-    ref.listen(chatRoomViewModelProvider(widget.activeConversationId), (_, next) {
+    ref.listen(chatRoomViewModelProvider(widget.activeChatRoomId), (_, next) {
       if (next.isSuccess) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
       }
     });
 
     final isStreaming = ref.watch(
-      chatRoomViewModelProvider(widget.activeConversationId).select(
+      chatRoomViewModelProvider(widget.activeChatRoomId).select(
         (s) => s.dataOrNull?.any((m) => m.isStreaming) ?? false,
       ),
     );
@@ -74,7 +74,7 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
                 type: selectedType,
                 scrollController: _scrollController,
                 onSendMessage: _handleSendMessage,
-                activeConversationId: widget.activeConversationId,
+                activeChatRoomId: widget.activeChatRoomId,
               ),
           },
         ),
@@ -90,10 +90,10 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
   Future<void> _handleSendMessage(String text) async {
     final type = ref.read(homeViewModelProvider.select((s) => s.selectedClassicType));
     await ref
-        .read(chatRoomViewModelProvider(widget.activeConversationId).notifier)
+        .read(chatRoomViewModelProvider(widget.activeChatRoomId).notifier)
         .sendMessage(
           content: text,
-          classicType: type,
+          topicCode: type,
         );
   }
 }

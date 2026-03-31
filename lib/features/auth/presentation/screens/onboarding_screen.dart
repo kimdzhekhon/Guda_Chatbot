@@ -10,6 +10,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_snack_bar.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -32,7 +33,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Step 2: Profile
   final TextEditingController _nicknameController = TextEditingController();
   DateTime? _selectedBirthDate;
-  String _selectedPersona = 'wise';
+  PersonaType _selectedPersona = PersonaType.wise;
 
   @override
   void dispose() {
@@ -354,11 +355,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildPersonaItem('wise', '현명한 현자'),
+            _buildPersonaItem(PersonaType.wise, '현명한 현자'),
             const SizedBox(height: GudaSpacing.md12),
-            _buildPersonaItem('friendly', '따뜻한 친구'),
+            _buildPersonaItem(PersonaType.friendly, '따뜻한 친구'),
             const SizedBox(height: GudaSpacing.md12),
-            _buildPersonaItem('strict', '냉철한 분석가'),
+            _buildPersonaItem(PersonaType.strict, '냉철한 분석가'),
           ],
         ),
         const SizedBox(height: GudaSpacing.md),
@@ -370,7 +371,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  Widget _buildPersonaItem(String id, String label) {
+  Widget _buildPersonaItem(PersonaType id, String label) {
     final isSelected = _selectedPersona == id;
     
     return GestureDetector(

@@ -3,6 +3,7 @@ import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/domain/orchestrations/chat_flow_orchestrator.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 
 part 'home_viewmodel.g.dart';
 
@@ -13,29 +14,29 @@ enum CardPhase {
 }
 
 class HomeState {
-  final String? activeConversationId;
+  final String? activeChatRoomId;
   final ClassicType selectedClassicType;
   final CardPhase phase;
   final Hexagram? selectedHexagram;
 
   HomeState({
-    this.activeConversationId,
+    this.activeChatRoomId,
     required this.selectedClassicType,
     this.phase = CardPhase.selection,
     this.selectedHexagram,
   });
 
   HomeState copyWith({
-    String? activeConversationId,
+    String? activeChatRoomId,
     ClassicType? selectedClassicType,
     CardPhase? phase,
     Hexagram? selectedHexagram,
-    bool clearActiveConversation = false,
+    bool clearActiveChatRoom = false,
   }) {
     return HomeState(
-      activeConversationId: clearActiveConversation
+      activeChatRoomId: clearActiveChatRoom
           ? null
-          : (activeConversationId ?? this.activeConversationId),
+          : (activeChatRoomId ?? this.activeChatRoomId),
       selectedClassicType: selectedClassicType ?? this.selectedClassicType,
       phase: phase ?? this.phase,
       selectedHexagram: selectedHexagram ?? this.selectedHexagram,
@@ -51,15 +52,15 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   void selectClassicType(ClassicType type) {
-    _initializeByClassicType(type, clearActiveConversation: true);
+    _initializeByClassicType(type, clearActiveChatRoom: true);
   }
 
   void _initializeByClassicType(ClassicType type,
-      {bool clearActiveConversation = false}) {
+      {bool clearActiveChatRoom = false}) {
     final config = ChatFlowOrchestrator.prepareNewChat(type: type);
     state = state.copyWith(
       selectedClassicType: type,
-      clearActiveConversation: clearActiveConversation,
+      clearActiveChatRoom: clearActiveChatRoom,
       phase: config['phase'] == 'input' ? CardPhase.input : CardPhase.selection,
       selectedHexagram: null,
     );
@@ -67,23 +68,34 @@ class HomeViewModel extends _$HomeViewModel {
 
   void selectConversation(Conversation conversation) {
     state = state.copyWith(
-      activeConversationId: conversation.id,
-      selectedClassicType: conversation.classicType,
+      activeChatRoomId: conversation.id,
+      selectedClassicType: conversation.topicCode,
       phase: CardPhase.input,
     );
   }
 
-  void startNewChat() {
+  Future<void> startNewChat() async {
     final type = state.selectedClassicType;
-    _initializeByClassicType(type);
     
-    // Note: In a real app, we might want to keep the mock ID generation 
-    // or call the repository to create a new conversation.
-    // For now, focusing on state initialization consistency.
+    try {
+      final useCase = ref.read(createConversationUseCaseProvider);
+      final newConv = await useCase(
+        title: '${type.displayName} 새 대화',
+        topicCode: type.name,
+      );
+      
+      _initializeByClassicType(type);
+      state = state.copyWith(activeChatRoomId: newConv.id);
+      
+      // 목록 갱신 트리거 (Side effect)
+      ref.read(chatListViewModelProvider.notifier).refresh();
+    } catch (e) {
+       // 에러 처리 (필요시 UiState 활용)
+    }
   }
 
-  void clearActiveConversation() {
-    state = state.copyWith(clearActiveConversation: true);
+  void clearActiveChatRoom() {
+    state = state.copyWith(clearActiveChatRoom: true);
     resetInitialPhase();
   }
 

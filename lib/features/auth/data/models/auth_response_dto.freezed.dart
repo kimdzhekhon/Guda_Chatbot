@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthResponseDto {
 
- String get id; String get email;@JsonKey(name: 'full_name') String? get displayName;@JsonKey(name: 'avatar_url') String? get photoUrl; String? get nickname;@JsonKey(name: 'birth_date') String? get birthDate; String? get persona;@JsonKey(name: 'terms_agreed_at') String? get termsAgreedAt;@JsonKey(name: 'created_at') String get createdAt;
+ String get id; String get email;@JsonKey(name: 'full_name') String? get displayName;@JsonKey(name: 'avatar_url') String? get photoUrl; String? get nickname;@JsonKey(name: 'birth_date') String? get birthDate; PersonaType? get persona;@JsonKey(name: 'terms_agreed_at') String? get termsAgreedAt;@JsonKey(name: 'created_at') String get createdAt;
 /// Create a copy of AuthResponseDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $AuthResponseDtoCopyWith<$Res>  {
   factory $AuthResponseDtoCopyWith(AuthResponseDto value, $Res Function(AuthResponseDto) _then) = _$AuthResponseDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String email,@JsonKey(name: 'full_name') String? displayName,@JsonKey(name: 'avatar_url') String? photoUrl, String? nickname,@JsonKey(name: 'birth_date') String? birthDate, String? persona,@JsonKey(name: 'terms_agreed_at') String? termsAgreedAt,@JsonKey(name: 'created_at') String createdAt
+ String id, String email,@JsonKey(name: 'full_name') String? displayName,@JsonKey(name: 'avatar_url') String? photoUrl, String? nickname,@JsonKey(name: 'birth_date') String? birthDate, PersonaType? persona,@JsonKey(name: 'terms_agreed_at') String? termsAgreedAt,@JsonKey(name: 'created_at') String createdAt
 });
 
 
@@ -74,7 +74,7 @@ as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: 
 as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
 as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as String?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
-as String?,termsAgreedAt: freezed == termsAgreedAt ? _self.termsAgreedAt : termsAgreedAt // ignore: cast_nullable_to_non_nullable
+as PersonaType?,termsAgreedAt: freezed == termsAgreedAt ? _self.termsAgreedAt : termsAgreedAt // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -161,7 +161,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'full_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? photoUrl,  String? nickname, @JsonKey(name: 'birth_date')  String? birthDate,  String? persona, @JsonKey(name: 'terms_agreed_at')  String? termsAgreedAt, @JsonKey(name: 'created_at')  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'full_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? photoUrl,  String? nickname, @JsonKey(name: 'birth_date')  String? birthDate,  PersonaType? persona, @JsonKey(name: 'terms_agreed_at')  String? termsAgreedAt, @JsonKey(name: 'created_at')  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthResponseDto() when $default != null:
 return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreedAt,_that.createdAt);case _:
@@ -182,7 +182,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'full_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? photoUrl,  String? nickname, @JsonKey(name: 'birth_date')  String? birthDate,  String? persona, @JsonKey(name: 'terms_agreed_at')  String? termsAgreedAt, @JsonKey(name: 'created_at')  String createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'full_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? photoUrl,  String? nickname, @JsonKey(name: 'birth_date')  String? birthDate,  PersonaType? persona, @JsonKey(name: 'terms_agreed_at')  String? termsAgreedAt, @JsonKey(name: 'created_at')  String createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _AuthResponseDto():
 return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreedAt,_that.createdAt);case _:
@@ -202,7 +202,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email, @JsonKey(name: 'full_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? photoUrl,  String? nickname, @JsonKey(name: 'birth_date')  String? birthDate,  String? persona, @JsonKey(name: 'terms_agreed_at')  String? termsAgreedAt, @JsonKey(name: 'created_at')  String createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email, @JsonKey(name: 'full_name')  String? displayName, @JsonKey(name: 'avatar_url')  String? photoUrl,  String? nickname, @JsonKey(name: 'birth_date')  String? birthDate,  PersonaType? persona, @JsonKey(name: 'terms_agreed_at')  String? termsAgreedAt, @JsonKey(name: 'created_at')  String createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthResponseDto() when $default != null:
 return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreedAt,_that.createdAt);case _:
@@ -226,7 +226,7 @@ class _AuthResponseDto extends AuthResponseDto {
 @override@JsonKey(name: 'avatar_url') final  String? photoUrl;
 @override final  String? nickname;
 @override@JsonKey(name: 'birth_date') final  String? birthDate;
-@override final  String? persona;
+@override final  PersonaType? persona;
 @override@JsonKey(name: 'terms_agreed_at') final  String? termsAgreedAt;
 @override@JsonKey(name: 'created_at') final  String createdAt;
 
@@ -263,7 +263,7 @@ abstract mixin class _$AuthResponseDtoCopyWith<$Res> implements $AuthResponseDto
   factory _$AuthResponseDtoCopyWith(_AuthResponseDto value, $Res Function(_AuthResponseDto) _then) = __$AuthResponseDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email,@JsonKey(name: 'full_name') String? displayName,@JsonKey(name: 'avatar_url') String? photoUrl, String? nickname,@JsonKey(name: 'birth_date') String? birthDate, String? persona,@JsonKey(name: 'terms_agreed_at') String? termsAgreedAt,@JsonKey(name: 'created_at') String createdAt
+ String id, String email,@JsonKey(name: 'full_name') String? displayName,@JsonKey(name: 'avatar_url') String? photoUrl, String? nickname,@JsonKey(name: 'birth_date') String? birthDate, PersonaType? persona,@JsonKey(name: 'terms_agreed_at') String? termsAgreedAt,@JsonKey(name: 'created_at') String createdAt
 });
 
 
@@ -289,7 +289,7 @@ as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: 
 as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
 as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as String?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
-as String?,termsAgreedAt: freezed == termsAgreedAt ? _self.termsAgreedAt : termsAgreedAt // ignore: cast_nullable_to_non_nullable
+as PersonaType?,termsAgreedAt: freezed == termsAgreedAt ? _self.termsAgreedAt : termsAgreedAt // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));

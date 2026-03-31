@@ -11,12 +11,12 @@ abstract class ConversationDto with _$ConversationDto {
   const factory ConversationDto({
     required String id,
     required String title,
-    @JsonKey(name: 'classic_type') required String classicType,
+    @JsonKey(name: 'topic_code') required String topicCode,
     @JsonKey(name: 'user_id') required String userId,
     @JsonKey(name: 'last_message_preview') String? lastMessagePreview,
     @JsonKey(name: 'message_count') @Default(0) int messageCount,
-    @JsonKey(name: 'created_at') required String createdAt,
-    @JsonKey(name: 'updated_at') required String updatedAt,
+    @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'last_message_at') String? lastMessageAt,
   }) = _ConversationDto;
 
   factory ConversationDto.fromJson(Map<String, dynamic> json) =>
@@ -27,11 +27,11 @@ abstract class ConversationDto with _$ConversationDto {
   Conversation toDomain() => Conversation(
     id: id,
     title: title,
-    classicType: ClassicType.values.firstWhere((e) => e.name == classicType),
+    topicCode: ClassicType.values.firstWhere((e) => e.name == topicCode),
     userId: userId,
     lastMessagePreview: lastMessagePreview,
     messageCount: messageCount,
-    createdAt: DateTime.parse(createdAt),
-    updatedAt: DateTime.parse(updatedAt),
+    createdAt: createdAt != null ? DateTime.parse(createdAt!) : DateTime.now(),
+    lastMessageAt: lastMessageAt != null ? DateTime.parse(lastMessageAt!) : DateTime.now(),
   );
 }

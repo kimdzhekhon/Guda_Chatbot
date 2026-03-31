@@ -7,9 +7,9 @@ part of 'message_dto.dart';
 // **************************************************************************
 
 _MessageDto _$MessageDtoFromJson(Map<String, dynamic> json) => _MessageDto(
-  id: json['id'] as String,
-  conversationId: json['conversation_id'] as String,
-  role: json['role'] as String,
+  id: (json['id'] as num).toInt(),
+  chatRoomId: json['chat_rooms_id'] as String,
+  senderRole: json['sender_role'] as String,
   content: json['content'] as String,
   createdAt: json['created_at'] as String,
 );
@@ -17,8 +17,8 @@ _MessageDto _$MessageDtoFromJson(Map<String, dynamic> json) => _MessageDto(
 Map<String, dynamic> _$MessageDtoToJson(_MessageDto instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'conversation_id': instance.conversationId,
-      'role': instance.role,
+      'chat_rooms_id': instance.chatRoomId,
+      'sender_role': instance.senderRole,
       'content': instance.content,
       'created_at': instance.createdAt,
     };

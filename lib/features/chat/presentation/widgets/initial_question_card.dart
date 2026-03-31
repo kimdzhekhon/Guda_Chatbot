@@ -33,7 +33,7 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final activeId = ref.read(homeViewModelProvider).activeConversationId;
+      final activeId = ref.read(homeViewModelProvider).activeChatRoomId;
       // 새 대화(mock ID)인 경우에만 초기 단계로 리셋
       if (activeId == null || activeId.startsWith('mock-new-')) {
         ref.read(homeViewModelProvider.notifier).resetInitialPhase();

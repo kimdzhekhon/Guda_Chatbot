@@ -10,7 +10,7 @@ _CreateConversationRequestDto _$CreateConversationRequestDtoFromJson(
   Map<String, dynamic> json,
 ) => _CreateConversationRequestDto(
   title: json['title'] as String,
-  classicType: json['classic_type'] as String,
+  topicCode: json['topic_code'] as String,
   userId: json['user_id'] as String,
 );
 
@@ -18,40 +18,38 @@ Map<String, dynamic> _$CreateConversationRequestDtoToJson(
   _CreateConversationRequestDto instance,
 ) => <String, dynamic>{
   'title': instance.title,
-  'classic_type': instance.classicType,
+  'topic_code': instance.topicCode,
   'user_id': instance.userId,
 };
 
 _SaveMessageRequestDto _$SaveMessageRequestDtoFromJson(
   Map<String, dynamic> json,
 ) => _SaveMessageRequestDto(
-  conversationId: json['conversation_id'] as String,
+  chatRoomId: json['chat_rooms_id'] as String,
   content: json['content'] as String,
-  role: json['role'] as String,
+  senderRole: json['sender_role'] as String,
 );
 
 Map<String, dynamic> _$SaveMessageRequestDtoToJson(
   _SaveMessageRequestDto instance,
 ) => <String, dynamic>{
-  'conversation_id': instance.conversationId,
+  'chat_rooms_id': instance.chatRoomId,
   'content': instance.content,
-  'role': instance.role,
+  'sender_role': instance.senderRole,
 };
 
 _GetMessagesRequestDto _$GetMessagesRequestDtoFromJson(
   Map<String, dynamic> json,
-) => _GetMessagesRequestDto(conversationId: json['conversation_id'] as String);
+) => _GetMessagesRequestDto(chatRoomId: json['chat_rooms_id'] as String);
 
 Map<String, dynamic> _$GetMessagesRequestDtoToJson(
   _GetMessagesRequestDto instance,
-) => <String, dynamic>{'conversation_id': instance.conversationId};
+) => <String, dynamic>{'chat_rooms_id': instance.chatRoomId};
 
 _DeleteConversationRequestDto _$DeleteConversationRequestDtoFromJson(
   Map<String, dynamic> json,
-) => _DeleteConversationRequestDto(
-  conversationId: json['conversation_id'] as String,
-);
+) => _DeleteConversationRequestDto(chatRoomId: json['chat_rooms_id'] as String);
 
 Map<String, dynamic> _$DeleteConversationRequestDtoToJson(
   _DeleteConversationRequestDto instance,
-) => <String, dynamic>{'conversation_id': instance.conversationId};
+) => <String, dynamic>{'chat_rooms_id': instance.chatRoomId};

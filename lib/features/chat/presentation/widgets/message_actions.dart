@@ -24,7 +24,7 @@ class GudaMessageActions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarksAsync = ref.watch(bookmarksProvider);
     final isBookmarked =
-        bookmarksAsync.value?.any((b) => b.referenceId == message.id) ?? false;
+        bookmarksAsync.value?.any((b) => b.referenceId == message.id.toString()) ?? false;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -41,7 +41,7 @@ class GudaMessageActions extends ConsumerWidget {
             if (isBookmarked) {
               ref
                   .read(bookmarksProvider.notifier)
-                  .removeBookmarkByReferenceId(message.id);
+                  .removeBookmarkByReferenceId(message.id.toString());
             } else {
               ref.read(bookmarksProvider.notifier).addBookmark(
                     Bookmark(
@@ -52,7 +52,7 @@ class GudaMessageActions extends ConsumerWidget {
                           : message.content,
                       content: message.content,
                       type: BookmarkType.message,
-                      referenceId: message.id,
+                      referenceId: message.id.toString(),
                       createdAt: DateTime.now(),
                     ),
                   );

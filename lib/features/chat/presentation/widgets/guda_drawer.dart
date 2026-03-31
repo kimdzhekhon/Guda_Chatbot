@@ -48,7 +48,7 @@ class GudaDrawer extends ConsumerWidget {
                   ),
                 },
               ),
-              if (ref.watch(homeViewModelProvider).activeConversationId != null)
+              if (ref.watch(homeViewModelProvider).activeChatRoomId != null)
                 const DrawerUserFooter(),
             ],
           ),
