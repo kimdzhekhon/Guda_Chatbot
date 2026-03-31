@@ -3,6 +3,7 @@ import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/repositories/auth_repository.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
+import 'package:guda_chatbot/features/auth/data/models/persona_update_dto.dart';
 
 /// AuthRepository 구현체 — data 레이어
 class AuthRepositoryImpl implements AuthRepository {
@@ -79,5 +80,18 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     await _dataSource.updateProfile(dto);
+  }
+
+  @override
+  Future<void> updatePersona(String persona) async {
+    final user = await _dataSource.getCurrentUser();
+    if (user == null) throw Exception('로그인된 사용자가 없습니다.');
+
+    final dto = PersonaUpdateDto(
+      userId: user.id,
+      persona: persona,
+    );
+
+    await _dataSource.updatePersona(dto);
   }
 }

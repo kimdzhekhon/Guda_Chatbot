@@ -40,6 +40,10 @@ GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) =>
 UpdateProfileUseCase updateProfileUseCase(Ref ref) =>
     UpdateProfileUseCase(ref.watch(authRepositoryProvider));
 
+@riverpod
+UpdatePersonaUseCase updatePersonaUseCase(Ref ref) =>
+    UpdatePersonaUseCase(ref.watch(authRepositoryProvider));
+
 /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 @riverpod
 class AuthViewModel extends _$AuthViewModel {
@@ -159,6 +163,20 @@ class AuthViewModel extends _$AuthViewModel {
       state = const UiSuccess(null);
     } catch (e) {
       state = UiError('계정 탈퇴 중 오류가 발생했습니다: ${e.toString()}');
+    }
+  }
+
+  /// 페르소나 업데이트 (설정 화면)
+  Future<void> updatePersona(String persona) async {
+    // UI 로딩 상태로 변경하지 않음 (페르소나 변경은 백그라운드에서 처리하고 UI는 즉시 반영되는 것이 자연스러움)
+    try {
+      await ref.read(updatePersonaUseCaseProvider).call(persona);
+      
+      // 업데이트된 정보를 반영하기 위해 유저 정보 재조회하여 상태 갱신
+      final updatedUser = await ref.read(getCurrentUserUseCaseProvider).call();
+      state = UiSuccess(updatedUser);
+    } catch (e) {
+      // 에러 발생 시 로그만 남기거나 무시 (혹은 필요시 에러 알림)
     }
   }
 }

@@ -17,8 +17,7 @@ class PaymentSelectionModal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final plans = ref.watch(paymentViewModelProvider.select((s) => s.currentPlans));
-    final selectedType = ref.watch(paymentViewModelProvider.select((s) => s.selectedType));
+    final state = ref.watch(paymentViewModelProvider);
 
     return GudaBottomSheet(
       heightFactor: 0.8,
@@ -37,31 +36,69 @@ class PaymentSelectionModal extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: GudaSpacing.lg),
-          GudaToggleControl<PaymentType>(
-            selectedValue: selectedType,
-            options: const [
-              GudaToggleOption(
-                  label: AppStrings.subscriptionTypeLabel,
-                  value: PaymentType.subscription),
-              GudaToggleOption(
-                  label: AppStrings.chargeTypeLabel, value: PaymentType.charge),
-            ],
-            onChanged: (type) {
-              if (selectedType != type) {
-                ref.read(paymentViewModelProvider.notifier).selectType(type);
-              }
-            },
-          ),
-          const SizedBox(height: GudaSpacing.lg),
-          PaymentPlanSlider(
-            key: ValueKey(selectedType),
-            plans: plans,
-            onPlanSelected: (plan) {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        '${plan.name} ${AppStrings.planSelectionSuffix}')),
+          state.when(
+            loading: () => const Expanded(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (error, stack) => Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.grey),
+                    const SizedBox(height: GudaSpacing.sm),
+                    const Text('데이터를 가져오지 못했습니다.'),
+                    TextButton(
+                      onPressed: () =>
+                          ref.read(paymentViewModelProvider.notifier).refresh(),
+                      child: const Text('다시 시도'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            data: (paymentState) {
+              final selectedType = paymentState.selectedType;
+              final plans = paymentState.currentPlans;
+
+              return Expanded(
+                child: Column(
+                  children: [
+                    GudaToggleControl<PaymentType>(
+                      selectedValue: selectedType,
+                      options: const [
+                        GudaToggleOption(
+                            label: AppStrings.subscriptionTypeLabel,
+                            value: PaymentType.subscription),
+                        GudaToggleOption(
+                            label: AppStrings.chargeTypeLabel,
+                            value: PaymentType.charge),
+                      ],
+                      onChanged: (type) {
+                        if (selectedType != type) {
+                          ref
+                              .read(paymentViewModelProvider.notifier)
+                              .selectType(type);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: GudaSpacing.lg),
+                    Expanded(
+                      child: PaymentPlanSlider(
+                        key: ValueKey(selectedType),
+                        plans: plans,
+                        onPlanSelected: (plan) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    '${plan.name} ${AppStrings.planSelectionSuffix}')),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),

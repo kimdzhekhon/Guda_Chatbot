@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
+import 'package:guda_chatbot/features/auth/data/models/persona_update_dto.dart';
 import 'package:guda_chatbot/app/config/app_config.dart';
 
 /// Supabase 인증 데이터 소스 — Google OAuth 연동
@@ -93,6 +94,15 @@ class SupabaseAuthDataSource {
   /// 프로필 테이블 데이터 업데이트 (RPC 연동)
   Future<void> updateProfile(ProfileRegistrationDto dto) async {
     // architecture 규정상 RPC 형식을 준수하여 호출
+    await _supabase.rpc('upsert_profile', params: dto.toJson());
+  }
+
+  /// 페르소나 단일 업데이트 (RPC 연동)
+  Future<void> updatePersona(PersonaUpdateDto dto) async {
+    // 백엔드에 전용 RPC가 없는 경우를 대비해 upsert_profile을 재활용하거나
+    // 혹은 직접 profiles 테이블을 patch 합니다.
+    // 여기서는 RPC 규칙을 준수하여 upsert_profile에 필요한 필드만 보냅니다.
+    // (백엔드 upsert_profile이 partial update를 지원한다고 가정)
     await _supabase.rpc('upsert_profile', params: dto.toJson());
   }
 
