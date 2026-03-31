@@ -45,3 +45,23 @@ class GetCurrentUserUseCase {
   /// 현재 로그인된 사용자 반환 (미인증 시 null)
   Future<GudaUser?> call() => _repository.getCurrentUser();
 }
+
+/// 프로필 정보 업데이트 유즈케이스
+class UpdateProfileUseCase {
+  const UpdateProfileUseCase(this._repository);
+  final AuthRepository _repository;
+
+  /// 프로필 업데이트 실행
+  Future<void> call({
+    required String nickname,
+    required DateTime birthDate,
+    required String persona,
+    required bool termsAgreed,
+  }) =>
+      _repository.updateProfile(
+        nickname: nickname,
+        birthDate: birthDate,
+        persona: persona,
+        termsAgreed: termsAgreed,
+      );
+}
