@@ -54,10 +54,9 @@ class SupabaseChatDataSource {
 
   /// 대화 삭제
   Future<void> deleteConversation(DeleteConversationRequestDto request) async {
-    await _rpcInvoker.invoke(
+    await _rpcInvoker.invokeVoid(
       functionName: 'delete_chat_room',
       params: {'p_chat_room_id': request.chatRoomId},
-      fromJson: (json) => json, // 리턴값이 없는 경우 빈 맵 처리
     );
   }
 

@@ -53,7 +53,7 @@ abstract final class AppStrings {
   static const String cancel = '취소';
   static const String deleteAccount = '계정 탈퇴';
   static const String deleteAccountConfirmTitle = '계정 탈퇴';
-  static const String deleteAccountConfirmMessage = '정말 계정을 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.';
+  static const String deleteAccountConfirmMessage = '계정을 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.';
 
   // 채팅
   static const String chatInputHint = '메시지를 입력하세요...';
@@ -64,6 +64,9 @@ abstract final class AppStrings {
   static const String conversationLoadFail = '대화 목록을 불러오는 데 실패했습니다.';
   static const String conversationCreateFail = '대화 생성에 실패했습니다.';
   static const String conversationDeleteFail = '대화 삭제에 실패했습니다.';
+  static const String deleteConversationTitle = '대화 삭제';
+  static const String deleteConversationMessage = '정말 이 대화를 삭제하시겠습니까?\n삭제된 대화는 복구할 수 없습니다.';
+  static const String deleteLabel = '삭제';
   static const String aiAdviceTitle = 'Guda AI의 조언';
   static const String aiAdviceMsg = 'Guda AI가 전하는 고전의 지혜입니다.';
   static const String shareAsImage = '이미지로 공유하기';
