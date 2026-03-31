@@ -11,6 +11,7 @@ class CreateConversationUseCase {
     required String title,
     required String topicCode,
     required String personaId,
+    String? hexagramId,
   }) {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
@@ -23,6 +24,7 @@ class CreateConversationUseCase {
         topicCode: topicCode,
         userId: user.id,
         personaId: personaId,
+        hexagramId: hexagramId,
       ),
     );
   }

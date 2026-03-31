@@ -19,7 +19,8 @@ mixin _$Conversation {
  String get title;/// 주제 코드 (고전 유형)
  ClassicType get topicCode;/// 소유자 사용자 ID
  String get userId;/// 페르소나 ID
- String? get personaId;/// 마지막 메시지 미리보기
+ String? get personaId;/// 주역 괘 번호 (이름)
+ String? get hexagramId;/// 마지막 메시지 미리보기
  String? get lastMessagePreview;/// 메시지 총 개수
  int get messageCount;/// 생성 일시
  DateTime get createdAt;/// 최종 메시지 일시
@@ -34,16 +35,16 @@ $ConversationCopyWith<Conversation> get copyWith => _$ConversationCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Conversation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.personaId, personaId) || other.personaId == personaId)&&(identical(other.lastMessagePreview, lastMessagePreview) || other.lastMessagePreview == lastMessagePreview)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessageAt, lastMessageAt) || other.lastMessageAt == lastMessageAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Conversation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.personaId, personaId) || other.personaId == personaId)&&(identical(other.hexagramId, hexagramId) || other.hexagramId == hexagramId)&&(identical(other.lastMessagePreview, lastMessagePreview) || other.lastMessagePreview == lastMessagePreview)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessageAt, lastMessageAt) || other.lastMessageAt == lastMessageAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,topicCode,userId,personaId,lastMessagePreview,messageCount,createdAt,lastMessageAt);
+int get hashCode => Object.hash(runtimeType,id,title,topicCode,userId,personaId,hexagramId,lastMessagePreview,messageCount,createdAt,lastMessageAt);
 
 @override
 String toString() {
-  return 'Conversation(id: $id, title: $title, topicCode: $topicCode, userId: $userId, personaId: $personaId, lastMessagePreview: $lastMessagePreview, messageCount: $messageCount, createdAt: $createdAt, lastMessageAt: $lastMessageAt)';
+  return 'Conversation(id: $id, title: $title, topicCode: $topicCode, userId: $userId, personaId: $personaId, hexagramId: $hexagramId, lastMessagePreview: $lastMessagePreview, messageCount: $messageCount, createdAt: $createdAt, lastMessageAt: $lastMessageAt)';
 }
 
 
@@ -54,7 +55,7 @@ abstract mixin class $ConversationCopyWith<$Res>  {
   factory $ConversationCopyWith(Conversation value, $Res Function(Conversation) _then) = _$ConversationCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, ClassicType topicCode, String userId, String? personaId, String? lastMessagePreview, int messageCount, DateTime createdAt, DateTime lastMessageAt
+ String id, String title, ClassicType topicCode, String userId, String? personaId, String? hexagramId, String? lastMessagePreview, int messageCount, DateTime createdAt, DateTime lastMessageAt
 });
 
 
@@ -71,13 +72,14 @@ class _$ConversationCopyWithImpl<$Res>
 
 /// Create a copy of Conversation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? topicCode = null,Object? userId = null,Object? personaId = freezed,Object? lastMessagePreview = freezed,Object? messageCount = null,Object? createdAt = null,Object? lastMessageAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? topicCode = null,Object? userId = null,Object? personaId = freezed,Object? hexagramId = freezed,Object? lastMessagePreview = freezed,Object? messageCount = null,Object? createdAt = null,Object? lastMessageAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,topicCode: null == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
 as ClassicType,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,personaId: freezed == personaId ? _self.personaId : personaId // ignore: cast_nullable_to_non_nullable
+as String?,hexagramId: freezed == hexagramId ? _self.hexagramId : hexagramId // ignore: cast_nullable_to_non_nullable
 as String?,lastMessagePreview: freezed == lastMessagePreview ? _self.lastMessagePreview : lastMessagePreview // ignore: cast_nullable_to_non_nullable
 as String?,messageCount: null == messageCount ? _self.messageCount : messageCount // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -167,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  ClassicType topicCode,  String userId,  String? personaId,  String? lastMessagePreview,  int messageCount,  DateTime createdAt,  DateTime lastMessageAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  ClassicType topicCode,  String userId,  String? personaId,  String? hexagramId,  String? lastMessagePreview,  int messageCount,  DateTime createdAt,  DateTime lastMessageAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Conversation() when $default != null:
-return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaId,_that.lastMessagePreview,_that.messageCount,_that.createdAt,_that.lastMessageAt);case _:
+return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaId,_that.hexagramId,_that.lastMessagePreview,_that.messageCount,_that.createdAt,_that.lastMessageAt);case _:
   return orElse();
 
 }
@@ -188,10 +190,10 @@ return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaI
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  ClassicType topicCode,  String userId,  String? personaId,  String? lastMessagePreview,  int messageCount,  DateTime createdAt,  DateTime lastMessageAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  ClassicType topicCode,  String userId,  String? personaId,  String? hexagramId,  String? lastMessagePreview,  int messageCount,  DateTime createdAt,  DateTime lastMessageAt)  $default,) {final _that = this;
 switch (_that) {
 case _Conversation():
-return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaId,_that.lastMessagePreview,_that.messageCount,_that.createdAt,_that.lastMessageAt);case _:
+return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaId,_that.hexagramId,_that.lastMessagePreview,_that.messageCount,_that.createdAt,_that.lastMessageAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +210,10 @@ return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaI
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  ClassicType topicCode,  String userId,  String? personaId,  String? lastMessagePreview,  int messageCount,  DateTime createdAt,  DateTime lastMessageAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  ClassicType topicCode,  String userId,  String? personaId,  String? hexagramId,  String? lastMessagePreview,  int messageCount,  DateTime createdAt,  DateTime lastMessageAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Conversation() when $default != null:
-return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaId,_that.lastMessagePreview,_that.messageCount,_that.createdAt,_that.lastMessageAt);case _:
+return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaId,_that.hexagramId,_that.lastMessagePreview,_that.messageCount,_that.createdAt,_that.lastMessageAt);case _:
   return null;
 
 }
@@ -223,7 +225,7 @@ return $default(_that.id,_that.title,_that.topicCode,_that.userId,_that.personaI
 
 
 class _Conversation implements Conversation {
-  const _Conversation({required this.id, required this.title, required this.topicCode, required this.userId, this.personaId, this.lastMessagePreview, this.messageCount = 0, required this.createdAt, required this.lastMessageAt});
+  const _Conversation({required this.id, required this.title, required this.topicCode, required this.userId, this.personaId, this.hexagramId, this.lastMessagePreview, this.messageCount = 0, required this.createdAt, required this.lastMessageAt});
   
 
 /// Supabase 대화 UUID
@@ -236,6 +238,8 @@ class _Conversation implements Conversation {
 @override final  String userId;
 /// 페르소나 ID
 @override final  String? personaId;
+/// 주역 괘 번호 (이름)
+@override final  String? hexagramId;
 /// 마지막 메시지 미리보기
 @override final  String? lastMessagePreview;
 /// 메시지 총 개수
@@ -255,16 +259,16 @@ _$ConversationCopyWith<_Conversation> get copyWith => __$ConversationCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Conversation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.personaId, personaId) || other.personaId == personaId)&&(identical(other.lastMessagePreview, lastMessagePreview) || other.lastMessagePreview == lastMessagePreview)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessageAt, lastMessageAt) || other.lastMessageAt == lastMessageAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Conversation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.personaId, personaId) || other.personaId == personaId)&&(identical(other.hexagramId, hexagramId) || other.hexagramId == hexagramId)&&(identical(other.lastMessagePreview, lastMessagePreview) || other.lastMessagePreview == lastMessagePreview)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastMessageAt, lastMessageAt) || other.lastMessageAt == lastMessageAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,topicCode,userId,personaId,lastMessagePreview,messageCount,createdAt,lastMessageAt);
+int get hashCode => Object.hash(runtimeType,id,title,topicCode,userId,personaId,hexagramId,lastMessagePreview,messageCount,createdAt,lastMessageAt);
 
 @override
 String toString() {
-  return 'Conversation(id: $id, title: $title, topicCode: $topicCode, userId: $userId, personaId: $personaId, lastMessagePreview: $lastMessagePreview, messageCount: $messageCount, createdAt: $createdAt, lastMessageAt: $lastMessageAt)';
+  return 'Conversation(id: $id, title: $title, topicCode: $topicCode, userId: $userId, personaId: $personaId, hexagramId: $hexagramId, lastMessagePreview: $lastMessagePreview, messageCount: $messageCount, createdAt: $createdAt, lastMessageAt: $lastMessageAt)';
 }
 
 
@@ -275,7 +279,7 @@ abstract mixin class _$ConversationCopyWith<$Res> implements $ConversationCopyWi
   factory _$ConversationCopyWith(_Conversation value, $Res Function(_Conversation) _then) = __$ConversationCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, ClassicType topicCode, String userId, String? personaId, String? lastMessagePreview, int messageCount, DateTime createdAt, DateTime lastMessageAt
+ String id, String title, ClassicType topicCode, String userId, String? personaId, String? hexagramId, String? lastMessagePreview, int messageCount, DateTime createdAt, DateTime lastMessageAt
 });
 
 
@@ -292,13 +296,14 @@ class __$ConversationCopyWithImpl<$Res>
 
 /// Create a copy of Conversation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? topicCode = null,Object? userId = null,Object? personaId = freezed,Object? lastMessagePreview = freezed,Object? messageCount = null,Object? createdAt = null,Object? lastMessageAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? topicCode = null,Object? userId = null,Object? personaId = freezed,Object? hexagramId = freezed,Object? lastMessagePreview = freezed,Object? messageCount = null,Object? createdAt = null,Object? lastMessageAt = null,}) {
   return _then(_Conversation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,topicCode: null == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
 as ClassicType,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,personaId: freezed == personaId ? _self.personaId : personaId // ignore: cast_nullable_to_non_nullable
+as String?,hexagramId: freezed == hexagramId ? _self.hexagramId : hexagramId // ignore: cast_nullable_to_non_nullable
 as String?,lastMessagePreview: freezed == lastMessagePreview ? _self.lastMessagePreview : lastMessagePreview // ignore: cast_nullable_to_non_nullable
 as String?,messageCount: null == messageCount ? _self.messageCount : messageCount // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable

@@ -142,10 +142,12 @@ class SupabaseRpcInvoker implements RpcInvoker {
       debugPrint('[RPC Stream Call] Started: $functionName');
       
       final session = _supabase.auth.currentSession;
+      final accessToken = session?.accessToken;
       final supabaseKey = AppConfig.supabaseAnonKey;
+      
       final headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${session?.accessToken ?? supabaseKey}',
+        'Authorization': 'Bearer ${accessToken ?? supabaseKey}',
         'apikey': supabaseKey,
       };
 

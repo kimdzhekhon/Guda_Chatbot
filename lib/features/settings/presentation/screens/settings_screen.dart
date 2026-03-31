@@ -144,11 +144,14 @@ class SettingsScreen extends ConsumerWidget {
               GudaTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: AppStrings.appVersionLabel,
-                trailing: Text(
-                  AppStrings.version.split(' ').last,
-                  style: GudaTypography.caption(
-                    color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                  ).copyWith(height: 1.2),
+                trailing: Padding(
+                  padding: const EdgeInsets.only(top: 3.0),
+                  child: Text(
+                    AppStrings.version.split(' ').last,
+                    style: GudaTypography.caption(
+                      color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                    ).copyWith(height: 1.2),
+                  ),
                 ),
               ),
               const GudaDivider(alpha: 1.0),
@@ -234,11 +237,14 @@ class _PersonaSelectionTile extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            persona.name.split(' ').first, // '기본' 또는 '친절한' 등 앞단어만 표시
-            style: GudaTypography.caption(
-              color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ).copyWith(height: 1.2),
+          Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: Text(
+              persona.name.split(' ').first, // '기본' 또는 '친절한' 등 앞단어만 표시
+              style: GudaTypography.caption(
+                color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              ).copyWith(height: 1.2),
+            ),
           ),
           const SizedBox(width: GudaSpacing.xs),
           Icon(
@@ -279,11 +285,14 @@ class _ThemeSelectionTile extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            modeLabel,
-            style: GudaTypography.caption(
-              color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ).copyWith(height: 1.2),
+          Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: Text(
+              modeLabel,
+              style: GudaTypography.caption(
+                color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              ).copyWith(height: 1.2),
+            ),
           ),
           const SizedBox(width: GudaSpacing.xs),
           Icon(

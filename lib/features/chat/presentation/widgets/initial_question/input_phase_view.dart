@@ -64,12 +64,18 @@ class InputPhaseView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: GudaSpacing.lg),
-          GudaButton.filled(
-            label: type == ClassicType.tripitaka
-                ? AppStrings.tripitakaStartButton
-                : AppStrings.startDivinationButton,
-            onPressed: () => onStart(controller.text),
-            isFullWidth: true,
+          ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) {
+              final isInputEmpty = controller.text.trim().isEmpty;
+              return GudaButton.filled(
+                label: type == ClassicType.tripitaka
+                    ? AppStrings.tripitakaStartButton
+                    : AppStrings.startDivinationButton,
+                onPressed: isInputEmpty ? null : () => onStart(controller.text),
+                isFullWidth: true,
+              );
+            },
           ),
         ],
       ),

@@ -89,7 +89,6 @@ class HomeViewModel extends _$HomeViewModel {
     state = state.copyWith(
       activeChatRoomId: null,
       isPendingNewChat: true,
-      phase: CardPhase.input,
     );
   }
 
@@ -99,8 +98,12 @@ class HomeViewModel extends _$HomeViewModel {
       activeChatRoomId: chatRoomId,
       isPendingNewChat: false,
     );
-    // 목록 갱신 트리거
-    ref.read(chatListViewModelProvider.notifier).refresh();
+    // 목록 갱신: microtask로 지연하여 현재 빌드 사이클 이후에 실행
+    Future.microtask(() {
+      if (ref.mounted) {
+        ref.read(chatListViewModelProvider.notifier).refresh();
+      }
+    });
   }
 
   /// Pending 상태에서 현재 페르소나 ID를 반환 (기본값: basic)

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_datasource.dart';
@@ -63,12 +64,15 @@ class ChatListViewModel extends _$ChatListViewModel {
   }
 
   Future<void> refresh() async {
+    if (!ref.mounted) return;
     state = const UiLoading();
     try {
       final useCase = ref.read(getConversationsUseCaseProvider);
       final conversations = await useCase();
+      if (!ref.mounted) return;
       state = UiSuccess(conversations);
     } catch (e) {
+      if (!ref.mounted) return;
       state = UiError('${AppStrings.conversationLoadFail}: ${e.toString()}');
     }
   }
@@ -125,12 +129,26 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
   }
 
   Future<void> _loadMessages() async {
-    state = const UiLoading();
+    // 이미 로딩이 불필요한 상황(예: sendMessage로 인해 성공 상태 진입)이면 state 변경을 최소화
+    if (state is! UiSuccess) {
+      if (!ref.mounted) return;
+      state = const UiLoading();
+    }
     try {
       final useCase = ref.read(getMessagesUseCaseProvider);
-      final messages = await useCase(chatRoomId);
-      state = UiSuccess(messages);
+      final dbMessages = await useCase(chatRoomId);
+      if (!ref.mounted) return;
+
+      // 만약 가져오는 도중 sendMessage가 호출되어 State에 임시 메시지가 존재한다면 병합
+      final currentData = state.dataOrNull;
+      if (currentData != null && currentData.any((m) => m.isStreaming || m.id > 1000000000000)) {
+        final tempMsgs = currentData.where((m) => m.isStreaming || m.id > 1000000000000).toList();
+        state = UiSuccess([...dbMessages, ...tempMsgs]);
+      } else {
+        state = UiSuccess(dbMessages);
+      }
     } catch (e) {
+      if (!ref.mounted) return;
       state = UiError('${AppStrings.messageLoadFail} ${e.toString()}');
     }
   }
@@ -163,9 +181,10 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       isStreaming: true,
     );
     
-    state = UiSuccess([...currentMessages, tempUserMsg, aiStreamingMsg]);
-
     try {
+      if (!ref.mounted) return;
+      state = UiSuccess([...currentMessages, tempUserMsg, aiStreamingMsg]);
+
       final useCase = ref.read(sendMessageUseCaseProvider);
       final personaId = ref.read(personaProvider).dataOrNull;
       String accumulatedContent = '';
@@ -176,6 +195,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         topicCode: topicCode.name,
         personaId: personaId,
       )) {
+        if (!ref.mounted) break;
         accumulatedContent += chunk;
         
         // UI 상태 업데이트
@@ -186,6 +206,8 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         ]);
       }
       
+      if (!ref.mounted) return;
+
       // 스트리밍 종료 후 상태 확정
       state = UiSuccess([
         ...currentMessages,
@@ -193,10 +215,19 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         aiStreamingMsg.copyWith(content: accumulatedContent, isStreaming: false),
       ]);
       
-      // DB와 동기화를 위해 실제 메시지 목록 다시 불러오기 (선택 사항)
-      // await _loadMessages();
     } catch (e) {
-      state = UiError('${AppStrings.messageSendFail} ${e.toString()}');
+      if (!ref.mounted) return;
+      // 에러 발생 시 전체 화면을 에러로 바꾸지 않고, 현재까지의 메시지 상태를 유지
+      debugPrint('${AppStrings.messageSendFail} ${e.toString()}');
+      
+      state = UiSuccess([
+        ...currentMessages,
+        tempUserMsg,
+        aiStreamingMsg.copyWith(
+          content: '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+          isStreaming: false,
+        ),
+      ]);
     }
   }
 }

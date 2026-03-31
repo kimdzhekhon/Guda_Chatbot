@@ -47,6 +47,7 @@ class SupabaseChatDataSource {
         'p_topic_code': request.topicCode,
         'p_user_id': request.userId,
         'p_persona_id': request.personaId,
+        'p_hexagram_id': request.hexagramId,
       },
       fromJson: ConversationDto.fromJson,
     );
@@ -82,6 +83,13 @@ class SupabaseChatDataSource {
     required String topicCode,
     String? personaId,
   }) async* {
+    // 앱 시작 직후 토큰 만료 문제를 방지하기 위해 세션 갱신 시도
+    try {
+      await _supabase.auth.refreshSession();
+    } catch (_) {
+      // 세션 갱신 실패 시에도 일단 진행 (익명 사용자 등 고려)
+    }
+
     final messagesForApi = await _buildMessagesForApi(
       chatRoomId,
       userMessage,
@@ -104,7 +112,24 @@ class SupabaseChatDataSource {
 
     final List<Map<String, String>> messages = [];
 
-    // 1. 페르소나 추가 지침이 있는 경우 첫 번째 시스템 메시지로 삽입
+    // 0. 주역 괘 정보 조회 및 AI 가이드 추가
+    final chatRoom = await _supabase
+        .from('chat_rooms')
+        .select('hexagram_id, topic_code')
+        .eq('id', chatRoomId)
+        .single();
+    
+    final hexagramName = chatRoom['hexagram_id'] as String?;
+    final topicCode = chatRoom['topic_code'] as String?;
+
+    if (topicCode == 'iching' && hexagramName != null) {
+      messages.add({
+        'role': 'system', 
+        'content': '주역 대화입니다. 사용자가 뽑은 괘는 \'$hexagramName\'입니다. 이 괘의 의미를 깊이 있게 풀이하여 사용자의 고민에 답해주세요.'
+      });
+    }
+
+    // 1. 페르소나 추가 지침이 있는 경우 시스템 메시지로 삽입
     if (personaId != null) {
       final type = PersonaType.fromString(personaId);
       String? addedPrompt;
