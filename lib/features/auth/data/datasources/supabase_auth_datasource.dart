@@ -1,12 +1,16 @@
+import 'dart:io';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
+import 'package:guda_chatbot/app/config/app_config.dart';
 
 /// Supabase 인증 데이터 소스 — Google OAuth 연동
 class SupabaseAuthDataSource {
   SupabaseAuthDataSource()
     : _supabase = Supabase.instance.client,
-      _googleSignIn = GoogleSignIn();
+      _googleSignIn = GoogleSignIn(
+        clientId: Platform.isIOS ? AppConfig.googleIosClientId : null,
+      );
 
   final SupabaseClient _supabase;
   final GoogleSignIn _googleSignIn;
@@ -38,30 +42,6 @@ class SupabaseAuthDataSource {
     final user = response.user;
     if (user == null) throw const AuthException('Supabase 인증에 실패했습니다.');
 
-    return _mapSupabaseUserToDto(user);
-  }
-
-  /// 이메일/비밀번호 로그인
-  Future<AuthResponseDto> signInWithEmail(String email, String password) async {
-    final response = await _supabase.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-
-    final user = response.user;
-    if (user == null) throw const AuthException('로그인에 실패했습니다.');
-    return _mapSupabaseUserToDto(user);
-  }
-
-  /// 이메일/비밀번호 회원가입
-  Future<AuthResponseDto> signUpWithEmail(String email, String password) async {
-    final response = await _supabase.auth.signUp(
-      email: email,
-      password: password,
-    );
-
-    final user = response.user;
-    if (user == null) throw const AuthException('회원가입에 실패했습니다.');
     return _mapSupabaseUserToDto(user);
   }
 

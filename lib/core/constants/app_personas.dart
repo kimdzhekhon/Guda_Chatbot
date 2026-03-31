@@ -1,5 +1,3 @@
-import 'package:guda_chatbot/core/constants/app_strings.dart';
-
 /// 페르소나 관련 프롬프트 및 상수 관리
 abstract final class AppPersonas {
   /// 기본 (지혜로운 현자) 추가 지침
