@@ -26,7 +26,7 @@ abstract class GudaUser with _$GudaUser {
     /// 생년월일
     DateTime? birthDate,
 
-    /// 페르소나 (PersonaType: wise, friendly, strict)
+    /// 페르소나 (PersonaType: basic, friendly, strict)
     PersonaType? persona,
 
     /// 약관 동의 여부

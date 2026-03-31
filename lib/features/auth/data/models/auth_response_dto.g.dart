@@ -33,7 +33,7 @@ Map<String, dynamic> _$AuthResponseDtoToJson(_AuthResponseDto instance) =>
     };
 
 const _$PersonaTypeEnumMap = {
-  PersonaType.wise: 'wise',
+  PersonaType.basic: 'basic',
   PersonaType.friendly: 'friendly',
   PersonaType.strict: 'strict',
 };

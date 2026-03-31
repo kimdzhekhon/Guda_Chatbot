@@ -20,7 +20,7 @@ mixin _$GudaUser {
  String? get displayName;/// Google 프로필 사진 URL
  String? get photoUrl;/// 닉네임 (사용자 설정)
  String? get nickname;/// 생년월일
- DateTime? get birthDate;/// 페르소나 (PersonaType: wise, friendly, strict)
+ DateTime? get birthDate;/// 페르소나 (PersonaType: basic, friendly, strict)
  PersonaType? get persona;/// 약관 동의 여부
  bool get termsAgreed;/// 계정 생성 일시
  DateTime get createdAt;
@@ -238,7 +238,7 @@ class _GudaUser extends GudaUser {
 @override final  String? nickname;
 /// 생년월일
 @override final  DateTime? birthDate;
-/// 페르소나 (PersonaType: wise, friendly, strict)
+/// 페르소나 (PersonaType: basic, friendly, strict)
 @override final  PersonaType? persona;
 /// 약관 동의 여부
 @override@JsonKey() final  bool termsAgreed;

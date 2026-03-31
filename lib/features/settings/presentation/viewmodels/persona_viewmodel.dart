@@ -12,21 +12,24 @@ part 'persona_viewmodel.g.dart';
 @Riverpod(keepAlive: true)
 class PersonaNotifier extends _$PersonaNotifier {
   @override
-  FutureOr<PersonaType> build() async {
-    // AuthViewModel의 상태를 구독하여 현재 사용자의 페르소나 정보를 가져옴
+  UiState<PersonaType> build() {
     final authState = ref.watch(authViewModelProvider);
     
-    final user = authState.dataOrNull;
-    return user?.persona ?? PersonaType.wise;
+    // AuthViewModel의 상태를 PersonaType 상태로 변환
+    return authState.when(
+      loading: () => const UiLoading(),
+      success: (user) => UiSuccess(user?.persona ?? PersonaType.basic),
+      error: (msg, code) => UiError(msg, errorCode: code),
+    );
   }
 
   /// 모든 가용 페르소나 목록 반환
   List<Persona> get personas => [
     const Persona(
-      id: PersonaType.wise,
+      id: PersonaType.basic,
       name: AppStrings.personaWiseName,
       description: AppStrings.personaWiseDesc,
-      addedPrompt: AppPersonas.wisePrompt,
+      addedPrompt: AppPersonas.basicPrompt,
     ),
     const Persona(
       id: PersonaType.friendly,
@@ -43,14 +46,20 @@ class PersonaNotifier extends _$PersonaNotifier {
   ];
 
   /// 현재 선택된 페르소나 타입
-  PersonaType get currentPersona => state.value ?? PersonaType.wise;
+  PersonaType get currentPersona => state.dataOrNull ?? PersonaType.basic;
 
   /// 페르소나 변경 및 저장 (AuthViewModel을 통해 DB 업데이트)
   Future<void> updatePersona(PersonaType personaType) async {
     // 즉시 상태 반영 (Optimistic UI)
-    state = AsyncValue.data(personaType);
+    state = UiSuccess(personaType);
     
-    // AuthViewModel을 통해 DB 업데이트 호출
-    await ref.read(authViewModelProvider.notifier).updatePersona(personaType);
+    try {
+      // AuthViewModel을 통해 DB 업데이트 호출
+      await ref.read(authViewModelProvider.notifier).updatePersona(personaType);
+    } catch (e) {
+      // 실패 시 상태 복원 (AuthViewModel이 이전 상태로 복구하므로 이를 반영하기 위해 build 재호출 유도 가능하지만
+      // 여기서는 명시적으로 에러 처리)
+      state = UiError(e.toString());
+    }
   }
 }

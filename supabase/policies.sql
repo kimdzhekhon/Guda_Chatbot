@@ -7,7 +7,9 @@ DROP POLICY IF EXISTS "Users can only view their own profile." ON profiles;
 CREATE POLICY "Users can only view their own profile." ON profiles FOR SELECT USING (auth.uid() = id);
 
 DROP POLICY IF EXISTS "Users can only update their own profile." ON profiles;
-CREATE POLICY "Users can only update their own profile." ON profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users can only update their own profile." ON profiles FOR UPDATE
+  USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id);
 
 -- 2. Chat Rooms
 DROP POLICY IF EXISTS "Users can manage their own chat rooms." ON chat_rooms;

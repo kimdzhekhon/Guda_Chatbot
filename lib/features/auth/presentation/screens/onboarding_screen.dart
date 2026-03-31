@@ -33,7 +33,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Step 2: Profile
   final TextEditingController _nicknameController = TextEditingController();
   DateTime? _selectedBirthDate;
-  PersonaType _selectedPersona = PersonaType.wise;
+  PersonaType _selectedPersona = PersonaType.basic;
 
   @override
   void dispose() {
@@ -355,7 +355,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildPersonaItem(PersonaType.wise, '현명한 현자'),
+            _buildPersonaItem(PersonaType.basic, '현명한 현자'),
             const SizedBox(height: GudaSpacing.md12),
             _buildPersonaItem(PersonaType.friendly, '따뜻한 친구'),
             const SizedBox(height: GudaSpacing.md12),

@@ -17,6 +17,7 @@ import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/app/theme/theme_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:guda_chatbot/features/settings/presentation/widgets/user_profile_card.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 
 /// SCR_SETTINGS — 설정 화면
@@ -219,10 +220,7 @@ class _PersonaSelectionTile extends ConsumerWidget {
     final personaState = ref.watch(personaProvider);
     final personaNotifier = ref.read(personaProvider.notifier);
 
-    final currentId = personaState.maybeWhen(
-      data: (id) => id,
-      orElse: () => 'wise',
-    );
+    final currentId = personaState.dataOrNull ?? PersonaType.basic;
 
     final persona = personaNotifier.personas.firstWhere(
       (p) => p.id == currentId,

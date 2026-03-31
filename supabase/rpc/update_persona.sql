@@ -2,7 +2,7 @@
 -- Usage: select update_persona('유저ID', 'wise/friendly/strict');
 CREATE OR REPLACE FUNCTION update_persona(
     p_user_id UUID,
-    p_persona TEXT
+    p_persona persona_type
 )
 RETURNS VOID AS $$
 BEGIN
