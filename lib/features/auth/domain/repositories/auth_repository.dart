@@ -28,4 +28,7 @@ abstract interface class AuthRepository {
     required String persona,
     required bool termsAgreed,
   });
+
+  /// 페르소나 단일 업데이트
+  Future<void> updatePersona(String persona);
 }

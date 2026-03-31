@@ -65,3 +65,12 @@ class UpdateProfileUseCase {
         termsAgreed: termsAgreed,
       );
 }
+
+/// 페르소나 업데이트 유즈케이스
+class UpdatePersonaUseCase {
+  const UpdatePersonaUseCase(this._repository);
+  final AuthRepository _repository;
+
+  /// 페르소나 업데이트 실행
+  Future<void> call(String persona) => _repository.updatePersona(persona);
+}

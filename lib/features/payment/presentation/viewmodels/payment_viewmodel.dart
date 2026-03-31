@@ -1,9 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:guda_chatbot/features/payment/data/datasources/supabase_product_datasource.dart';
+import 'package:guda_chatbot/features/payment/data/repositories/product_repository_impl.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
+import 'package:guda_chatbot/features/payment/domain/repositories/product_repository.dart';
+import 'package:guda_chatbot/features/payment/domain/usecases/get_payment_plans_usecase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'payment_viewmodel.g.dart';
 
+/// 결제 상태 클래스
 class PaymentState {
   final List<PaymentPlan> subscriptionPlans;
   final List<PaymentPlan> chargePlans;
@@ -31,75 +36,45 @@ class PaymentState {
   }
 }
 
+//--- 의존성 주입 레이어 ---
+
+@riverpod
+SupabaseProductDataSource productDataSource(Ref ref) {
+  return SupabaseProductDataSource();
+}
+
+@riverpod
+ProductRepository productRepository(Ref ref) {
+  final dataSource = ref.watch(productDataSourceProvider);
+  return ProductRepositoryImpl(dataSource: dataSource);
+}
+
+@riverpod
+GetPaymentPlansUseCase getPaymentPlansUseCase(Ref ref) {
+  final repository = ref.watch(productRepositoryProvider);
+  return GetPaymentPlansUseCase(repository);
+}
+
+//--- ViewModel 레이어 ---
+
 @riverpod
 class PaymentViewModel extends _$PaymentViewModel {
   @override
-  PaymentState build() {
-    final subscriptionPlans = [
-      const PaymentPlan(
-        id: 'light',
-        name: 'Guda Light',
-        price: 7900,
-        chatLimit: 500,
-        pricePerChat: 15.8,
-        description: '가볍게 시작하는 명상과 대화',
-        type: PaymentType.subscription,
-        icon: Icons.eco,
-      ),
-      const PaymentPlan(
-        id: 'pro',
-        name: 'Guda Pro',
-        price: 14900,
-        chatLimit: 1200,
-        pricePerChat: 12.4,
-        description: '깊이 있는 탐구를 위한 추천 요금제',
-        type: PaymentType.subscription,
-        icon: Icons.psychology,
-      ),
-      const PaymentPlan(
-        id: 'elite',
-        name: 'Guda Elite',
-        price: 29900,
-        chatLimit: 3000,
-        pricePerChat: 9.9,
-        description: '모든 지혜를 자유롭게 누리는 마스터 플랜',
-        type: PaymentType.subscription,
-        icon: Icons.workspace_premium,
-      ),
-    ];
+  Future<PaymentState> build() async {
+    return _loadPlans();
+  }
 
-    final chargePlans = [
-      const PaymentPlan(
-        id: 'charge_100',
-        name: '100회 충전',
-        price: 2900,
-        chatLimit: 100,
-        pricePerChat: 29.0,
-        description: '부담 없이 한 번씩 사용하는 실속형',
-        type: PaymentType.charge,
-        icon: Icons.chat_bubble,
-      ),
-      const PaymentPlan(
-        id: 'charge_200',
-        name: '200회 충전',
-        price: 4900,
-        chatLimit: 200,
-        pricePerChat: 24.5,
-        description: '가장 많은 사용자가 선택하는 충전식',
-        type: PaymentType.charge,
-        icon: Icons.forum,
-      ),
-      const PaymentPlan(
-        id: 'charge_500',
-        name: '500회 충전',
-        price: 9900,
-        chatLimit: 500,
-        pricePerChat: 19.8,
-        description: '헤비 유저를 위한 대용량 충전 플랜',
-        type: PaymentType.charge,
-        icon: Icons.people,
-      ),
-    ];
+  Future<PaymentState> _loadPlans() async {
+    final useCase = ref.read(getPaymentPlansUseCaseProvider);
+    final allPlans = await useCase.execute();
+
+    final subscriptionPlans = allPlans
+        .where((p) => p.type == PaymentType.subscription)
+        .toList();
+    
+    final chargePlans = allPlans
+        .where((p) => p.type == PaymentType.charge)
+        .toList();
 
     return PaymentState(
       subscriptionPlans: subscriptionPlans,
@@ -107,7 +82,18 @@ class PaymentViewModel extends _$PaymentViewModel {
     );
   }
 
-  void selectType(PaymentType type) {
-    state = state.copyWith(selectedType: type);
+  /// 탭 타입 변경
+  Future<void> selectType(PaymentType type) async {
+    // state 자체가 AsyncValue이므로 state.value로 접근 (해당 버전에서는 valueOrNull 대신 value 사용)
+    final currentState = state.value;
+    if (currentState != null) {
+      state = AsyncData(currentState.copyWith(selectedType: type));
+    }
+  }
+
+  /// 데이터 새로고침
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _loadPlans());
   }
 }
