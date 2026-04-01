@@ -81,6 +81,7 @@ class _StaticGuidanceBubble extends StatelessWidget {
         content: content,
         senderRole: MessageRole.assistant,
         createdAt: DateTime(2024), // Use static date to avoid rebuild comparisons
+        isSystem: true,
       ),
       showActions: false,
     );

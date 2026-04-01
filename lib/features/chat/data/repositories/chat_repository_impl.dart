@@ -1,5 +1,6 @@
 import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_datasource.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/chat_usage_log.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/save_message_result.dart';
@@ -49,4 +50,10 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Future<ChatUsage> getChatUsage() => _dataSource.getChatUsage();
+
+  @override
+  Future<List<ChatUsageLog>> getChatUsageLogs() async {
+    final dtos = await _dataSource.getChatUsageLogs();
+    return dtos.map((dto) => dto.toDomain()).toList();
+  }
 }

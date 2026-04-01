@@ -1,4 +1,5 @@
 import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/chat_usage_log.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
@@ -32,4 +33,7 @@ abstract interface class ChatRepository {
 
   /// 대화 사용량 조회
   Future<ChatUsage> getChatUsage();
+
+  /// 대화 사용 로그 조회
+  Future<List<ChatUsageLog>> getChatUsageLogs();
 }
