@@ -54,7 +54,7 @@ final class ProductDataSourceProvider
   }
 }
 
-String _$productDataSourceHash() => r'9f699a0bda46c0e936542c79f2f1c4c4ed40d9ae';
+String _$productDataSourceHash() => r'245c1f77939cf202fec58dfa3e106f5ad2dea117';
 
 @ProviderFor(productRepository)
 final productRepositoryProvider = ProductRepositoryProvider._();
@@ -150,6 +150,54 @@ final class GetPaymentPlansUseCaseProvider
 
 String _$getPaymentPlansUseCaseHash() =>
     r'850e4fe37e669446704e768945b16bd94e1d55cd';
+
+@ProviderFor(getTransactionLogsUseCase)
+final getTransactionLogsUseCaseProvider = GetTransactionLogsUseCaseProvider._();
+
+final class GetTransactionLogsUseCaseProvider
+    extends
+        $FunctionalProvider<
+          GetTransactionLogsUseCase,
+          GetTransactionLogsUseCase,
+          GetTransactionLogsUseCase
+        >
+    with $Provider<GetTransactionLogsUseCase> {
+  GetTransactionLogsUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getTransactionLogsUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getTransactionLogsUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetTransactionLogsUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GetTransactionLogsUseCase create(Ref ref) {
+    return getTransactionLogsUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetTransactionLogsUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetTransactionLogsUseCase>(value),
+    );
+  }
+}
+
+String _$getTransactionLogsUseCaseHash() =>
+    r'c35c95bfb7f64db6ae12bd0634242173e3768b36';
 
 @ProviderFor(PaymentViewModel)
 final paymentViewModelProvider = PaymentViewModelProvider._();

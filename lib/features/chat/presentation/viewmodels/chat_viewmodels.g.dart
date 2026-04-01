@@ -379,6 +379,54 @@ final class SendMessageUseCaseProvider
 String _$sendMessageUseCaseHash() =>
     r'55850c09b954fe0a47d8b252a0ff70bb6cd6e22b';
 
+@ProviderFor(getChatUsageLogsUseCase)
+final getChatUsageLogsUseCaseProvider = GetChatUsageLogsUseCaseProvider._();
+
+final class GetChatUsageLogsUseCaseProvider
+    extends
+        $FunctionalProvider<
+          GetChatUsageLogsUseCase,
+          GetChatUsageLogsUseCase,
+          GetChatUsageLogsUseCase
+        >
+    with $Provider<GetChatUsageLogsUseCase> {
+  GetChatUsageLogsUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getChatUsageLogsUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getChatUsageLogsUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetChatUsageLogsUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GetChatUsageLogsUseCase create(Ref ref) {
+    return getChatUsageLogsUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetChatUsageLogsUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetChatUsageLogsUseCase>(value),
+    );
+  }
+}
+
+String _$getChatUsageLogsUseCaseHash() =>
+    r'a6feb664f035f006b1bbc02cf12c06e84d96ec3a';
+
 @ProviderFor(ChatListViewModel)
 final chatListViewModelProvider = ChatListViewModelProvider._();
 
@@ -534,7 +582,7 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'bf89c98da864e7c0aa1c48d91d35610ac32b7cf1';
+String _$chatRoomViewModelHash() => r'f26ab86e1a7e8e6fd3131fd2ee075286aff7818b';
 
 final class ChatRoomViewModelFamily extends $Family
     with

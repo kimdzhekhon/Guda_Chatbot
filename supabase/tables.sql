@@ -81,7 +81,18 @@ CREATE TABLE IF NOT EXISTS public.chat_usage_logs (
 );
 ALTER TABLE public.chat_usage_logs ENABLE ROW LEVEL SECURITY;
 
--- 7. System Config (시스템 설정 — 앱 공지 및 점검 정보)
+-- 7. Transaction Logs (구매/결제 내역)
+CREATE TABLE IF NOT EXISTS public.transaction_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+    product_name TEXT NOT NULL,
+    amount INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'success', -- 'success', 'fail', 'cancelled'
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.transaction_logs ENABLE ROW LEVEL SECURITY;
+
+-- 8. System Config (시스템 설정 — 앱 공지 및 점검 정보)
 CREATE TABLE IF NOT EXISTS public.system_config (
     id SERIAL PRIMARY KEY,
     min_version TEXT,

@@ -33,7 +33,7 @@ class MessageContent extends StatelessWidget {
           GudaMarkdown(
             data: message.content,
           ),
-        if (!isUser && !message.isStreaming && showActions) ...[
+        if (!isUser && !message.isStreaming && showActions && !message.isSystem) ...[
           const SizedBox(height: GudaSpacing.sm),
           GudaMessageActions(
             message: message,

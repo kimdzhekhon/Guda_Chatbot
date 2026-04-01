@@ -13,6 +13,7 @@ import 'package:guda_chatbot/features/chat/domain/usecases/delete_conversation_u
 import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/get_chat_usage_logs_usecase.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
@@ -51,6 +52,9 @@ GetMessagesUseCase getMessagesUseCase(Ref ref) =>
 @riverpod
 SendMessageUseCase sendMessageUseCase(Ref ref) =>
     SendMessageUseCase(ref.watch(chatRepositoryProvider));
+@riverpod
+GetChatUsageLogsUseCase getChatUsageLogsUseCase(Ref ref) =>
+    GetChatUsageLogsUseCase(ref.watch(chatRepositoryProvider));
 
 // ── Chat List ViewModel ────────────────────────────
 
@@ -186,6 +190,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           senderRole: MessageRole.assistant,
           content: '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.',
           createdAt: DateTime.now(),
+          isSystem: true,
         ),
       ]);
       return;
@@ -267,6 +272,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
               ? '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.'
               : '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
           isStreaming: false,
+          isSystem: true,
         ),
       ]);
     } finally {

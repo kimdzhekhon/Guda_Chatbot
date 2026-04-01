@@ -1,9 +1,11 @@
-import 'dart:async';
 import 'package:guda_chatbot/features/payment/data/datasources/supabase_product_datasource.dart';
 import 'package:guda_chatbot/features/payment/data/repositories/product_repository_impl.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
+import 'package:guda_chatbot/features/payment/domain/entities/transaction_log.dart';
 import 'package:guda_chatbot/features/payment/domain/repositories/product_repository.dart';
 import 'package:guda_chatbot/features/payment/domain/usecases/get_payment_plans_usecase.dart';
+import 'package:guda_chatbot/features/payment/domain/usecases/get_transaction_logs_usecase.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'payment_viewmodel.g.dart';
@@ -40,7 +42,8 @@ class PaymentState {
 
 @riverpod
 SupabaseProductDataSource productDataSource(Ref ref) {
-  return SupabaseProductDataSource();
+  final rpc = ref.watch(rpcInvokerProvider);
+  return SupabaseProductDataSource(rpcInvoker: rpc);
 }
 
 @riverpod
@@ -53,6 +56,12 @@ ProductRepository productRepository(Ref ref) {
 GetPaymentPlansUseCase getPaymentPlansUseCase(Ref ref) {
   final repository = ref.watch(productRepositoryProvider);
   return GetPaymentPlansUseCase(repository);
+}
+
+@riverpod
+GetTransactionLogsUseCase getTransactionLogsUseCase(Ref ref) {
+  final repository = ref.watch(productRepositoryProvider);
+  return GetTransactionLogsUseCase(repository);
 }
 
 //--- ViewModel 레이어 ---

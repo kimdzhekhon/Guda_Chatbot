@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
+import 'package:guda_chatbot/features/chat/data/models/chat_usage_log_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 import 'package:guda_chatbot/core/constants/app_personas.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
@@ -107,6 +108,18 @@ class SupabaseChatDataSource {
         totalLimit: (json['total_limit'] as num).toInt(),
         planName: _mapPlanName(json['plan_name'] as String),
       ),
+    );
+  }
+
+  /// 대화 사용 로그 조회 (RPC 연동)
+  Future<List<ChatUsageLogDto>> getChatUsageLogs() async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) return [];
+
+    return _rpcInvoker.invokeList(
+      functionName: 'get_chat_usage_logs',
+      params: {'p_user_id': userId},
+      fromJson: ChatUsageLogDto.fromJson,
     );
   }
 

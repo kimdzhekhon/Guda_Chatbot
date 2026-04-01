@@ -32,5 +32,8 @@ abstract class Message with _$Message {
 
     /// 스트리밍 중 여부 (렌더링 시 점진적 텍스트 표시)
     @Default(false) bool isStreaming,
+
+    /// 시스템 메시지 여부 (북마크/공유 액션 버튼 비노출용)
+    @Default(false) bool isSystem,
   }) = _Message;
 }

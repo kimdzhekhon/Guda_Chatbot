@@ -82,11 +82,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.chevron_right_rounded,
                   color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('준비 중인 기능입니다.')),
-                  );
-                },
+                onTap: () => context.push(RoutePaths.purchaseHistory),
               ),
               const GudaDivider(alpha: 1.0),
               GudaTile(
@@ -96,11 +92,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.chevron_right_rounded,
                   color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('준비 중인 기능입니다.')),
-                  );
-                },
+                onTap: () => context.push(RoutePaths.usageHistory),
               ),
             ],
           ),
