@@ -122,6 +122,8 @@ List<Conversation> sortedConversations(Ref ref) {
 
 @riverpod
 class ChatRoomViewModel extends _$ChatRoomViewModel {
+  bool _isSending = false;
+
   @override
   UiState<List<Message>> build(String chatRoomId) {
     Future.microtask(() => _loadMessages());
@@ -129,6 +131,9 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
   }
 
   Future<void> _loadMessages() async {
+    // sendMessage 진행 중이면 낙관적 상태를 보호하기 위해 스킵
+    if (_isSending) return;
+
     // 이미 로딩이 불필요한 상황(예: sendMessage로 인해 성공 상태 진입)이면 state 변경을 최소화
     if (state is! UiSuccess) {
       if (!ref.mounted) return;
@@ -138,6 +143,9 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       final useCase = ref.read(getMessagesUseCaseProvider);
       final dbMessages = await useCase(chatRoomId);
       if (!ref.mounted) return;
+
+      // sendMessage가 도중에 시작되었으면 DB 결과로 덮어쓰지 않음
+      if (_isSending) return;
 
       // 만약 가져오는 도중 sendMessage가 호출되어 State에 임시 메시지가 존재한다면 병합
       final currentData = state.dataOrNull;
@@ -157,11 +165,16 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     required String content,
     required ClassicType topicCode,
   }) async {
+    // autoDispose 방지: 위젯 전환(PendingChatRoomView → ChatRoomView) 동안
+    // watcher가 없어도 provider가 폐기되지 않도록 유지
+    final keepAliveLink = ref.keepAlive();
+    _isSending = true;
+
     final currentMessages = state.dataOrNull ?? [];
-    
+
     // 사용량 증가
     ref.read(chatUsageViewModelProvider.notifier).incrementUsedCount();
-    
+
     // 1. 임시 사용자 메시지 추가 (반응성)
     final tempUserMsg = Message(
       id: DateTime.now().millisecondsSinceEpoch,
@@ -170,7 +183,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       content: content,
       createdAt: DateTime.now(),
     );
-    
+
     // AI 스트리밍용 빈 메시지 추가
     final aiStreamingMsg = Message(
       id: DateTime.now().millisecondsSinceEpoch + 1,
@@ -180,7 +193,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       createdAt: DateTime.now(),
       isStreaming: true,
     );
-    
+
     try {
       if (!ref.mounted) return;
       state = UiSuccess([...currentMessages, tempUserMsg, aiStreamingMsg]);
@@ -188,7 +201,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       final useCase = ref.read(sendMessageUseCaseProvider);
       final personaId = ref.read(personaProvider).dataOrNull;
       String accumulatedContent = '';
-      
+
       await for (final chunk in useCase(
         chatRoomId: chatRoomId,
         content: content,
@@ -197,7 +210,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       )) {
         if (!ref.mounted) break;
         accumulatedContent += chunk;
-        
+
         // UI 상태 업데이트
         state = UiSuccess([
           ...currentMessages,
@@ -205,7 +218,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           aiStreamingMsg.copyWith(content: accumulatedContent),
         ]);
       }
-      
+
       if (!ref.mounted) return;
 
       // 스트리밍 종료 후 상태 확정
@@ -214,12 +227,12 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         tempUserMsg,
         aiStreamingMsg.copyWith(content: accumulatedContent, isStreaming: false),
       ]);
-      
+
     } catch (e) {
       if (!ref.mounted) return;
       // 에러 발생 시 전체 화면을 에러로 바꾸지 않고, 현재까지의 메시지 상태를 유지
       debugPrint('${AppStrings.messageSendFail} ${e.toString()}');
-      
+
       state = UiSuccess([
         ...currentMessages,
         tempUserMsg,
@@ -228,6 +241,13 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           isStreaming: false,
         ),
       ]);
+    } finally {
+      _isSending = false;
+      keepAliveLink.close();
+      // 전송 완료 후 DB에서 실제 메시지를 로드하여 임시 ID를 정식 ID로 교체
+      if (ref.mounted) {
+        _loadMessages();
+      }
     }
   }
 }
