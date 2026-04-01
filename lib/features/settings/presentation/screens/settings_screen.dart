@@ -44,8 +44,11 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final usage = ref.watch(chatUsageViewModelProvider);
-    final isUsageLoaded = usage.totalLimit > 0;
-    final progress = isUsageLoaded ? usage.usedCount / usage.totalLimit : 0.0;
+    // totalLimit이 0이더라도 planName이 있으면 로딩이 된 것으로 간주 (무료 플랜 0회 등 케이스 대응)
+    final isUsageLoaded = usage.totalLimit > 0 || usage.planName.isNotEmpty;
+    final progress = (isUsageLoaded && usage.totalLimit > 0) 
+        ? usage.usedCount / usage.totalLimit 
+        : 0.0;
 
     return ListView(
       children: [
@@ -142,6 +145,16 @@ class SettingsScreen extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
           child: Column(
             children: [
+              GudaTile(
+                leading: const Icon(Icons.campaign_outlined),
+                title: '공지사항',
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () => context.push(RoutePaths.notice),
+              ),
+              const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: AppStrings.appVersionLabel,

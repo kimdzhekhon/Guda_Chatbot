@@ -54,12 +54,18 @@ CREATE POLICY "Users can manage their own chat rooms."
 
 -- 5. Messages
 DROP POLICY IF EXISTS "Users can manage messages in their own rooms." ON messages;
-CREATE POLICY "Users can manage messages in their own rooms." 
-  ON messages FOR ALL 
+CREATE POLICY "Users can manage messages in their own rooms."
+  ON messages FOR ALL
   USING (
     EXISTS (
-        SELECT 1 FROM chat_rooms 
-        WHERE chat_rooms.id = messages.chat_rooms_id 
+        SELECT 1 FROM chat_rooms
+        WHERE chat_rooms.id = messages.chat_rooms_id
         AND chat_rooms.user_id = auth.uid()
     )
 );
+
+-- 6. System Config (인증 전 앱 버전/점검 체크를 위해 모든 사용자 조회 허용)
+DROP POLICY IF EXISTS "Anyone can view system config" ON system_config;
+CREATE POLICY "Anyone can view system config"
+  ON system_config FOR SELECT
+  USING (true);
