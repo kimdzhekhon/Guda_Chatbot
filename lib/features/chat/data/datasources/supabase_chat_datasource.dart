@@ -6,6 +6,7 @@ import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 import 'package:guda_chatbot/core/constants/app_personas.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/save_message_result.dart';
 
 import 'package:guda_chatbot/core/network/rpc_invoker.dart';
 
@@ -62,8 +63,8 @@ class SupabaseChatDataSource {
     );
   }
 
-  /// 메시지 저장
-  Future<MessageDto> saveMessage(SaveMessageRequestDto request) async {
+  /// 메시지 저장 (user 메시지일 때 크레딧 차감 + 로그 기록 포함)
+  Future<SaveMessageResult> saveMessage(SaveMessageRequestDto request) async {
     return _rpcInvoker.invoke(
       functionName: 'save_chat_message',
       params: {
@@ -71,7 +72,19 @@ class SupabaseChatDataSource {
         'p_content': request.content,
         'p_sender_role': request.senderRole,
       },
-      fromJson: MessageDto.fromJson,
+      fromJson: (json) {
+        final msgDto = MessageDto.fromJson(json['message'] as Map<String, dynamic>);
+        final usageJson = json['usage'] as Map<String, dynamic>?;
+        ChatUsage? usage;
+        if (usageJson != null) {
+          usage = ChatUsage(
+            usedCount: (usageJson['total_limit'] as num).toInt() - (usageJson['remaining_count'] as num).toInt(),
+            totalLimit: (usageJson['total_limit'] as num).toInt(),
+            planName: _mapPlanName(usageJson['plan_name'] as String),
+          );
+        }
+        return SaveMessageResult(message: msgDto.toDomain(), usage: usage);
+      },
     );
   }
 
@@ -88,22 +101,6 @@ class SupabaseChatDataSource {
 
     return _rpcInvoker.invoke(
       functionName: 'get_chat_usage',
-      params: {'p_user_id': userId},
-      fromJson: (json) => ChatUsage(
-        usedCount: (json['total_limit'] as num).toInt() - (json['remaining_count'] as num).toInt(),
-        totalLimit: (json['total_limit'] as num).toInt(),
-        planName: _mapPlanName(json['plan_name'] as String),
-      ),
-    );
-  }
-
-  /// 대화 크레딧 1회 차감 후 갱신된 사용량 반환
-  Future<ChatUsage> useChatCredit() async {
-    final userId = _supabase.auth.currentUser?.id;
-    if (userId == null) throw RpcException('인증이 필요합니다.');
-
-    return _rpcInvoker.invoke(
-      functionName: 'use_chat_credit',
       params: {'p_user_id': userId},
       fromJson: (json) => ChatUsage(
         usedCount: (json['total_limit'] as num).toInt() - (json['remaining_count'] as num).toInt(),

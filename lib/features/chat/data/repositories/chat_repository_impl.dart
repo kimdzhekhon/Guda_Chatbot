@@ -2,6 +2,7 @@ import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_dataso
 import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/save_message_result.dart';
 import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
@@ -30,10 +31,8 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<void> deleteConversation(DeleteConversationRequestDto request) =>
       _dataSource.deleteConversation(request);
   @override
-  Future<Message> saveMessage(SaveMessageRequestDto request) async {
-    final dto = await _dataSource.saveMessage(request);
-    return dto.toDomain();
-  }
+  Future<SaveMessageResult> saveMessage(SaveMessageRequestDto request) =>
+      _dataSource.saveMessage(request);
 
   @override
   Stream<String> streamResponse({
@@ -50,7 +49,4 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Future<ChatUsage> getChatUsage() => _dataSource.getChatUsage();
-
-  @override
-  Future<ChatUsage> useChatCredit() => _dataSource.useChatCredit();
 }

@@ -45,7 +45,7 @@ final class ChatUsageViewModelProvider
 }
 
 String _$chatUsageViewModelHash() =>
-    r'de8a4f0ecd6e8894a4edff1f2acc65fccf5adc1b';
+    r'13e59f471ebb4102922a5ef6e8d515d77cc424bf';
 
 /// 대화 사용량 관리 ViewModel (DB 연동)
 

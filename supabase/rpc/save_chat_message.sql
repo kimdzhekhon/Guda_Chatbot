@@ -1,13 +1,18 @@
--- 4. 메시지 저장 및 상태 업데이트 (Atomic 작업)
+-- 메시지 저장 + 크레딧 차감 + 사용 로그 기록 (Atomic 작업)
+-- user 메시지일 때만 크레딧을 차감하고 로그를 남김
 -- Usage: select * from save_chat_message('방ID', '내용', 'user/assistant');
 CREATE OR REPLACE FUNCTION save_chat_message(
-    p_chat_room_id UUID, 
-    p_content TEXT, 
+    p_chat_room_id UUID,
+    p_content TEXT,
     p_sender_role TEXT
 )
-RETURNS messages AS $$
+RETURNS JSON AS $$
 DECLARE
     v_msg messages;
+    v_user_id UUID;
+    v_remaining INT;
+    v_limit INT;
+    v_name TEXT;
 BEGIN
     -- 1. 메시지 테이블 삽입
     INSERT INTO messages (chat_rooms_id, content, sender_role)
@@ -15,13 +20,75 @@ BEGIN
     RETURNING * INTO v_msg;
 
     -- 2. 채팅방 테이블 최신 상태 업데이트
-    UPDATE chat_rooms 
+    UPDATE chat_rooms
     SET last_message_at = v_msg.created_at,
         last_message_preview = p_content
     WHERE id = p_chat_room_id;
 
-    RETURN v_msg;
+    -- 3. user 메시지인 경우에만 크레딧 차감 + 로그 기록
+    IF p_sender_role = 'user' THEN
+        -- 채팅방 소유자 조회
+        SELECT user_id INTO v_user_id
+        FROM chat_rooms WHERE id = p_chat_room_id;
+
+        -- 활성 구독에서 크레딧 1 차감
+        UPDATE user_subscriptions us
+        SET remaining_count = us.remaining_count - 1,
+            updated_at = NOW()
+        FROM products p
+        WHERE us.user_id = v_user_id
+          AND us.product_id = p.id
+          AND us.status = 'active'
+          AND us.remaining_count > 0
+          AND us.product_id = (
+              SELECT us2.product_id
+              FROM user_subscriptions us2
+              WHERE us2.user_id = v_user_id
+                AND us2.status = 'active'
+                AND us2.remaining_count > 0
+              ORDER BY us2.updated_at DESC
+              LIMIT 1
+          )
+        RETURNING us.remaining_count, p.usage_limit, p.name
+        INTO v_remaining, v_limit, v_name;
+
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'NO_CREDITS_REMAINING'
+                USING HINT = '남은 대화 횟수가 없습니다.';
+        END IF;
+
+        -- 사용 로그 기록
+        INSERT INTO chat_usage_logs (user_id, chat_room_id, action, amount, remaining)
+        VALUES (v_user_id, p_chat_room_id, 'credit_used', 1, v_remaining);
+
+        RETURN json_build_object(
+            'message', json_build_object(
+                'id', v_msg.id,
+                'chat_rooms_id', v_msg.chat_rooms_id,
+                'content', v_msg.content,
+                'sender_role', v_msg.sender_role,
+                'created_at', v_msg.created_at
+            ),
+            'usage', json_build_object(
+                'remaining_count', v_remaining,
+                'total_limit', v_limit,
+                'plan_name', v_name
+            )
+        );
+    END IF;
+
+    -- assistant 메시지는 usage 없이 반환
+    RETURN json_build_object(
+        'message', json_build_object(
+            'id', v_msg.id,
+            'chat_rooms_id', v_msg.chat_rooms_id,
+            'content', v_msg.content,
+            'sender_role', v_msg.sender_role,
+            'created_at', v_msg.created_at
+        ),
+        'usage', NULL
+    );
 END;
 $$ LANGUAGE plpgsql SECURITY INVOKER;
 
-COMMENT ON FUNCTION save_chat_message IS '메시지를 저장하고 해당 채팅방의 최신 정보를 갱신합니다.';
+COMMENT ON FUNCTION save_chat_message IS '메시지를 저장하고, user 메시지인 경우 크레딧 차감 및 사용 로그를 기록합니다.';

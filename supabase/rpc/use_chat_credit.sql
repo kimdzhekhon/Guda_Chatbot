@@ -1,4 +1,4 @@
--- 대화 크레딧 1회 차감
+-- 대화 크레딧 1회 차감 (단독 호출용 — 충전/관리 등)
 -- Usage: select * from use_chat_credit('유저ID');
 CREATE OR REPLACE FUNCTION use_chat_credit(p_user_id UUID)
 RETURNS JSON AS $$
