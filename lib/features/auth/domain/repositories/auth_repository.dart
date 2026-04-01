@@ -1,14 +1,9 @@
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 /// Auth 리포지토리 추상 인터페이스 — 도메인 레이어
 /// 구현체는 data 레이어에 위치
 abstract interface class AuthRepository {
-  /// 이메일/비밀번호 로그인
-  Future<GudaUser> signInWithEmail(String email, String password);
-
-  /// 이메일/비밀번호 회원가입
-  Future<GudaUser> signUpWithEmail(String email, String password);
-
   /// Google 소셜 로그인
   Future<GudaUser> signInWithGoogle();
 
@@ -26,4 +21,15 @@ abstract interface class AuthRepository {
 
   /// 인증 상태 스트림 (세션 변경 시 자동 갱신)
   Stream<GudaUser?> authStateChanges();
+
+  /// 프로필 정보 업데이트 (닉네임, 생년월일, 페르소나, 약관동의 등)
+  Future<void> updateProfile({
+    required String nickname,
+    required DateTime birthDate,
+    required PersonaType persona,
+    required bool termsAgreed,
+  });
+
+  /// 페르소나 단일 업데이트
+  Future<void> updatePersona(PersonaType persona);
 }

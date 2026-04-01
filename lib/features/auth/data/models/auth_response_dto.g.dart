@@ -12,6 +12,10 @@ _AuthResponseDto _$AuthResponseDtoFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       displayName: json['full_name'] as String?,
       photoUrl: json['avatar_url'] as String?,
+      nickname: json['nickname'] as String?,
+      birthDate: json['birth_date'] as String?,
+      persona: $enumDecodeNullable(_$PersonaTypeEnumMap, json['persona']),
+      termsAgreedAt: json['terms_agreed_at'] as String?,
       createdAt: json['created_at'] as String,
     );
 
@@ -21,5 +25,15 @@ Map<String, dynamic> _$AuthResponseDtoToJson(_AuthResponseDto instance) =>
       'email': instance.email,
       'full_name': instance.displayName,
       'avatar_url': instance.photoUrl,
+      'nickname': instance.nickname,
+      'birth_date': instance.birthDate,
+      'persona': _$PersonaTypeEnumMap[instance.persona],
+      'terms_agreed_at': instance.termsAgreedAt,
       'created_at': instance.createdAt,
     };
+
+const _$PersonaTypeEnumMap = {
+  PersonaType.basic: 'basic',
+  PersonaType.friendly: 'friendly',
+  PersonaType.strict: 'strict',
+};

@@ -53,7 +53,7 @@ abstract final class AppStrings {
   static const String cancel = '취소';
   static const String deleteAccount = '계정 탈퇴';
   static const String deleteAccountConfirmTitle = '계정 탈퇴';
-  static const String deleteAccountConfirmMessage = '정말 계정을 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.';
+  static const String deleteAccountConfirmMessage = '계정을 탈퇴하시겠습니까?\n모든 데이터가 삭제되며 복구할 수 없습니다.';
 
   // 채팅
   static const String chatInputHint = '메시지를 입력하세요...';
@@ -64,6 +64,9 @@ abstract final class AppStrings {
   static const String conversationLoadFail = '대화 목록을 불러오는 데 실패했습니다.';
   static const String conversationCreateFail = '대화 생성에 실패했습니다.';
   static const String conversationDeleteFail = '대화 삭제에 실패했습니다.';
+  static const String deleteConversationTitle = '대화 삭제';
+  static const String deleteConversationMessage = '정말 이 대화를 삭제하시겠습니까?\n삭제된 대화는 복구할 수 없습니다.';
+  static const String deleteLabel = '삭제';
   static const String aiAdviceTitle = 'Guda AI의 조언';
   static const String aiAdviceMsg = 'Guda AI가 전하는 고전의 지혜입니다.';
   static const String shareAsImage = '이미지로 공유하기';
@@ -110,6 +113,12 @@ abstract final class AppStrings {
   static const String authDesc = '고전 AI 챗봇 Guda와 함께\n불교의 가르침을 탐구합니다.';
   static const String continueWithGoogle = 'Google로 계속하기';
   static const String continueWithApple = 'Apple로 계속하기';
+  static const String termsOfService = '이용약관';
+  static const String privacyPolicy = '개인정보처리방침';
+  static const String agreeToAll = '전체 동의하기';
+  static const String termsRequired = '(필수) 이용약관';
+  static const String privacyRequired = '(필수) 개인정보처리방침';
+  static const String startWithGuda = 'Guda 시작하기';
   static const String version = 'Guda v1.0.0';
 
   // 주역 관련
@@ -158,6 +167,16 @@ abstract final class AppStrings {
   static const String subscriptionTypeLabel = '정기 구독형';
   static const String chargeTypeLabel = '단일 충전형';
   static const String planSelectionSuffix = '선택 완료';
+
+  // 페르소나 설정
+  static const String personaSettingTitle = '페르소나 설정';
+  static const String personaSettingDesc = 'AI의 대화 스타일을 선택하세요';
+  static const String personaWiseName = '기본';
+  static const String personaWiseDesc = '차분하고 격식 있는 어조로 깊이 있는 지혜를 전합니다.';
+  static const String personaFriendlyName = '친절한';
+  static const String personaFriendlyDesc = '다정하고 따뜻한 어조로 위로와 격려를 건넵니다.';
+  static const String personaStrictName = '직설적인';
+  static const String personaStrictDesc = '핵심을 짚어 간결하고 명확하게 상황을 분석합니다.';
 
   // ── 추천 질문 ──────────────────────────────────
   static const List<String> ichingSuggestions = [

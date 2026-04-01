@@ -6,8 +6,8 @@ class GetMessagesUseCase {
   const GetMessagesUseCase(this._repository);
   final ChatRepository _repository;
 
-  Future<List<Message>> call(String conversationId) =>
+  Future<List<Message>> call(String chatRoomId) =>
       _repository.getMessages(
-        GetMessagesRequestDto(conversationId: conversationId),
+        GetMessagesRequestDto(chatRoomId: chatRoomId),
       );
 }

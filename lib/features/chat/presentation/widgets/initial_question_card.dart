@@ -33,7 +33,7 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final activeId = ref.read(homeViewModelProvider).activeConversationId;
+      final activeId = ref.read(homeViewModelProvider).activeChatRoomId;
       // 새 대화(mock ID)인 경우에만 초기 단계로 리셋
       if (activeId == null || activeId.startsWith('mock-new-')) {
         ref.read(homeViewModelProvider.notifier).resetInitialPhase();
@@ -75,30 +75,27 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final homeState = ref.watch(homeViewModelProvider);
 
     return GudaCard(
       child: AnimatedSize(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        child: _buildContent(isDark, homeState),
+        child: _buildContent(homeState),
       ),
     );
   }
 
-  Widget _buildContent(bool isDark, HomeState homeState) {
+  Widget _buildContent(HomeState homeState) {
     return switch (homeState.phase) {
       CardPhase.selection => SelectionPhaseView(
           type: widget.type,
-          isDark: isDark,
           onSelect: _handleSelect,
           onThrow: _handleThrow,
         ),
-      CardPhase.animating => AnimationPhaseView(isDark: isDark),
+      CardPhase.animating => const AnimationPhaseView(),
       CardPhase.input => InputPhaseView(
           type: widget.type,
-          isDark: isDark,
           controller: _controller,
           selectedHexagram: homeState.selectedHexagram,
           onStart: widget.onStart,

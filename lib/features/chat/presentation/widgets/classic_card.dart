@@ -7,6 +7,8 @@ import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 
 /// 고전 유형(팔만대장경, 주역)의 정보를 시각적으로 보여주는 카드 위젯
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+
 class ClassicCard extends StatelessWidget {
   const ClassicCard({
     super.key,
@@ -25,7 +27,6 @@ class ClassicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final typeColor = type == ClassicType.tripitaka
         ? GudaColors.tripitaka
         : GudaColors.iching;
@@ -43,7 +44,7 @@ class ClassicCard extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: isDark
+              color: context.isDark
                   ? GudaColors.accent.withValues(alpha: 0.1)
                   : GudaColors.iching.withValues(alpha: 0.1),
               shape: BoxShape.circle,
@@ -66,9 +67,7 @@ class ClassicCard extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: GudaTypography.heading3(
-              color: isDark
-                  ? GudaColors.onSurfaceDark
-                  : GudaColors.onSurfaceLight,
+              color: context.onSurfaceColor,
             ),
           ),
           const SizedBox(height: GudaSpacing.xs),
@@ -76,9 +75,7 @@ class ClassicCard extends StatelessWidget {
             description,
             textAlign: TextAlign.center,
             style: GudaTypography.body2(
-              color: isDark
-                  ? GudaColors.onSurfaceVariantDark
-                  : GudaColors.onSurfaceVariantLight,
+              color: context.onSurfaceVariantColor,
             ),
           ),
 
@@ -91,9 +88,7 @@ class ClassicCard extends StatelessWidget {
           Text(
             contentsSubtitle,
             style: GudaTypography.captionBold(
-              color: isDark
-                  ? GudaColors.onSurfaceVariantDark
-                  : GudaColors.onSurfaceVariantLight,
+              color: context.onSurfaceVariantColor,
             ),
           ),
           const SizedBox(height: GudaSpacing.sm),

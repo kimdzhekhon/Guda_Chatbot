@@ -6,6 +6,8 @@ import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/font_size_viewmodel.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// SCR_FONT_SIZE — 글자 크기 조절 화면
 class FontSizeScreen extends ConsumerWidget {
@@ -14,12 +16,11 @@ class FontSizeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fontScaleAsync = ref.watch(fontSizeViewModelProvider);
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
+    return GudaScaffold(
       appBar: const GudaAppBar(title: AppStrings.fontSizeScreenTitle),
       body: fontScaleAsync.when(
-        data: (scale) => _buildBody(context, ref, scale, colorScheme),
+        data: (scale) => _buildBody(context, ref, scale),
         loading: () => const GudaLoadingWidget(),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
@@ -30,7 +31,6 @@ class FontSizeScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     double currentScale,
-    ColorScheme colorScheme,
   ) {
     // 슬라이더 값 매핑: 0.85 (작게), 1.0 (보통), 1.15 (크게)
     double sliderValue = 1.0;
@@ -49,7 +49,7 @@ class FontSizeScreen extends ConsumerWidget {
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(GudaSpacing.xl),
-            color: colorScheme.surfaceContainerLow,
+            color: context.colorScheme.surfaceContainerLow,
             alignment: Alignment.center,
             child: GudaCard(
               padding: const EdgeInsets.all(GudaSpacing.xl),
@@ -59,13 +59,13 @@ class FontSizeScreen extends ConsumerWidget {
                   Text(
                     AppStrings.fontSizePreviewText,
                     textAlign: TextAlign.center,
-                    style: GudaTypography.body1(color: colorScheme.onSurface),
+                    style: GudaTypography.body1(color: context.colorScheme.onSurface),
                   ),
                   const SizedBox(height: GudaSpacing.md),
                   Text(
                     '${AppStrings.fontSizeLabel}: ${_getLabel(currentScale)}',
                     style: GudaTypography.caption(
-                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -87,27 +87,27 @@ class FontSizeScreen extends ConsumerWidget {
                   children: [
                     Text(
                       AppStrings.fontSizeSmall,
-                      style: GudaTypography.caption(color: colorScheme.onSurfaceVariant),
+                      style: GudaTypography.caption(color: context.colorScheme.onSurfaceVariant),
                     ),
                     Text(
                       AppStrings.fontSizeNormal,
-                      style: GudaTypography.caption(color: colorScheme.onSurfaceVariant),
+                      style: GudaTypography.caption(color: context.colorScheme.onSurfaceVariant),
                     ),
                     Text(
                       AppStrings.fontSizeLarge,
-                      style: GudaTypography.caption(color: colorScheme.onSurfaceVariant),
+                      style: GudaTypography.caption(color: context.colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 4,
-                    activeTrackColor: colorScheme.primary,
-                    inactiveTrackColor: colorScheme.outlineVariant,
-                    thumbColor: colorScheme.primary,
-                    overlayColor: colorScheme.primary.withValues(alpha: 0.12),
-                    valueIndicatorColor: colorScheme.primary,
-                    valueIndicatorTextStyle: GudaTypography.caption(color: Colors.white),
+                    activeTrackColor: context.colorScheme.primary,
+                    inactiveTrackColor: context.colorScheme.outlineVariant,
+                    thumbColor: context.colorScheme.primary,
+                    overlayColor: context.colorScheme.primary.withValues(alpha: 0.12),
+                    valueIndicatorColor: context.colorScheme.primary,
+                    valueIndicatorTextStyle: GudaTypography.caption(color: context.colorScheme.onPrimary),
                   ),
                   child: Slider(
                     value: sliderValue,

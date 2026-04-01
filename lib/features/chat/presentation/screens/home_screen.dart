@@ -1,188 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
-import 'package:guda_chatbot/core/constants/app_strings.dart';
-import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
-import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/guda_drawer.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/classic_card_slider.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/guda_home_app_bar.dart';
-import 'package:guda_chatbot/features/chat/presentation/widgets/message_list.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/chat_room_view.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/pending_chat_room_view.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final _scrollController = ScrollController();
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final homeState = ref.watch(homeViewModelProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final activeId = homeState.activeConversationId;
-
-    // 메시지 업데이트 시 스크롤
-    if (activeId != null) {
-      ref.listen(chatRoomViewModelProvider(activeId), (_, next) {
-        if (next.isSuccess) {
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) => _scrollToBottom(),
-          );
-        }
-      });
-    }
+    final activeId = homeState.activeChatRoomId;
+    final isPending = homeState.isPendingNewChat;
 
     final isMessagesEmpty = activeId != null
         ? ref.watch(chatRoomViewModelProvider(activeId).select(
             (state) => state.dataOrNull?.isEmpty ?? true,
           ))
         : true;
-    final showBackButton = activeId != null && isMessagesEmpty;
+
+    // 뒤로가기: 실제 방에서 메시지가 없거나 Pending 상태일 때
+    final showBackButton = (activeId != null && isMessagesEmpty) || isPending;
     final hideChatCount = activeId != null &&
         isMessagesEmpty &&
         homeState.selectedClassicType != ClassicType.tripitaka &&
         homeState.phase != CardPhase.input;
 
-    return Scaffold(
-      backgroundColor: isDark
-          ? GudaColors.backgroundDark
-          : GudaColors.backgroundLight,
+    Widget body;
+    if (isPending) {
+      // Pending: DB에 방이 없는 새 대화 상태 → 첫 메시지 입력 대기
+      body = PendingChatRoomView(
+        topicCode: homeState.selectedClassicType,
+      );
+    } else if (activeId != null) {
+      // 기존 대화방 선택 상태
+      body = ChatRoomView(activeChatRoomId: activeId);
+    } else {
+      // 홈 화면 (슬라이더)
+      body = const Center(
+        child: SingleChildScrollView(child: ClassicCardSlider()),
+      );
+    }
+
+    return GudaScaffold(
+      useSafeArea: false,
       appBar: GudaHomeAppBar(
-        isDark: isDark,
         showBackButton: showBackButton,
         activeId: activeId,
         hideChatCount: hideChatCount,
       ),
       drawer: const GudaDrawer(),
-      body: AppResponsiveLayout(
-        useSafeArea: false,
-        mobile: (context, data) => _buildBody(activeId, homeState, isDark),
-        tablet: (context, data) => Center(
-          child: SizedBox(
-            width: 768,
-            child: _buildBody(activeId, homeState, isDark),
-          ),
-        ),
-        desktop: (context, data) => Center(
-          child: SizedBox(
-            width: 1024,
-            child: _buildBody(activeId, homeState, isDark),
-          ),
-        ),
-      ),
-      bottomNavigationBar: activeId == null
-          ? null
-          : Consumer(
-              builder: (context, ref, child) {
-                final chatState = ref.watch(chatRoomViewModelProvider(activeId));
-                final isStreaming =
-                    chatState.dataOrNull?.any((m) => m.isStreaming) ?? false;
-                final messages = chatState.dataOrNull ?? [];
-
-                if (messages.isEmpty &&
-                    homeState.selectedClassicType != ClassicType.tripitaka) {
-                  return const SizedBox.shrink();
-                }
-
-                return ChatInputBar(
-                  isLoading: isStreaming,
-                  onSend: (text) => _handleSendMessage(text, homeState),
-                );
-              },
-            ),
+      body: body,
     );
-  }
-
-  Widget _buildBody(String? activeId, HomeState homeState, bool isDark) {
-    return activeId == null
-        ? const Column(
-            children: [
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(child: ClassicCardSlider()),
-                ),
-              ),
-            ],
-          )
-        : Consumer(
-            builder: (context, ref, child) {
-              final chatState = ref.watch(chatRoomViewModelProvider(activeId));
-              ref.watch(chatRoomViewModelProvider(activeId));
-
-              return Column(
-                children: [
-                  Expanded(
-                    child: switch (chatState) {
-                      UiLoading() => const GudaLoadingWidget(
-                        message: AppStrings.processing,
-                      ),
-                      UiError(message: final msg) => GudaErrorWidget(
-                        message: msg,
-                      ),
-                      UiSuccess(data: final messages) => MessageList(
-                        messages: messages,
-                        isDark: isDark,
-                        type: homeState.selectedClassicType,
-                        scrollController: _scrollController,
-                        onSendMessage: (text) =>
-                            _handleSendMessage(text, homeState),
-                        activeConversationId: activeId,
-                      ),
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-  }
-
-  Future<void> _handleSendMessage(String text, HomeState homeState) async {
-    String? convId = homeState.activeConversationId;
-
-    // 만약 활성 대화가 없으면 새로 생성
-    if (convId == null) {
-      final newConv = await ref
-          .read(chatListViewModelProvider.notifier)
-          .createConversation(classicType: homeState.selectedClassicType);
-
-      if (newConv != null) {
-        convId = newConv.id;
-        ref.read(homeViewModelProvider.notifier).selectConversation(newConv);
-      } else {
-        return; // 생성 실패 시 중단
-      }
-    }
-
-    // 메시지 전송
-    await ref
-        .read(chatRoomViewModelProvider(convId).notifier)
-        .sendMessage(content: text, classicType: homeState.selectedClassicType);
   }
 }

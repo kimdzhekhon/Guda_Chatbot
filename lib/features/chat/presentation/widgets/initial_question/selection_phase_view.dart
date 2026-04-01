@@ -9,20 +9,17 @@ class SelectionPhaseView extends StatelessWidget {
   const SelectionPhaseView({
     super.key,
     required this.type,
-    required this.isDark,
     required this.onSelect,
     required this.onThrow,
   });
 
   final ClassicType type;
-  final bool isDark;
   final VoidCallback onSelect;
   final VoidCallback onThrow;
 
   @override
   Widget build(BuildContext context) {
     return GudaActionLayout(
-      isDark: isDark,
       title: type == ClassicType.tripitaka
           ? AppStrings.tripitakaInitialTitle
           : AppStrings.ichingSelectionTitle,
@@ -35,7 +32,6 @@ class SelectionPhaseView extends StatelessWidget {
                 label: AppStrings.selectHexagram,
                 icon: Icons.grid_view_rounded,
                 onTap: onSelect,
-                isDark: isDark,
               ),
             ),
             const SizedBox(width: GudaSpacing.md),
@@ -44,7 +40,6 @@ class SelectionPhaseView extends StatelessWidget {
                 label: AppStrings.throwHexagram,
                 icon: Icons.casino_outlined,
                 onTap: onThrow,
-                isDark: isDark,
               ),
             ),
           ],

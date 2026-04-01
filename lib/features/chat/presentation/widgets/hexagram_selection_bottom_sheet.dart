@@ -6,9 +6,9 @@ import 'package:guda_chatbot/core/ui/widgets/guda_bottom_sheet_header.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/domain/constants/hexagram_data.dart';
-import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_widgets.dart';
 
-/// 64괘 선택 바텀 시트
+import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_grid.dart';
+
 class HexagramSelectionBottomSheet extends StatefulWidget {
   final Function(Hexagram) onHexagramSelected;
 
@@ -45,9 +45,6 @@ class _HexagramSelectionBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final filteredHexagrams = hexagramData.where((hexagram) {
       if (_searchQuery.isEmpty) return true;
       return hexagram.name.contains(_searchQuery) ||
@@ -61,108 +58,22 @@ class _HexagramSelectionBottomSheetState
             title: '괘 선택',
             onClose: () => Navigator.pop(context),
           ),
-          
-          // 검색창
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
             child: GudaTextInputField(
               controller: _searchController,
-              isDark: isDark,
               hintText: '괘 이름이나 한자를 검색해보세요',
             ),
           ),
           const SizedBox(height: GudaSpacing.md),
           const GudaDivider(),
-
-          // 64괘 그리드
           Expanded(
-            child: filteredHexagrams.isEmpty
-                ? Center(
-                    child: Text(
-                      '검색 결과가 없습니다.',
-                      style: GudaTypography.body1(
-                        color: isDark
-                            ? GudaColors.onSurfaceVariantDark
-                            : GudaColors.onSurfaceVariantLight,
-                      ),
-                    ),
-                  )
-                : GridView.builder(
-                    padding: EdgeInsets.only(
-                      top: GudaSpacing.md,
-                      left: GudaSpacing.md,
-                      right: GudaSpacing.md,
-                      bottom: bottomPadding + GudaSpacing.lg,
-                    ),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4, // 1줄에 4개
-                      childAspectRatio: 0.8, // 세로로 약간 긴 형태 (이미지 + 텍스트)
-                      crossAxisSpacing: GudaSpacing.md,
-                      mainAxisSpacing: GudaSpacing.lg,
-                    ),
-                    itemCount: filteredHexagrams.length,
-                    itemBuilder: (context, index) {
-                      final hexagram = filteredHexagrams[index];
-                      return _HexagramItem(
-                        hexagram: hexagram,
-                        onTap: () {
-                          widget.onHexagramSelected(hexagram);
-                          Navigator.pop(context);
-                        },
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HexagramItem extends StatelessWidget {
-  final Hexagram hexagram;
-  final VoidCallback onTap;
-
-  const _HexagramItem({required this.hexagram, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: GudaRadius.mdAll,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          HexagramWidget(
-            lines: hexagram.lines,
-            size: 48,
-          ),
-          const SizedBox(height: GudaSpacing.sm),
-          Text(
-            hexagram.name
-                .replaceAll('중', '')
-                .replaceAll('천', '')
-                .replaceAll('지', ''), // 간략화된 이름 표시 (선택사항)
-            // 하지만 사용자가 "궤 이름"이 나오게 해달라고 했으므로 전체 이름을 적절히 표시
-            // 너무 길면 줄바꿈 처리
-            textAlign: TextAlign.center,
-            style: GudaTypography.captionSemiBold(
-              color: isDark
-                  ? GudaColors.onSurfaceDark
-                  : GudaColors.onSurfaceLight,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Text(
-            hexagram.hanja,
-            style: GudaTypography.tiny(
-              color: (isDark
-                      ? GudaColors.onSurfaceVariantDark
-                      : GudaColors.onSurfaceVariantLight)
-                  .withValues(alpha: 0.7),
+            child: HexagramGrid(
+              hexagrams: filteredHexagrams,
+              onHexagramSelected: (hexagram) {
+                widget.onHexagramSelected(hexagram);
+                Navigator.pop(context);
+              },
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 구분선 위젯
 /// 디자인 시스템의 색상과 일관된 투명도를 적용합니다.
@@ -23,9 +24,9 @@ class GudaDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final defaultColor = color ?? theme.dividerTheme.color ?? 
-        (theme.brightness == Brightness.dark ? GudaColors.dividerDark : GudaColors.dividerLight);
+    final isDark = context.isDark;
+    final defaultColor = color ?? Theme.of(context).dividerTheme.color ?? 
+        (isDark ? GudaColors.dividerDark : GudaColors.dividerLight);
     final finalColor = defaultColor;
 
     return Divider(

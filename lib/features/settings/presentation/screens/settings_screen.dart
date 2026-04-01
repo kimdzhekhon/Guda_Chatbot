@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_lottie.dart';
-import 'package:guda_chatbot/core/constants/app_assets.dart';
-import 'package:guda_chatbot/core/constants/app_strings.dart';
-import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
-import 'package:guda_chatbot/core/ui/ui_state.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_section.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_section.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
+import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:go_router/go_router.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/app/theme/theme_viewmodel.dart';
-import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
+import 'package:go_router/go_router.dart';
+import 'package:guda_chatbot/features/settings/presentation/widgets/user_profile_card.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
+import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 
 /// SCR_SETTINGS — 설정 화면
 class SettingsScreen extends ConsumerWidget {
@@ -30,23 +32,9 @@ class SettingsScreen extends ConsumerWidget {
       _ => null,
     };
 
-    return Scaffold(
+    return GudaScaffold(
       appBar: const GudaAppBar(title: AppStrings.settingLabel),
-      body: AppResponsiveLayout(
-        mobile: (context, data) => _buildBody(context, user, ref),
-        tablet: (context, data) => Center(
-          child: SizedBox(
-            width: 600,
-            child: _buildBody(context, user, ref),
-          ),
-        ),
-        desktop: (context, data) => Center(
-          child: SizedBox(
-            width: 800,
-            child: _buildBody(context, user, ref),
-          ),
-        ),
-      ),
+      body: _buildBody(context, user, ref),
     );
   }
 
@@ -55,8 +43,6 @@ class SettingsScreen extends ConsumerWidget {
     GudaUser? user,
     WidgetRef ref,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final usage = ref.watch(chatUsageViewModelProvider);
     final progress = usage.totalLimit > 0 ? usage.usedCount / usage.totalLimit : 0.0;
 
@@ -66,78 +52,10 @@ class SettingsScreen extends ConsumerWidget {
         if (user != null)
           GudaSection(
             title: AppStrings.profileSection,
-            child: Container(
-              padding: const EdgeInsets.all(GudaSpacing.lg),
-              decoration: BoxDecoration(
-                color: isDark ? GudaColors.surfaceDark : GudaColors.surfaceLight,
-                borderRadius: GudaRadius.lgAll,
-                boxShadow: GudaShadows.card,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GudaLottie(
-                    path: AppAssets.lotusLottie,
-                    size: 60,
-                  ),
-                  const SizedBox(width: GudaSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: GudaSpacing.sm,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: GudaRadius.smAll,
-                          ),
-                          child: Text(
-                            usage.planName,
-                            style: GudaTypography.captionBold(color: colorScheme.primary),
-                          ),
-                        ),
-                        const SizedBox(height: GudaSpacing.xs),
-                        Text(
-                          user.email,
-                          style: GudaTypography.heading3(color: colorScheme.onSurface),
-                        ),
-                        const SizedBox(height: GudaSpacing.md),
-                        ClipRRect(
-                          borderRadius: GudaRadius.smAll,
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor:
-                                isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
-                            color: GudaColors.accent,
-                            minHeight: 8,
-                          ),
-                        ),
-                        const SizedBox(height: GudaSpacing.xs),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '대화 사용량',
-                              style: GudaTypography.tiny(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            Text(
-                              '${usage.usedCount} / ${usage.totalLimit}',
-                              style: GudaTypography.tiny(
-                                color: colorScheme.onSurfaceVariant,
-                              ).copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            child: UserProfileCard(
+              user: user,
+              usage: usage,
+              progress: progress,
             ),
           ),
 
@@ -158,7 +76,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: AppStrings.purchaseHistoryLabel,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -172,7 +90,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: AppStrings.usageHistoryLabel,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -195,17 +113,19 @@ class SettingsScreen extends ConsumerWidget {
                 title: AppStrings.fontSizeLabel,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
                 onTap: () => context.push(RoutePaths.fontSize),
               ),
+              const GudaDivider(alpha: 1.0),
+              _PersonaSelectionTile(),
               const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.bookmark_outline_rounded),
                 title: '보관함',
                 trailing: Icon(
                   Icons.chevron_right_rounded,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
                 onTap: () => context.push(RoutePaths.bookmarks),
               ),
@@ -224,10 +144,13 @@ class SettingsScreen extends ConsumerWidget {
               GudaTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: AppStrings.appVersionLabel,
-                trailing: Text(
-                  AppStrings.version.split(' ').last,
-                  style: GudaTypography.caption(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                trailing: Padding(
+                  padding: const EdgeInsets.only(top: 3.0),
+                  child: Text(
+                    AppStrings.version.split(' ').last,
+                    style: GudaTypography.caption(
+                      color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                    ).copyWith(height: 1.2),
                   ),
                 ),
               ),
@@ -237,7 +160,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: AppStrings.licenseLabel,
                 trailing: Icon(
                   Icons.chevron_right_rounded,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
                 onTap: () => context.push(RoutePaths.license),
               ),
@@ -251,9 +174,9 @@ class SettingsScreen extends ConsumerWidget {
           child: Column(
             children: [
               GudaTile(
-                leading: Icon(Icons.logout_rounded, color: colorScheme.error),
+                leading: Icon(Icons.logout_rounded, color: context.colorScheme.error),
                 title: AppStrings.logoutConfirmTitle,
-                color: colorScheme.error,
+                color: context.colorScheme.error,
                 onTap: () async {
                   final confirm = await GudaDialog.show(
                     context,
@@ -269,9 +192,9 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const GudaDivider(alpha: 1.0),
               GudaTile(
-                leading: Icon(Icons.person_remove_outlined, color: colorScheme.error),
+                leading: Icon(Icons.person_remove_outlined, color: context.colorScheme.error),
                 title: AppStrings.deleteAccountConfirmTitle,
-                color: colorScheme.error,
+                color: context.colorScheme.error,
                 onTap: () async {
                   final confirm = await GudaDialog.show(
                     context,
@@ -294,11 +217,51 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+class _PersonaSelectionTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final personaState = ref.watch(personaProvider);
+    final personaNotifier = ref.read(personaProvider.notifier);
+
+    final currentId = personaState.dataOrNull ?? PersonaType.basic;
+
+    final persona = personaNotifier.personas.firstWhere(
+      (p) => p.id == currentId,
+      orElse: () => personaNotifier.personas.first,
+    );
+
+    return GudaTile(
+      leading: const Icon(Icons.psychology_outlined),
+      title: AppStrings.personaSettingTitle,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: Text(
+              persona.name.split(' ').first, // '기본' 또는 '친절한' 등 앞단어만 표시
+              style: GudaTypography.caption(
+                color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              ).copyWith(height: 1.2),
+            ),
+          ),
+          const SizedBox(width: GudaSpacing.xs),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+        ],
+      ),
+      onTap: () => context.push(RoutePaths.persona),
+    );
+  }
+}
+
 class _ThemeSelectionTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeViewModelProvider);
-    final colorScheme = Theme.of(context).colorScheme;
 
     final currentMode = themeMode.maybeWhen(
       data: (mode) => mode,
@@ -322,16 +285,19 @@ class _ThemeSelectionTile extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            modeLabel,
-            style: GudaTypography.caption(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ).copyWith(height: 1.3),
+          Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: Text(
+              modeLabel,
+              style: GudaTypography.caption(
+                color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              ).copyWith(height: 1.2),
+            ),
           ),
           const SizedBox(width: GudaSpacing.xs),
           Icon(
             Icons.chevron_right_rounded,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -344,7 +310,6 @@ class _ThemeSelectionTile extends ConsumerWidget {
     WidgetRef ref,
     ThemeMode currentMode,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
     GudaDialog.show(
       context,
       title: AppStrings.themeLabel,
@@ -359,7 +324,7 @@ class _ThemeSelectionTile extends ConsumerWidget {
               Navigator.pop(context);
             },
             trailing: currentMode == ThemeMode.system
-                ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                ? Icon(Icons.check_rounded, color: context.colorScheme.primary)
                 : null,
           ),
           GudaTile(
@@ -370,7 +335,7 @@ class _ThemeSelectionTile extends ConsumerWidget {
               Navigator.pop(context);
             },
             trailing: currentMode == ThemeMode.light
-                ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                ? Icon(Icons.check_rounded, color: context.colorScheme.primary)
                 : null,
           ),
           GudaTile(
@@ -381,7 +346,7 @@ class _ThemeSelectionTile extends ConsumerWidget {
               Navigator.pop(context);
             },
             trailing: currentMode == ThemeMode.dark
-                ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                ? Icon(Icons.check_rounded, color: context.colorScheme.primary)
                 : null,
           ),
         ],
@@ -391,4 +356,3 @@ class _ThemeSelectionTile extends ConsumerWidget {
     );
   }
 }
-

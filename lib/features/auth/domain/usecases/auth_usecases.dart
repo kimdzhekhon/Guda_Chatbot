@@ -1,23 +1,6 @@
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/repositories/auth_repository.dart';
-
-/// 이메일/비밀번호 로그인 유즈케이스
-class SignInWithEmailUseCase {
-  const SignInWithEmailUseCase(this._repository);
-  final AuthRepository _repository;
-
-  Future<GudaUser> call(String email, String password) =>
-      _repository.signInWithEmail(email, password);
-}
-
-/// 이메일/비밀번호 회원가입 유즈케이스
-class SignUpWithEmailUseCase {
-  const SignUpWithEmailUseCase(this._repository);
-  final AuthRepository _repository;
-
-  Future<GudaUser> call(String email, String password) =>
-      _repository.signUpWithEmail(email, password);
-}
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 /// Google 소셜 로그인 유즈케이스
 class SignInWithGoogleUseCase {
@@ -62,4 +45,33 @@ class GetCurrentUserUseCase {
 
   /// 현재 로그인된 사용자 반환 (미인증 시 null)
   Future<GudaUser?> call() => _repository.getCurrentUser();
+}
+
+/// 프로필 정보 업데이트 유즈케이스
+class UpdateProfileUseCase {
+  const UpdateProfileUseCase(this._repository);
+  final AuthRepository _repository;
+
+  /// 프로필 업데이트 실행
+  Future<void> call({
+    required String nickname,
+    required DateTime birthDate,
+    required PersonaType persona,
+    required bool termsAgreed,
+  }) =>
+      _repository.updateProfile(
+        nickname: nickname,
+        birthDate: birthDate,
+        persona: persona,
+        termsAgreed: termsAgreed,
+      );
+}
+
+/// 페르소나 업데이트 유즈케이스
+class UpdatePersonaUseCase {
+  const UpdatePersonaUseCase(this._repository);
+  final AuthRepository _repository;
+
+  /// 페르소나 업데이트 실행
+  Future<void> call(PersonaType persona) => _repository.updatePersona(persona);
 }

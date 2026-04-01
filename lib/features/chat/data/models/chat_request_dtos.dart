@@ -8,8 +8,10 @@ part 'chat_request_dtos.g.dart';
 abstract class CreateConversationRequestDto with _$CreateConversationRequestDto {
   const factory CreateConversationRequestDto({
     required String title,
-    @JsonKey(name: 'classic_type') required String classicType,
+    @JsonKey(name: 'topic_code') required String topicCode,
     @JsonKey(name: 'user_id') required String userId,
+    @JsonKey(name: 'persona_id') required String personaId,
+    @JsonKey(name: 'hexagram_id') String? hexagramId,
   }) = _CreateConversationRequestDto;
 
   factory CreateConversationRequestDto.fromJson(Map<String, dynamic> json) =>
@@ -20,9 +22,9 @@ abstract class CreateConversationRequestDto with _$CreateConversationRequestDto 
 @freezed
 abstract class SaveMessageRequestDto with _$SaveMessageRequestDto {
   const factory SaveMessageRequestDto({
-    @JsonKey(name: 'conversation_id') required String conversationId,
+    @JsonKey(name: 'chat_rooms_id') required String chatRoomId,
     required String content,
-    required String role,
+    @JsonKey(name: 'sender_role') required String senderRole,
   }) = _SaveMessageRequestDto;
 
   factory SaveMessageRequestDto.fromJson(Map<String, dynamic> json) =>
@@ -33,7 +35,7 @@ abstract class SaveMessageRequestDto with _$SaveMessageRequestDto {
 @freezed
 abstract class GetMessagesRequestDto with _$GetMessagesRequestDto {
   const factory GetMessagesRequestDto({
-    @JsonKey(name: 'conversation_id') required String conversationId,
+    @JsonKey(name: 'chat_rooms_id') required String chatRoomId,
   }) = _GetMessagesRequestDto;
 
   factory GetMessagesRequestDto.fromJson(Map<String, dynamic> json) =>
@@ -44,7 +46,7 @@ abstract class GetMessagesRequestDto with _$GetMessagesRequestDto {
 @freezed
 abstract class DeleteConversationRequestDto with _$DeleteConversationRequestDto {
   const factory DeleteConversationRequestDto({
-    @JsonKey(name: 'conversation_id') required String conversationId,
+    @JsonKey(name: 'chat_rooms_id') required String chatRoomId,
   }) = _DeleteConversationRequestDto;
 
   factory DeleteConversationRequestDto.fromJson(Map<String, dynamic> json) =>

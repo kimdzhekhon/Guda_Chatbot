@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// 가격 표시 전용 위젯
 /// 큰 숫자와 '원' 단위를 정렬하여 보여줍니다.
@@ -26,7 +27,7 @@ class GudaPriceDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Row(
       mainAxisAlignment: alignment,

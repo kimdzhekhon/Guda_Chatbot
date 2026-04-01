@@ -1,7 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
+import 'package:guda_chatbot/features/chat/domain/orchestrations/chat_flow_orchestrator.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 
 part 'home_viewmodel.g.dart';
 
@@ -12,32 +15,38 @@ enum CardPhase {
 }
 
 class HomeState {
-  final String? activeConversationId;
+  final String? activeChatRoomId;
   final ClassicType selectedClassicType;
   final CardPhase phase;
   final Hexagram? selectedHexagram;
 
+  /// 첫 메시지 전송 전 대기 상태 (DB에 방이 아직 없음)
+  final bool isPendingNewChat;
+
   HomeState({
-    this.activeConversationId,
+    this.activeChatRoomId,
     required this.selectedClassicType,
     this.phase = CardPhase.selection,
     this.selectedHexagram,
+    this.isPendingNewChat = false,
   });
 
   HomeState copyWith({
-    String? activeConversationId,
+    String? activeChatRoomId,
     ClassicType? selectedClassicType,
     CardPhase? phase,
     Hexagram? selectedHexagram,
-    bool clearActiveConversation = false,
+    bool clearActiveChatRoom = false,
+    bool? isPendingNewChat,
   }) {
     return HomeState(
-      activeConversationId: clearActiveConversation
+      activeChatRoomId: clearActiveChatRoom
           ? null
-          : (activeConversationId ?? this.activeConversationId),
+          : (activeChatRoomId ?? this.activeChatRoomId),
       selectedClassicType: selectedClassicType ?? this.selectedClassicType,
       phase: phase ?? this.phase,
       selectedHexagram: selectedHexagram ?? this.selectedHexagram,
+      isPendingNewChat: isPendingNewChat ?? (clearActiveChatRoom ? false : this.isPendingNewChat),
     );
   }
 }
@@ -50,35 +59,58 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   void selectClassicType(ClassicType type) {
+    _initializeByClassicType(type, clearActiveChatRoom: true);
+  }
+
+  void _initializeByClassicType(ClassicType type,
+      {bool clearActiveChatRoom = false}) {
+    final config = ChatFlowOrchestrator.prepareNewChat(type: type);
     state = state.copyWith(
       selectedClassicType: type,
-      clearActiveConversation: true,
+      clearActiveChatRoom: clearActiveChatRoom,
+      phase: config['phase'] == 'input' ? CardPhase.input : CardPhase.selection,
+      selectedHexagram: null,
     );
   }
 
   void selectConversation(Conversation conversation) {
     state = state.copyWith(
-      activeConversationId: conversation.id,
-      selectedClassicType: conversation.classicType,
+      activeChatRoomId: conversation.id,
+      selectedClassicType: conversation.topicCode,
       phase: CardPhase.input,
     );
   }
 
-  void startNewChat() {
+  Future<void> startNewChat() async {
     final type = state.selectedClassicType;
-    final mockConv = Conversation(
-      id: 'mock-new-${DateTime.now().millisecondsSinceEpoch}',
-      title: '${type.displayName} 새로운 시작',
-      classicType: type,
-      userId: 'mock-user',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+    // 대화방은 첫 메시지 전송 시 생성됩니다.
+    // 여기서는 클라이언트 상태만 Pending 모드로 전환합니다.
+    _initializeByClassicType(type);
+    state = state.copyWith(
+      activeChatRoomId: null,
+      isPendingNewChat: true,
     );
-    state = state.copyWith(activeConversationId: mockConv.id);
   }
 
-  void clearActiveConversation() {
-    state = state.copyWith(clearActiveConversation: true);
+  /// 첫 메시지 전송 성공 후 실제 생성된 방 ID로 상태 업데이트
+  void setActiveChatRoomId(String chatRoomId) {
+    state = state.copyWith(
+      activeChatRoomId: chatRoomId,
+      isPendingNewChat: false,
+    );
+    // 목록 갱신: microtask로 지연하여 현재 빌드 사이클 이후에 실행
+    Future.microtask(() {
+      if (ref.mounted) {
+        ref.read(chatListViewModelProvider.notifier).refresh();
+      }
+    });
+  }
+
+  /// Pending 상태에서 현재 페르소나 ID를 반환 (기본값: basic)
+  String currentPersonaId(PersonaType personaType) => personaType.name;
+
+  void clearActiveChatRoom() {
+    state = state.copyWith(clearActiveChatRoom: true);
     resetInitialPhase();
   }
 
@@ -94,11 +126,6 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   void resetInitialPhase() {
-    state = state.copyWith(
-      phase: state.selectedClassicType == ClassicType.tripitaka
-          ? CardPhase.input
-          : CardPhase.selection,
-      selectedHexagram: null,
-    );
+    _initializeByClassicType(state.selectedClassicType);
   }
 }

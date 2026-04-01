@@ -13,11 +13,17 @@ abstract class Conversation with _$Conversation {
     /// 대화 제목 (첫 메시지 기반 자동 생성)
     required String title,
 
-    /// 고전 유형
-    required ClassicType classicType,
+    /// 주제 코드 (고전 유형)
+    required ClassicType topicCode,
 
     /// 소유자 사용자 ID
     required String userId,
+
+    /// 페르소나 ID
+    String? personaId,
+
+    /// 주역 괘 번호 (이름)
+    String? hexagramId,
 
     /// 마지막 메시지 미리보기
     String? lastMessagePreview,
@@ -28,7 +34,7 @@ abstract class Conversation with _$Conversation {
     /// 생성 일시
     required DateTime createdAt,
 
-    /// 최종 수정 일시
-    required DateTime updatedAt,
+    /// 최종 메시지 일시
+    required DateTime lastMessageAt,
   }) = _Conversation;
 }

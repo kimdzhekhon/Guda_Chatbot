@@ -13,7 +13,6 @@ class InputPhaseView extends StatelessWidget {
   const InputPhaseView({
     super.key,
     required this.type,
-    required this.isDark,
     required this.controller,
     required this.selectedHexagram,
     required this.onStart,
@@ -21,7 +20,6 @@ class InputPhaseView extends StatelessWidget {
   });
 
   final ClassicType type;
-  final bool isDark;
   final TextEditingController controller;
   final Hexagram? selectedHexagram;
   final Function(String) onStart;
@@ -30,7 +28,6 @@ class InputPhaseView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GudaActionLayout(
-      isDark: isDark,
       title: type == ClassicType.tripitaka
           ? AppStrings.tripitakaName
           : AppStrings.initialQuestionTitle,
@@ -43,7 +40,6 @@ class InputPhaseView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
               child: SelectedHexagramDisplay(
-                isDark: isDark,
                 hexagram: selectedHexagram!,
                 onReset: onResetHexagram,
               ),
@@ -54,7 +50,6 @@ class InputPhaseView extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: GudaSpacing.md),
               child: SuggestedQuestionChips(
                 type: type,
-                isDark: isDark,
                 onTap: (text) => controller.text = text,
               ),
             ),
@@ -62,7 +57,6 @@ class InputPhaseView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md),
             child: GudaTextInputField(
               controller: controller,
-              isDark: isDark,
               autofocus: true,
               hintText: type == ClassicType.tripitaka
                   ? AppStrings.tripitakaQuestionHint
@@ -70,12 +64,18 @@ class InputPhaseView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: GudaSpacing.lg),
-          GudaButton.filled(
-            label: type == ClassicType.tripitaka
-                ? AppStrings.tripitakaStartButton
-                : AppStrings.startDivinationButton,
-            onPressed: () => onStart(controller.text),
-            isFullWidth: true,
+          ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) {
+              final isInputEmpty = controller.text.trim().isEmpty;
+              return GudaButton.filled(
+                label: type == ClassicType.tripitaka
+                    ? AppStrings.tripitakaStartButton
+                    : AppStrings.startDivinationButton,
+                onPressed: isInputEmpty ? null : () => onStart(controller.text),
+                isFullWidth: true,
+              );
+            },
           ),
         ],
       ),

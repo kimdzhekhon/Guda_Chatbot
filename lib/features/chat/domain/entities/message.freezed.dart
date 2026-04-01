@@ -14,10 +14,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Message {
 
-/// 메시지 UUID
- String get id;/// 소속 대화 세션 ID
- String get conversationId;/// 발신자 역할
- MessageRole get role;/// 메시지 내용 (마크다운 지원)
+/// 메시지 고유 ID (PK)
+ int get id;/// 소속 채팅방 ID
+ String get chatRoomId;/// 발신자 역할
+ MessageRole get senderRole;/// 메시지 내용 (마크다운 지원)
  String get content;/// 생성 일시
  DateTime get createdAt;/// 스트리밍 중 여부 (렌더링 시 점진적 텍스트 표시)
  bool get isStreaming;
@@ -31,16 +31,16 @@ $MessageCopyWith<Message> get copyWith => _$MessageCopyWithImpl<Message>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Message&&(identical(other.id, id) || other.id == id)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.role, role) || other.role == role)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Message&&(identical(other.id, id) || other.id == id)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.senderRole, senderRole) || other.senderRole == senderRole)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,conversationId,role,content,createdAt,isStreaming);
+int get hashCode => Object.hash(runtimeType,id,chatRoomId,senderRole,content,createdAt,isStreaming);
 
 @override
 String toString() {
-  return 'Message(id: $id, conversationId: $conversationId, role: $role, content: $content, createdAt: $createdAt, isStreaming: $isStreaming)';
+  return 'Message(id: $id, chatRoomId: $chatRoomId, senderRole: $senderRole, content: $content, createdAt: $createdAt, isStreaming: $isStreaming)';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $MessageCopyWith<$Res>  {
   factory $MessageCopyWith(Message value, $Res Function(Message) _then) = _$MessageCopyWithImpl;
 @useResult
 $Res call({
- String id, String conversationId, MessageRole role, String content, DateTime createdAt, bool isStreaming
+ int id, String chatRoomId, MessageRole senderRole, String content, DateTime createdAt, bool isStreaming
 });
 
 
@@ -68,11 +68,11 @@ class _$MessageCopyWithImpl<$Res>
 
 /// Create a copy of Message
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? conversationId = null,Object? role = null,Object? content = null,Object? createdAt = null,Object? isStreaming = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? chatRoomId = null,Object? senderRole = null,Object? content = null,Object? createdAt = null,Object? isStreaming = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as int,chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
+as String,senderRole: null == senderRole ? _self.senderRole : senderRole // ignore: cast_nullable_to_non_nullable
 as MessageRole,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming // ignore: cast_nullable_to_non_nullable
@@ -161,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String conversationId,  MessageRole role,  String content,  DateTime createdAt,  bool isStreaming)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String chatRoomId,  MessageRole senderRole,  String content,  DateTime createdAt,  bool isStreaming)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Message() when $default != null:
-return $default(_that.id,_that.conversationId,_that.role,_that.content,_that.createdAt,_that.isStreaming);case _:
+return $default(_that.id,_that.chatRoomId,_that.senderRole,_that.content,_that.createdAt,_that.isStreaming);case _:
   return orElse();
 
 }
@@ -182,10 +182,10 @@ return $default(_that.id,_that.conversationId,_that.role,_that.content,_that.cre
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String conversationId,  MessageRole role,  String content,  DateTime createdAt,  bool isStreaming)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String chatRoomId,  MessageRole senderRole,  String content,  DateTime createdAt,  bool isStreaming)  $default,) {final _that = this;
 switch (_that) {
 case _Message():
-return $default(_that.id,_that.conversationId,_that.role,_that.content,_that.createdAt,_that.isStreaming);case _:
+return $default(_that.id,_that.chatRoomId,_that.senderRole,_that.content,_that.createdAt,_that.isStreaming);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +202,10 @@ return $default(_that.id,_that.conversationId,_that.role,_that.content,_that.cre
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String conversationId,  MessageRole role,  String content,  DateTime createdAt,  bool isStreaming)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String chatRoomId,  MessageRole senderRole,  String content,  DateTime createdAt,  bool isStreaming)?  $default,) {final _that = this;
 switch (_that) {
 case _Message() when $default != null:
-return $default(_that.id,_that.conversationId,_that.role,_that.content,_that.createdAt,_that.isStreaming);case _:
+return $default(_that.id,_that.chatRoomId,_that.senderRole,_that.content,_that.createdAt,_that.isStreaming);case _:
   return null;
 
 }
@@ -217,15 +217,15 @@ return $default(_that.id,_that.conversationId,_that.role,_that.content,_that.cre
 
 
 class _Message implements Message {
-  const _Message({required this.id, required this.conversationId, required this.role, required this.content, required this.createdAt, this.isStreaming = false});
+  const _Message({required this.id, required this.chatRoomId, required this.senderRole, required this.content, required this.createdAt, this.isStreaming = false});
   
 
-/// 메시지 UUID
-@override final  String id;
-/// 소속 대화 세션 ID
-@override final  String conversationId;
+/// 메시지 고유 ID (PK)
+@override final  int id;
+/// 소속 채팅방 ID
+@override final  String chatRoomId;
 /// 발신자 역할
-@override final  MessageRole role;
+@override final  MessageRole senderRole;
 /// 메시지 내용 (마크다운 지원)
 @override final  String content;
 /// 생성 일시
@@ -243,16 +243,16 @@ _$MessageCopyWith<_Message> get copyWith => __$MessageCopyWithImpl<_Message>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Message&&(identical(other.id, id) || other.id == id)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.role, role) || other.role == role)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Message&&(identical(other.id, id) || other.id == id)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.senderRole, senderRole) || other.senderRole == senderRole)&&(identical(other.content, content) || other.content == content)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,conversationId,role,content,createdAt,isStreaming);
+int get hashCode => Object.hash(runtimeType,id,chatRoomId,senderRole,content,createdAt,isStreaming);
 
 @override
 String toString() {
-  return 'Message(id: $id, conversationId: $conversationId, role: $role, content: $content, createdAt: $createdAt, isStreaming: $isStreaming)';
+  return 'Message(id: $id, chatRoomId: $chatRoomId, senderRole: $senderRole, content: $content, createdAt: $createdAt, isStreaming: $isStreaming)';
 }
 
 
@@ -263,7 +263,7 @@ abstract mixin class _$MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
   factory _$MessageCopyWith(_Message value, $Res Function(_Message) _then) = __$MessageCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String conversationId, MessageRole role, String content, DateTime createdAt, bool isStreaming
+ int id, String chatRoomId, MessageRole senderRole, String content, DateTime createdAt, bool isStreaming
 });
 
 
@@ -280,11 +280,11 @@ class __$MessageCopyWithImpl<$Res>
 
 /// Create a copy of Message
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? conversationId = null,Object? role = null,Object? content = null,Object? createdAt = null,Object? isStreaming = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? chatRoomId = null,Object? senderRole = null,Object? content = null,Object? createdAt = null,Object? isStreaming = null,}) {
   return _then(_Message(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,conversationId: null == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as int,chatRoomId: null == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
+as String,senderRole: null == senderRole ? _self.senderRole : senderRole // ignore: cast_nullable_to_non_nullable
 as MessageRole,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming // ignore: cast_nullable_to_non_nullable

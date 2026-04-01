@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_animations.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
-import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/layout/app_responsive_layout.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
-import 'package:guda_chatbot/features/chat/presentation/widgets/classic_card.dart';
+
+import 'package:guda_chatbot/features/chat/presentation/widgets/classic_card_page_view.dart';
+import 'package:guda_chatbot/features/chat/presentation/widgets/classic_start_button.dart';
 
 class ClassicCardSlider extends ConsumerStatefulWidget {
   const ClassicCardSlider({super.key});
@@ -47,6 +47,17 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
     ref.read(homeViewModelProvider.notifier).selectClassicType(type);
   }
 
+  Future<void> _handleStart() async {
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(homeViewModelProvider.notifier).startNewChat();
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppResponsiveLayout(
@@ -66,60 +77,18 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
       children: [
         SizedBox(
           height: height,
-          child: PageView(
+          child: ClassicCardPageView(
             controller: _pageController,
             onPageChanged: _onPageChanged,
-            physics: _isLoading ? const NeverScrollableScrollPhysics() : null,
-            children: [
-              ClassicCard(
-                type: ClassicType.tripitaka,
-                title: AppStrings.tripitakaName,
-                description: AppStrings.tripitakaDesc,
-                contentsSubtitle: AppStrings.tripitakaContentsSubtitle,
-                contents: const [
-                  AppStrings.tripitakaContents1,
-                  AppStrings.tripitakaContents2,
-                  AppStrings.tripitakaContents3,
-                ],
-              ),
-              ClassicCard(
-                type: ClassicType.iching,
-                title: AppStrings.ichingName,
-                description: AppStrings.ichingDesc,
-                contentsSubtitle: AppStrings.ichingContentsSubtitle,
-                contents: const [
-                  AppStrings.ichingContents1,
-                  AppStrings.ichingContents2,
-                ],
-              ),
-            ],
+            isLoading: _isLoading,
           ),
         )
             .gudaFadeIn(duration: const Duration(milliseconds: 400))
             .gudaSlideIn(begin: const Offset(0, 0.05)),
         const SizedBox(height: GudaSpacing.xl),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
-          child: GudaButton.filled(
-            label: _isLoading ? '대화 생성 중...' : '새 대화 시작',
-            onPressed: () async {
-              setState(() => _isLoading = true);
-              await Future.delayed(const Duration(milliseconds: 500));
-              if (mounted) {
-                ref.read(homeViewModelProvider.notifier).startNewChat();
-                setState(() => _isLoading = false);
-              }
-            },
-            icon: _isLoading ? null : Icons.chat_bubble_outline,
-            isLoading: _isLoading,
-            isFullWidth: true,
-            backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? GudaColors.accent
-                : null, // null defaults to cs.primary (Indigo)
-            foregroundColor: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : null,
-          ),
+        ClassicStartButton(
+          onPressed: _handleStart,
+          isLoading: _isLoading,
         )
             .gudaFadeIn(delay: const Duration(milliseconds: 200))
             .gudaScaleIn(

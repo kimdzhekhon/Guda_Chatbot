@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// 주역의 괘(Hexagram)를 그리는 Painter
 class HexagramPainter extends CustomPainter {
@@ -80,7 +81,7 @@ class GudaHexagram extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final strokeColor =
         color ??
         (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight);

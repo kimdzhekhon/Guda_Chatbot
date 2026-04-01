@@ -23,9 +23,12 @@ class GudaLoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withValues(alpha: 0.6), // 더 짙은 반투명 효과
             child: Center(
-              child: GudaLoadingWidget(message: message),
+              child: GudaLoadingWidget(
+                message: message,
+                color: Colors.white, // 흰색 인디케이터 적용
+              ),
             ),
           ),
       ],

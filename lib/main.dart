@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/app/config/app_config.dart';
@@ -48,6 +49,15 @@ class GudaApp extends ConsumerWidget {
         data: (mode) => mode,
         orElse: () => ThemeMode.system,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+      ],
+      locale: const Locale('ko', 'KR'),
       routerConfig: router,
       builder: (context, child) {
         return MediaQuery(

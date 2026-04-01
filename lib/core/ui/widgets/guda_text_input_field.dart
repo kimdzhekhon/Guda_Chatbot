@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
+import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 텍스트 입력 필드 컨테이너
 /// 디자인 시스템에 따른 배경색, 곡률, 테두리를 적용합니다.
@@ -7,7 +8,6 @@ class GudaTextInputField extends StatelessWidget {
   const GudaTextInputField({
     super.key,
     required this.controller,
-    required this.isDark,
     this.hintText,
     this.maxLines = 1,
     this.autofocus = false,
@@ -17,11 +17,11 @@ class GudaTextInputField extends StatelessWidget {
     this.hintStyle,
     this.backgroundColor,
     this.borderRadius,
+    this.border,
     this.contentPadding,
   });
 
   final TextEditingController controller;
-  final bool isDark;
   final String? hintText;
   final int? maxLines;
   final bool autofocus;
@@ -31,20 +31,20 @@ class GudaTextInputField extends StatelessWidget {
   final TextStyle? hintStyle;
   final Color? backgroundColor;
   final BorderRadiusGeometry? borderRadius;
+  final BoxBorder? border;
   final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final defaultBg = isDark
-        ? GudaColors.surfaceVariantDark
-        : GudaColors.surfaceVariantLight;
+    final defaultBg = context.isDark ? GudaColors.surfaceVariantDark : GudaColors.surfaceVariantLight;
 
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor ?? defaultBg,
         borderRadius: borderRadius ?? GudaRadius.lgAll,
+        border: border,
       ),
       child: TextField(
         controller: controller,

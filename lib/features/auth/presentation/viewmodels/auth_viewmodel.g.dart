@@ -108,102 +108,6 @@ final class AuthRepositoryProvider
 
 String _$authRepositoryHash() => r'519da6b15afb088cfb679a4ff821d9dd0247b7ce';
 
-@ProviderFor(signInWithEmailUseCase)
-final signInWithEmailUseCaseProvider = SignInWithEmailUseCaseProvider._();
-
-final class SignInWithEmailUseCaseProvider
-    extends
-        $FunctionalProvider<
-          SignInWithEmailUseCase,
-          SignInWithEmailUseCase,
-          SignInWithEmailUseCase
-        >
-    with $Provider<SignInWithEmailUseCase> {
-  SignInWithEmailUseCaseProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'signInWithEmailUseCaseProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$signInWithEmailUseCaseHash();
-
-  @$internal
-  @override
-  $ProviderElement<SignInWithEmailUseCase> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  SignInWithEmailUseCase create(Ref ref) {
-    return signInWithEmailUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SignInWithEmailUseCase value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SignInWithEmailUseCase>(value),
-    );
-  }
-}
-
-String _$signInWithEmailUseCaseHash() =>
-    r'85d655e9de2bf12757b0d8f231d4406e4290e12c';
-
-@ProviderFor(signUpWithEmailUseCase)
-final signUpWithEmailUseCaseProvider = SignUpWithEmailUseCaseProvider._();
-
-final class SignUpWithEmailUseCaseProvider
-    extends
-        $FunctionalProvider<
-          SignUpWithEmailUseCase,
-          SignUpWithEmailUseCase,
-          SignUpWithEmailUseCase
-        >
-    with $Provider<SignUpWithEmailUseCase> {
-  SignUpWithEmailUseCaseProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'signUpWithEmailUseCaseProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$signUpWithEmailUseCaseHash();
-
-  @$internal
-  @override
-  $ProviderElement<SignUpWithEmailUseCase> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  SignUpWithEmailUseCase create(Ref ref) {
-    return signUpWithEmailUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SignUpWithEmailUseCase value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SignUpWithEmailUseCase>(value),
-    );
-  }
-}
-
-String _$signUpWithEmailUseCaseHash() =>
-    r'b14fd6122f7136248c6577581d96f08de1f78692';
-
 @ProviderFor(signInWithGoogleUseCase)
 final signInWithGoogleUseCaseProvider = SignInWithGoogleUseCaseProvider._();
 
@@ -437,15 +341,111 @@ final class GetCurrentUserUseCaseProvider
 String _$getCurrentUserUseCaseHash() =>
     r'4c558036519273e5a4eae954197dcf61cff31679';
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+@ProviderFor(updateProfileUseCase)
+final updateProfileUseCaseProvider = UpdateProfileUseCaseProvider._();
+
+final class UpdateProfileUseCaseProvider
+    extends
+        $FunctionalProvider<
+          UpdateProfileUseCase,
+          UpdateProfileUseCase,
+          UpdateProfileUseCase
+        >
+    with $Provider<UpdateProfileUseCase> {
+  UpdateProfileUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateProfileUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateProfileUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdateProfileUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UpdateProfileUseCase create(Ref ref) {
+    return updateProfileUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdateProfileUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdateProfileUseCase>(value),
+    );
+  }
+}
+
+String _$updateProfileUseCaseHash() =>
+    r'e5d4e709b8118678f163c741d0d4f3595d788e8a';
+
+@ProviderFor(updatePersonaUseCase)
+final updatePersonaUseCaseProvider = UpdatePersonaUseCaseProvider._();
+
+final class UpdatePersonaUseCaseProvider
+    extends
+        $FunctionalProvider<
+          UpdatePersonaUseCase,
+          UpdatePersonaUseCase,
+          UpdatePersonaUseCase
+        >
+    with $Provider<UpdatePersonaUseCase> {
+  UpdatePersonaUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updatePersonaUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updatePersonaUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdatePersonaUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UpdatePersonaUseCase create(Ref ref) {
+    return updatePersonaUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdatePersonaUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdatePersonaUseCase>(value),
+    );
+  }
+}
+
+String _$updatePersonaUseCaseHash() =>
+    r'f16cb203bde96a6774c8f0d30c80d7027e148622';
+
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 
 @ProviderFor(AuthViewModel)
 final authViewModelProvider = AuthViewModelProvider._();
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 final class AuthViewModelProvider
     extends $NotifierProvider<AuthViewModel, UiState<GudaUser?>> {
-  /// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+  /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
   AuthViewModelProvider._()
     : super(
         from: null,
@@ -473,9 +473,9 @@ final class AuthViewModelProvider
   }
 }
 
-String _$authViewModelHash() => r'6836aa2491547a6a925c99e2dfcab7fd3a2ed262';
+String _$authViewModelHash() => r'84ab42869be3eaf4f1168a5e71bdf53ac62b580d';
 
-/// Auth ViewModel — 이메일/Google/Apple 로그인 및 인증 상태 관리
+/// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 
 abstract class _$AuthViewModel extends $Notifier<UiState<GudaUser?>> {
   UiState<GudaUser?> build();

@@ -24,6 +24,7 @@ abstract final class GudaRadius {
   static const double full = 999.0;
 
   // ── BorderRadius 헬퍼 ────────────────────────────
+  static const BorderRadius xsAll = BorderRadius.all(Radius.circular(xs));
   static const BorderRadius smAll = BorderRadius.all(Radius.circular(sm));
   static const BorderRadius mdAll = BorderRadius.all(Radius.circular(md));
   static const BorderRadius lgAll = BorderRadius.all(Radius.circular(lg));

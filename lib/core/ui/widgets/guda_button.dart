@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 
 /// 버튼 변형 종류
@@ -9,7 +10,7 @@ class GudaButton extends StatelessWidget {
   const GudaButton._({
     super.key,
     required this.label,
-    required this.onPressed,
+    this.onPressed,
     required this.variant,
     this.icon,
     this.isLoading = false,
@@ -22,7 +23,7 @@ class GudaButton extends StatelessWidget {
   factory GudaButton.filled({
     Key? key,
     required String label,
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     IconData? icon,
     bool isLoading = false,
     bool isFullWidth = false,
@@ -44,7 +45,7 @@ class GudaButton extends StatelessWidget {
   factory GudaButton.outlined({
     Key? key,
     required String label,
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     IconData? icon,
     bool isLoading = false,
     bool isFullWidth = false,
@@ -62,7 +63,7 @@ class GudaButton extends StatelessWidget {
   factory GudaButton.text({
     Key? key,
     required String label,
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     IconData? icon,
   }) => GudaButton._(
     key: key,
@@ -73,7 +74,7 @@ class GudaButton extends StatelessWidget {
   );
 
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final GudaButtonVariant variant;
   final IconData? icon;
   final bool isLoading;
@@ -118,10 +119,17 @@ class GudaButton extends StatelessWidget {
   }
 
   Widget _buildButton(BuildContext context, ColorScheme cs, Widget child) {
+    VoidCallback? effectiveOnPressed = isLoading
+        ? null
+        : () {
+            HapticFeedback.lightImpact();
+            onPressed?.call();
+          };
+
     switch (variant) {
       case GudaButtonVariant.filled:
         return FilledButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: FilledButton.styleFrom(
             backgroundColor: backgroundColor ?? cs.primary,
             foregroundColor: foregroundColor ?? cs.onPrimary,
@@ -135,7 +143,7 @@ class GudaButton extends StatelessWidget {
         );
       case GudaButtonVariant.outlined:
         return OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: OutlinedButton.styleFrom(
             foregroundColor: cs.primary,
             side: BorderSide(color: cs.outline),
@@ -149,7 +157,7 @@ class GudaButton extends StatelessWidget {
         );
       case GudaButtonVariant.text:
         return TextButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: effectiveOnPressed,
           style: TextButton.styleFrom(
             foregroundColor: cs.primary,
             padding: const EdgeInsets.symmetric(
