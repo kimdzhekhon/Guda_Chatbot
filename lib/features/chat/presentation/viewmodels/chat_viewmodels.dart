@@ -14,6 +14,7 @@ import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_use
 import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/get_chat_usage_logs_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/search_tripitaka_local_usecase.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
@@ -51,7 +52,10 @@ GetMessagesUseCase getMessagesUseCase(Ref ref) =>
 
 @riverpod
 SendMessageUseCase sendMessageUseCase(Ref ref) =>
-    SendMessageUseCase(ref.watch(chatRepositoryProvider));
+    SendMessageUseCase(
+      ref.watch(chatRepositoryProvider),
+      ref.watch(searchTripitakaLocalUseCaseProvider),
+    );
 @riverpod
 GetChatUsageLogsUseCase getChatUsageLogsUseCase(Ref ref) =>
     GetChatUsageLogsUseCase(ref.watch(chatRepositoryProvider));

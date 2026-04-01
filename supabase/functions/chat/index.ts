@@ -24,6 +24,7 @@ interface ChatRequest {
   topic_code: string        // 'iching' | 'tripitaka'
   hexagram_id?: string      // 주역 괘 이름 (예: "건괘")
   persona_id?: string       // 'basic' | 'friendly' | 'strict'
+  search_context?: string   // Flutter에서 전달된 로컬 검색 결과
 }
 
 interface DocumentResult {
@@ -78,7 +79,7 @@ ${contextBlock ? `다음은 이 괘와 관련된 주역 원전 내용입니다:\
 
 // ─── 불경 시스템 프롬프트 (2단계 구조) ────────────────────
 
-function buildTripitakaSystemPrompt(contexts: DocumentResult[]): string {
+function buildTripitakaSystemPrompt(contexts: DocumentResult[], searchContext?: string): string {
   const contextBlock = contexts.length > 0
     ? contexts.map((c, i) => {
         const langLabel = { ko: '한글', zh: '한문', en: '영어', sa: '산스크리트' }[c.source_lang || 'ko'] || c.source_lang
@@ -86,9 +87,11 @@ function buildTripitakaSystemPrompt(contexts: DocumentResult[]): string {
       }).join('\n\n')
     : ''
 
+  const combinedContext = [searchContext, contextBlock].filter(Boolean).join('\n\n---\n\n')
+
   return `당신은 불교 경전(팔만대장경, 구사론 포함)에 정통한 학자이자 해설가입니다.
 
-${contextBlock ? `다음은 사용자의 질문과 관련된 경전 내용입니다:\n\n${contextBlock}\n\n` : ''}다음 2단계로 답변해 주세요:
+${combinedContext ? `다음은 사용자의 질문과 관련된 경전 내용입니다:\n\n${combinedContext}\n\n` : ''}다음 2단계로 답변해 주세요:
 
 **1단계: 경전에 기반한 설명**
 - 관련 경전의 핵심 구절을 인용하며 정확하게 설명합니다.
@@ -431,8 +434,7 @@ serve(async (req) => {
   }
 
   try {
-    const body: ChatRequest = await req.json()
-    const { messages, topic_code, hexagram_id, persona_id } = body
+    const { messages, topic_code, hexagram_id, persona_id, search_context } = await req.json() as ChatRequest
 
     if (!messages || !Array.isArray(messages)) {
       throw new Error('messages 배열이 필요합니다.')
@@ -498,7 +500,7 @@ serve(async (req) => {
 
       finalMessages.push({
         role: 'system',
-        content: buildTripitakaSystemPrompt(contexts),
+        content: buildTripitakaSystemPrompt(contexts, search_context),
       })
 
     } else {
