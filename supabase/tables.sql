@@ -69,7 +69,19 @@ CREATE TABLE IF NOT EXISTS public.messages (
 );
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
--- 6. System Config (시스템 설정 — 앱 공지 및 점검 정보)
+-- 6. Chat Usage Logs (채팅 사용 로그 — 크레딧 차감/충전 이력)
+CREATE TABLE IF NOT EXISTS public.chat_usage_logs (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+    chat_room_id UUID REFERENCES public.chat_rooms ON DELETE SET NULL,
+    action TEXT NOT NULL,        -- 'credit_used', 'credit_charged', 'credit_expired'
+    amount INTEGER NOT NULL DEFAULT 1,
+    remaining INTEGER NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.chat_usage_logs ENABLE ROW LEVEL SECURITY;
+
+-- 7. System Config (시스템 설정 — 앱 공지 및 점검 정보)
 CREATE TABLE IF NOT EXISTS public.system_config (
     id SERIAL PRIMARY KEY,
     min_version TEXT,

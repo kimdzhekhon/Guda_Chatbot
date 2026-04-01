@@ -39,25 +39,8 @@ class ChatUsageViewModel extends _$ChatUsageViewModel {
     }
   }
 
-  /// 대화 크레딧 1회 차감 (DB 반영)
-  /// 성공 시 true, 실패(잔여 횟수 없음 등) 시 false 반환
-  Future<bool> useChatCredit() async {
-    // 로컬 선차감 (낙관적 업데이트)
-    final previous = state;
-    if (state.remainingCount <= 0) return false;
-    state = state.copyWith(usedCount: state.usedCount + 1);
-
-    try {
-      final repo = ref.read(chatRepositoryProvider);
-      final usage = await repo.useChatCredit();
-      if (!ref.mounted) return true;
-      state = usage;
-      return true;
-    } catch (e) {
-      debugPrint('[ChatUsage] 크레딧 차감 실패: $e');
-      // 실패 시 롤백
-      if (ref.mounted) state = previous;
-      return false;
-    }
+  /// 외부에서 사용량 상태를 직접 갱신 (save_chat_message 결과 반영용)
+  void updateUsage(ChatUsage usage) {
+    state = usage;
   }
 }

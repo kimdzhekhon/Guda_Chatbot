@@ -64,7 +64,18 @@ CREATE POLICY "Users can manage messages in their own rooms."
     )
 );
 
--- 6. System Config (인증 전 앱 버전/점검 체크를 위해 모든 사용자 조회 허용)
+-- 6. Chat Usage Logs
+DROP POLICY IF EXISTS "Users can view own usage logs" ON chat_usage_logs;
+CREATE POLICY "Users can view own usage logs"
+  ON chat_usage_logs FOR SELECT
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert own usage logs" ON chat_usage_logs;
+CREATE POLICY "Users can insert own usage logs"
+  ON chat_usage_logs FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- 7. System Config (인증 전 앱 버전/점검 체크를 위해 모든 사용자 조회 허용)
 DROP POLICY IF EXISTS "Anyone can view system config" ON system_config;
 CREATE POLICY "Anyone can view system config"
   ON system_config FOR SELECT
