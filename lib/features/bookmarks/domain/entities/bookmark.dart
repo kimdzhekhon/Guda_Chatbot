@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 
 part 'bookmark.freezed.dart';
 part 'bookmark.g.dart';
@@ -17,6 +18,8 @@ abstract class Bookmark with _$Bookmark {
     required String content,
     required BookmarkType type,
     required String referenceId,
+    String? chatRoomId,
+    ClassicType? topicCode,
     required DateTime createdAt,
   }) = _Bookmark;
 

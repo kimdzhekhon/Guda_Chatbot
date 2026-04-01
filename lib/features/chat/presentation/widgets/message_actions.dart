@@ -8,6 +8,7 @@ import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:guda_chatbot/features/chat/presentation/widgets/share_preview_dialog.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 
 /// 채팅 메시지 하단의 액션 버튼(북마크, 공유) 위젯
 class GudaMessageActions extends ConsumerWidget {
@@ -43,6 +44,7 @@ class GudaMessageActions extends ConsumerWidget {
                   .read(bookmarksProvider.notifier)
                   .removeBookmarkByReferenceId(message.id.toString());
             } else {
+              final topicCode = ref.read(homeViewModelProvider.select((s) => s.selectedClassicType));
               ref.read(bookmarksProvider.notifier).addBookmark(
                     Bookmark(
                       id: const Uuid().v4(),
@@ -53,6 +55,8 @@ class GudaMessageActions extends ConsumerWidget {
                       content: message.content,
                       type: BookmarkType.message,
                       referenceId: message.id.toString(),
+                      chatRoomId: message.chatRoomId,
+                      topicCode: topicCode,
                       createdAt: DateTime.now(),
                     ),
                   );
