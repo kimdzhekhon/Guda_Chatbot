@@ -18,9 +18,7 @@ mixin _$GudaUser {
  String get id;/// 이메일 주소
  String get email;/// 표시 이름 (기본값: Google 계정 이름)
  String? get displayName;/// Google 프로필 사진 URL
- String? get photoUrl;/// 닉네임 (사용자 설정)
- String? get nickname;/// 생년월일
- DateTime? get birthDate;/// 페르소나 (PersonaType: basic, friendly, strict)
+ String? get photoUrl;/// 페르소나 (PersonaType: basic, friendly, strict)
  PersonaType? get persona;/// 약관 동의 여부
  bool get termsAgreed;/// 계정 생성 일시
  DateTime get createdAt;
@@ -34,16 +32,16 @@ $GudaUserCopyWith<GudaUser> get copyWith => _$GudaUserCopyWithImpl<GudaUser>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GudaUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.persona, persona) || other.persona == persona)&&(identical(other.termsAgreed, termsAgreed) || other.termsAgreed == termsAgreed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GudaUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.persona, persona) || other.persona == persona)&&(identical(other.termsAgreed, termsAgreed) || other.termsAgreed == termsAgreed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,email,displayName,photoUrl,nickname,birthDate,persona,termsAgreed,createdAt);
+int get hashCode => Object.hash(runtimeType,id,email,displayName,photoUrl,persona,termsAgreed,createdAt);
 
 @override
 String toString() {
-  return 'GudaUser(id: $id, email: $email, displayName: $displayName, photoUrl: $photoUrl, nickname: $nickname, birthDate: $birthDate, persona: $persona, termsAgreed: $termsAgreed, createdAt: $createdAt)';
+  return 'GudaUser(id: $id, email: $email, displayName: $displayName, photoUrl: $photoUrl, persona: $persona, termsAgreed: $termsAgreed, createdAt: $createdAt)';
 }
 
 
@@ -54,7 +52,7 @@ abstract mixin class $GudaUserCopyWith<$Res>  {
   factory $GudaUserCopyWith(GudaUser value, $Res Function(GudaUser) _then) = _$GudaUserCopyWithImpl;
 @useResult
 $Res call({
- String id, String email, String? displayName, String? photoUrl, String? nickname, DateTime? birthDate, PersonaType? persona, bool termsAgreed, DateTime createdAt
+ String id, String email, String? displayName, String? photoUrl, PersonaType? persona, bool termsAgreed, DateTime createdAt
 });
 
 
@@ -71,15 +69,13 @@ class _$GudaUserCopyWithImpl<$Res>
 
 /// Create a copy of GudaUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? nickname = freezed,Object? birthDate = freezed,Object? persona = freezed,Object? termsAgreed = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? persona = freezed,Object? termsAgreed = null,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
-as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
+as String?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
 as PersonaType?,termsAgreed: null == termsAgreed ? _self.termsAgreed : termsAgreed // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
@@ -167,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GudaUser() when $default != null:
-return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreed,_that.createdAt);case _:
+return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.persona,_that.termsAgreed,_that.createdAt);case _:
   return orElse();
 
 }
@@ -188,10 +184,10 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoUrl,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _GudaUser():
-return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreed,_that.createdAt);case _:
+return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.persona,_that.termsAgreed,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +204,10 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String? displayName,  String? photoUrl,  String? nickname,  DateTime? birthDate,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String? displayName,  String? photoUrl,  PersonaType? persona,  bool termsAgreed,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _GudaUser() when $default != null:
-return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nickname,_that.birthDate,_that.persona,_that.termsAgreed,_that.createdAt);case _:
+return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.persona,_that.termsAgreed,_that.createdAt);case _:
   return null;
 
 }
@@ -223,7 +219,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoUrl,_that.nick
 
 
 class _GudaUser extends GudaUser {
-  const _GudaUser({required this.id, required this.email, this.displayName, this.photoUrl, this.nickname, this.birthDate, this.persona, this.termsAgreed = false, required this.createdAt}): super._();
+  const _GudaUser({required this.id, required this.email, this.displayName, this.photoUrl, this.persona, this.termsAgreed = false, required this.createdAt}): super._();
   
 
 /// Supabase 사용자 UUID
@@ -234,10 +230,6 @@ class _GudaUser extends GudaUser {
 @override final  String? displayName;
 /// Google 프로필 사진 URL
 @override final  String? photoUrl;
-/// 닉네임 (사용자 설정)
-@override final  String? nickname;
-/// 생년월일
-@override final  DateTime? birthDate;
 /// 페르소나 (PersonaType: basic, friendly, strict)
 @override final  PersonaType? persona;
 /// 약관 동의 여부
@@ -255,16 +247,16 @@ _$GudaUserCopyWith<_GudaUser> get copyWith => __$GudaUserCopyWithImpl<_GudaUser>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GudaUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.persona, persona) || other.persona == persona)&&(identical(other.termsAgreed, termsAgreed) || other.termsAgreed == termsAgreed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GudaUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.persona, persona) || other.persona == persona)&&(identical(other.termsAgreed, termsAgreed) || other.termsAgreed == termsAgreed)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,email,displayName,photoUrl,nickname,birthDate,persona,termsAgreed,createdAt);
+int get hashCode => Object.hash(runtimeType,id,email,displayName,photoUrl,persona,termsAgreed,createdAt);
 
 @override
 String toString() {
-  return 'GudaUser(id: $id, email: $email, displayName: $displayName, photoUrl: $photoUrl, nickname: $nickname, birthDate: $birthDate, persona: $persona, termsAgreed: $termsAgreed, createdAt: $createdAt)';
+  return 'GudaUser(id: $id, email: $email, displayName: $displayName, photoUrl: $photoUrl, persona: $persona, termsAgreed: $termsAgreed, createdAt: $createdAt)';
 }
 
 
@@ -275,7 +267,7 @@ abstract mixin class _$GudaUserCopyWith<$Res> implements $GudaUserCopyWith<$Res>
   factory _$GudaUserCopyWith(_GudaUser value, $Res Function(_GudaUser) _then) = __$GudaUserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email, String? displayName, String? photoUrl, String? nickname, DateTime? birthDate, PersonaType? persona, bool termsAgreed, DateTime createdAt
+ String id, String email, String? displayName, String? photoUrl, PersonaType? persona, bool termsAgreed, DateTime createdAt
 });
 
 
@@ -292,15 +284,13 @@ class __$GudaUserCopyWithImpl<$Res>
 
 /// Create a copy of GudaUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? nickname = freezed,Object? birthDate = freezed,Object? persona = freezed,Object? termsAgreed = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,Object? persona = freezed,Object? termsAgreed = null,Object? createdAt = null,}) {
   return _then(_GudaUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
-as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
+as String?,persona: freezed == persona ? _self.persona : persona // ignore: cast_nullable_to_non_nullable
 as PersonaType?,termsAgreed: null == termsAgreed ? _self.termsAgreed : termsAgreed // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,

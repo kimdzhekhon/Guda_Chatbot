@@ -175,6 +175,8 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     // 대화 크레딧 차감 (DB 반영)
     final hasCredit = await ref.read(chatUsageViewModelProvider.notifier).useChatCredit();
     if (!hasCredit) {
+      _isSending = false;
+      keepAliveLink.close();
       if (!ref.mounted) return;
       state = UiSuccess([
         ...currentMessages,

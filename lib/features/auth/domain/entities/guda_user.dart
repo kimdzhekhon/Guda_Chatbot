@@ -20,12 +20,6 @@ abstract class GudaUser with _$GudaUser {
     /// Google 프로필 사진 URL
     String? photoUrl,
 
-    /// 닉네임 (사용자 설정)
-    String? nickname,
-
-    /// 생년월일
-    DateTime? birthDate,
-
     /// 페르소나 (PersonaType: basic, friendly, strict)
     PersonaType? persona,
 
@@ -38,11 +32,8 @@ abstract class GudaUser with _$GudaUser {
 
   const GudaUser._();
 
-  /// 모든 필수 정보(닉네임, 생년월일, 페르소나, 약관동의)가 작성되었는지 확인
+  /// 모든 필수 정보(페르소나, 약관동의)가 작성되었는지 확인
   bool get isProfileComplete =>
-      nickname != null &&
-      nickname!.isNotEmpty &&
-      birthDate != null &&
       persona != null &&
       termsAgreed;
 }

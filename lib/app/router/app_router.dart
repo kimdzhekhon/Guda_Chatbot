@@ -45,7 +45,7 @@ GoRouter appRouter(Ref ref) {
 
       // 미인증 시 로그인 화면으로
       if (!isLoggedIn) {
-        if (isAuth || isSplash) return null;
+        if (isAuth) return null;
         return RoutePaths.auth;
       }
 
