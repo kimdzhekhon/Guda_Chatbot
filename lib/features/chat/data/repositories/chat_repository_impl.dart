@@ -8,7 +8,7 @@ import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.d
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 
-/// ChatRepository 구현체 — data 레이어
+/// ChatRepository 구현체 — tripitaka 레이어
 class ChatRepositoryImpl implements ChatRepository {
   const ChatRepositoryImpl(this._dataSource);
   final SupabaseChatDataSource _dataSource;
