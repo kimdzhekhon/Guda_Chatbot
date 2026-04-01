@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Bookmark {
 
- String get id; String get userId; String get title; String get content; BookmarkType get type; String get referenceId; DateTime get createdAt;
+ String get id; String get userId; String get title; String get content; BookmarkType get type; String get referenceId; String? get chatRoomId; ClassicType? get topicCode; DateTime get createdAt;
 /// Create a copy of Bookmark
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $BookmarkCopyWith<Bookmark> get copyWith => _$BookmarkCopyWithImpl<Bookmark>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,title,content,type,referenceId,createdAt);
+int get hashCode => Object.hash(runtimeType,id,userId,title,content,type,referenceId,chatRoomId,topicCode,createdAt);
 
 @override
 String toString() {
-  return 'Bookmark(id: $id, userId: $userId, title: $title, content: $content, type: $type, referenceId: $referenceId, createdAt: $createdAt)';
+  return 'Bookmark(id: $id, userId: $userId, title: $title, content: $content, type: $type, referenceId: $referenceId, chatRoomId: $chatRoomId, topicCode: $topicCode, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $BookmarkCopyWith<$Res>  {
   factory $BookmarkCopyWith(Bookmark value, $Res Function(Bookmark) _then) = _$BookmarkCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String title, String content, BookmarkType type, String referenceId, DateTime createdAt
+ String id, String userId, String title, String content, BookmarkType type, String referenceId, String? chatRoomId, ClassicType? topicCode, DateTime createdAt
 });
 
 
@@ -65,7 +65,7 @@ class _$BookmarkCopyWithImpl<$Res>
 
 /// Create a copy of Bookmark
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? title = null,Object? content = null,Object? type = null,Object? referenceId = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? title = null,Object? content = null,Object? type = null,Object? referenceId = null,Object? chatRoomId = freezed,Object? topicCode = freezed,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,9 @@ as String,title: null == title ? _self.title : title // ignore: cast_nullable_to
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as BookmarkType,referenceId: null == referenceId ? _self.referenceId : referenceId // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,chatRoomId: freezed == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
+as String?,topicCode: freezed == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
+as ClassicType?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String title,  String content,  BookmarkType type,  String referenceId,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String title,  String content,  BookmarkType type,  String referenceId,  String? chatRoomId,  ClassicType? topicCode,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Bookmark() when $default != null:
-return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that.referenceId,_that.createdAt);case _:
+return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that.referenceId,_that.chatRoomId,_that.topicCode,_that.createdAt);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String title,  String content,  BookmarkType type,  String referenceId,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String title,  String content,  BookmarkType type,  String referenceId,  String? chatRoomId,  ClassicType? topicCode,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Bookmark():
-return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that.referenceId,_that.createdAt);case _:
+return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that.referenceId,_that.chatRoomId,_that.topicCode,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String title,  String content,  BookmarkType type,  String referenceId,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String title,  String content,  BookmarkType type,  String referenceId,  String? chatRoomId,  ClassicType? topicCode,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Bookmark() when $default != null:
-return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that.referenceId,_that.createdAt);case _:
+return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that.referenceId,_that.chatRoomId,_that.topicCode,_that.createdAt);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.id,_that.userId,_that.title,_that.content,_that.type,_that
 @JsonSerializable()
 
 class _Bookmark implements Bookmark {
-  const _Bookmark({required this.id, required this.userId, required this.title, required this.content, required this.type, required this.referenceId, required this.createdAt});
+  const _Bookmark({required this.id, required this.userId, required this.title, required this.content, required this.type, required this.referenceId, this.chatRoomId, this.topicCode, required this.createdAt});
   factory _Bookmark.fromJson(Map<String, dynamic> json) => _$BookmarkFromJson(json);
 
 @override final  String id;
@@ -224,6 +226,8 @@ class _Bookmark implements Bookmark {
 @override final  String content;
 @override final  BookmarkType type;
 @override final  String referenceId;
+@override final  String? chatRoomId;
+@override final  ClassicType? topicCode;
 @override final  DateTime createdAt;
 
 /// Create a copy of Bookmark
@@ -239,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.title, title) || other.title == title)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.referenceId, referenceId) || other.referenceId == referenceId)&&(identical(other.chatRoomId, chatRoomId) || other.chatRoomId == chatRoomId)&&(identical(other.topicCode, topicCode) || other.topicCode == topicCode)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,title,content,type,referenceId,createdAt);
+int get hashCode => Object.hash(runtimeType,id,userId,title,content,type,referenceId,chatRoomId,topicCode,createdAt);
 
 @override
 String toString() {
-  return 'Bookmark(id: $id, userId: $userId, title: $title, content: $content, type: $type, referenceId: $referenceId, createdAt: $createdAt)';
+  return 'Bookmark(id: $id, userId: $userId, title: $title, content: $content, type: $type, referenceId: $referenceId, chatRoomId: $chatRoomId, topicCode: $topicCode, createdAt: $createdAt)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$BookmarkCopyWith<$Res> implements $BookmarkCopyWith<$Res>
   factory _$BookmarkCopyWith(_Bookmark value, $Res Function(_Bookmark) _then) = __$BookmarkCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String title, String content, BookmarkType type, String referenceId, DateTime createdAt
+ String id, String userId, String title, String content, BookmarkType type, String referenceId, String? chatRoomId, ClassicType? topicCode, DateTime createdAt
 });
 
 
@@ -276,7 +280,7 @@ class __$BookmarkCopyWithImpl<$Res>
 
 /// Create a copy of Bookmark
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? title = null,Object? content = null,Object? type = null,Object? referenceId = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? title = null,Object? content = null,Object? type = null,Object? referenceId = null,Object? chatRoomId = freezed,Object? topicCode = freezed,Object? createdAt = null,}) {
   return _then(_Bookmark(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -284,7 +288,9 @@ as String,title: null == title ? _self.title : title // ignore: cast_nullable_to
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as BookmarkType,referenceId: null == referenceId ? _self.referenceId : referenceId // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String,chatRoomId: freezed == chatRoomId ? _self.chatRoomId : chatRoomId // ignore: cast_nullable_to_non_nullable
+as String?,topicCode: freezed == topicCode ? _self.topicCode : topicCode // ignore: cast_nullable_to_non_nullable
+as ClassicType?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
