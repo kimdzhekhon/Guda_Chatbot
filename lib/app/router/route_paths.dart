@@ -26,4 +26,7 @@ abstract final class RoutePaths {
   static const String persona = '/settings/persona';
   
   static const String bookmarks = '/bookmarks';
+
+  /// 공지사항 화면 (SCR_NOTICE)
+  static const String notice = '/settings/notice';
 }

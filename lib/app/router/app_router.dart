@@ -12,6 +12,7 @@ import 'package:guda_chatbot/features/settings/presentation/screens/license_scre
 import 'package:guda_chatbot/features/settings/presentation/screens/font_size_screen.dart';
 import 'package:guda_chatbot/features/settings/presentation/screens/persona_selection_screen.dart';
 import 'package:guda_chatbot/features/bookmarks/presentation/screens/bookmark_screen.dart';
+import 'package:guda_chatbot/features/settings/presentation/screens/notice_screen.dart';
 import 'route_paths.dart';
 
 part 'app_router.g.dart';
@@ -93,6 +94,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RoutePaths.bookmarks,
         builder: (_, _) => const BookmarkScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.notice,
+        builder: (_, _) => const NoticeScreen(),
       ),
     ],
   );

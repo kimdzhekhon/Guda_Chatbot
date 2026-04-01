@@ -90,8 +90,8 @@ class SupabaseChatDataSource {
       functionName: 'get_chat_usage',
       params: {'p_user_id': userId},
       fromJson: (json) => ChatUsage(
-        usedCount: (json['total_limit'] as int) - (json['remaining_count'] as int),
-        totalLimit: json['total_limit'] as int,
+        usedCount: (json['total_limit'] as num).toInt() - (json['remaining_count'] as num).toInt(),
+        totalLimit: (json['total_limit'] as num).toInt(),
         planName: _mapPlanName(json['plan_name'] as String),
       ),
     );
@@ -106,8 +106,8 @@ class SupabaseChatDataSource {
       functionName: 'use_chat_credit',
       params: {'p_user_id': userId},
       fromJson: (json) => ChatUsage(
-        usedCount: (json['total_limit'] as int) - (json['remaining_count'] as int),
-        totalLimit: json['total_limit'] as int,
+        usedCount: (json['total_limit'] as num).toInt() - (json['remaining_count'] as num).toInt(),
+        totalLimit: (json['total_limit'] as num).toInt(),
         planName: _mapPlanName(json['plan_name'] as String),
       ),
     );

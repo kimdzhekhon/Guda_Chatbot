@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:guda_chatbot/core/ui/ui_state.dart';
+import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 
@@ -10,8 +12,14 @@ part 'chat_usage_viewmodel.g.dart';
 class ChatUsageViewModel extends _$ChatUsageViewModel {
   @override
   ChatUsage build() {
-    // 초기값 (DB 로딩 전 표시용)
-    Future.microtask(() => loadUsage());
+    // 인증 상태 감시 — 로그인/로그아웃 또는 사용자 정보 변경 시 build가 재실행되어 데이터를 초기화하고 다시 로드합니다.
+    final authState = ref.watch(authViewModelProvider);
+    
+    // 사용자가 로그인된 상태라면 데이터 로드 트리거
+    if (authState is UiSuccess && authState.dataOrNull != null) {
+      Future.microtask(() => loadUsage());
+    }
+
     return const ChatUsage(
       usedCount: 0,
       totalLimit: 0,

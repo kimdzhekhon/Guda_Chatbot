@@ -68,3 +68,14 @@ CREATE TABLE IF NOT EXISTS public.messages (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+
+-- 6. System Config (시스템 설정 — 앱 공지 및 점검 정보)
+CREATE TABLE IF NOT EXISTS public.system_config (
+    id SERIAL PRIMARY KEY,
+    min_version TEXT,
+    is_maintenance BOOLEAN DEFAULT false,
+    notice_title TEXT,
+    notice_content TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.system_config ENABLE ROW LEVEL SECURITY;
