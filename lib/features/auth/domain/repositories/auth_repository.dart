@@ -2,7 +2,7 @@ import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 
 /// Auth 리포지토리 추상 인터페이스 — 도메인 레이어
-/// 구현체는 data 레이어에 위치
+/// 구현체는 tripitaka 레이어에 위치
 abstract interface class AuthRepository {
   /// Google 소셜 로그인
   Future<GudaUser> signInWithGoogle();

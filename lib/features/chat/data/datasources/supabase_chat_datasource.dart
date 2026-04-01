@@ -4,8 +4,6 @@ import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_usage_log_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
-import 'package:guda_chatbot/core/constants/app_personas.dart';
-import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/save_message_result.dart';
 
@@ -127,7 +125,8 @@ class SupabaseChatDataSource {
 
   // ── AI 응답 스트리밍 ───────────────────────────────
 
-  /// RPC 기반 AI 응답 스트리밍
+  /// Edge Function 기반 AI 응답 스트리밍
+  /// 시스템 프롬프트(RAG 포함)는 Edge Function에서 구성합니다.
   Stream<String> streamResponse({
     required String chatRoomId,
     required String userMessage,
@@ -141,69 +140,47 @@ class SupabaseChatDataSource {
       // 세션 갱신 실패 시에도 일단 진행 (익명 사용자 등 고려)
     }
 
-    final messagesForApi = await _buildMessagesForApi(
-      chatRoomId,
-      userMessage,
-      personaId: personaId,
-    );
+    // 대화 이력 + 현재 메시지 (시스템 프롬프트 제외)
+    final messages = await _buildMessagesForApi(chatRoomId, userMessage);
+
+    // chat_rooms에서 hexagram_id 조회 (주역인 경우)
+    String? hexagramId;
+    if (topicCode == 'iching') {
+      final chatRoom = await _supabase
+          .from('chat_rooms')
+          .select('hexagram_id')
+          .eq('id', chatRoomId)
+          .single();
+      hexagramId = chatRoom['hexagram_id'] as String?;
+    }
 
     yield* _rpcInvoker.invokeStream(
       functionName: 'chat',
-      params: {'messages': messagesForApi},
+      params: {
+        'messages': messages,
+        'topic_code': topicCode,
+        if (hexagramId != null) 'hexagram_id': hexagramId,
+        if (personaId != null) 'persona_id': personaId,
+      },
     );
   }
 
-  /// 대화 기록을 API 포맷으로 변환
+  /// 대화 기록을 API 포맷으로 변환 (시스템 프롬프트 없이 순수 대화만)
   Future<List<Map<String, String>>> _buildMessagesForApi(
     String chatRoomId,
-    String userMessage, {
-    String? personaId,
-  }) async {
+    String userMessage,
+  ) async {
     final history = await getMessages(GetMessagesRequestDto(chatRoomId: chatRoomId));
 
     final List<Map<String, String>> messages = [];
 
-    // 0. 주역 괘 정보 조회 및 AI 가이드 추가
-    final chatRoom = await _supabase
-        .from('chat_rooms')
-        .select('hexagram_id, topic_code')
-        .eq('id', chatRoomId)
-        .single();
-    
-    final hexagramName = chatRoom['hexagram_id'] as String?;
-    final topicCode = chatRoom['topic_code'] as String?;
-
-    if (topicCode == 'iching' && hexagramName != null) {
-      messages.add({
-        'role': 'system', 
-        'content': '주역 대화입니다. 사용자가 뽑은 괘는 \'$hexagramName\'입니다. 이 괘의 의미를 깊이 있게 풀이하여 사용자의 고민에 답해주세요.'
-      });
-    }
-
-    // 1. 페르소나 추가 지침이 있는 경우 시스템 메시지로 삽입
-    if (personaId != null) {
-      final type = PersonaType.fromString(personaId);
-      String? addedPrompt;
-      switch (type) {
-        case PersonaType.basic:
-          addedPrompt = AppPersonas.basicPrompt;
-        case PersonaType.friendly:
-          addedPrompt = AppPersonas.friendlyPrompt;
-        case PersonaType.strict:
-          addedPrompt = AppPersonas.strictPrompt;
-      }
-
-      // 1.1 프롬프트 삽입
-      messages.add({'role': 'system', 'content': addedPrompt});
-    }
-
-    // 2. 대화 기록 추가
+    // 대화 기록 추가
     messages.addAll(history.map((m) => {
           'role': m.senderRole,
           'content': m.content,
         }));
 
-    // 3. 현재 사용자 메시지 추가
+    // 현재 사용자 메시지 추가
     messages.add({'role': 'user', 'content': userMessage});
 
     return messages;

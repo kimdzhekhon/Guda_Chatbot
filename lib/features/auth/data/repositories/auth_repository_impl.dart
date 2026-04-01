@@ -6,7 +6,7 @@ import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
 import 'package:guda_chatbot/features/auth/data/models/persona_update_dto.dart';
 
-/// AuthRepository 구현체 — data 레이어
+/// AuthRepository 구현체 — tripitaka 레이어
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this._dataSource);
   final SupabaseAuthDataSource _dataSource;
