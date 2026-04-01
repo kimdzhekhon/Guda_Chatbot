@@ -1,7 +1,6 @@
 import 'package:guda_chatbot/features/payment/data/datasources/supabase_product_datasource.dart';
 import 'package:guda_chatbot/features/payment/data/repositories/product_repository_impl.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
-import 'package:guda_chatbot/features/payment/domain/entities/transaction_log.dart';
 import 'package:guda_chatbot/features/payment/domain/repositories/product_repository.dart';
 import 'package:guda_chatbot/features/payment/domain/usecases/get_payment_plans_usecase.dart';
 import 'package:guda_chatbot/features/payment/domain/usecases/get_transaction_logs_usecase.dart';

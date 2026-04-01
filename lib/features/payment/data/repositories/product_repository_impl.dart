@@ -2,7 +2,6 @@ import 'package:guda_chatbot/features/payment/data/datasources/supabase_product_
 import 'package:guda_chatbot/features/payment/domain/entities/payment_plan.dart';
 import 'package:guda_chatbot/features/payment/domain/entities/transaction_log.dart';
 import 'package:guda_chatbot/features/payment/domain/repositories/product_repository.dart';
-import 'package:guda_chatbot/core/network/rpc_invoker.dart';
 
 /// 결제 상품 리포지토리 구현체
 class ProductRepositoryImpl implements ProductRepository {

@@ -79,9 +79,10 @@ class SupabaseChatDataSource {
         ChatUsage? usage;
         if (usageJson != null) {
           usage = ChatUsage(
-            usedCount: (usageJson['total_limit'] as num).toInt() - (usageJson['remaining_count'] as num).toInt(),
+            remainingCount: (usageJson['remaining_count'] as num).toInt(),
             totalLimit: (usageJson['total_limit'] as num).toInt(),
             planName: _mapPlanName(usageJson['plan_name'] as String),
+            productId: usageJson['product_id'] as String?,
           );
         }
         return SaveMessageResult(message: msgDto.toDomain(), usage: usage);
@@ -97,16 +98,17 @@ class SupabaseChatDataSource {
   Future<ChatUsage> getChatUsage() async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) {
-      return const ChatUsage(usedCount: 0, totalLimit: 0, planName: 'Free');
+      return const ChatUsage(remainingCount: 0, totalLimit: 0, planName: 'Free');
     }
 
     return _rpcInvoker.invoke(
       functionName: 'get_chat_usage',
       params: {'p_user_id': userId},
       fromJson: (json) => ChatUsage(
-        usedCount: (json['total_limit'] as num).toInt() - (json['remaining_count'] as num).toInt(),
+        remainingCount: (json['remaining_count'] as num).toInt(),
         totalLimit: (json['total_limit'] as num).toInt(),
         planName: _mapPlanName(json['plan_name'] as String),
+        productId: json['product_id'] as String?,
       ),
     );
   }

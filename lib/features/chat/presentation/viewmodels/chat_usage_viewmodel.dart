@@ -21,7 +21,7 @@ class ChatUsageViewModel extends _$ChatUsageViewModel {
     }
 
     return const ChatUsage(
-      usedCount: 0,
+      remainingCount: 0,
       totalLimit: 0,
       planName: '',
     );
