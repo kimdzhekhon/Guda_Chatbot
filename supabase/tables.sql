@@ -38,8 +38,10 @@ CREATE TABLE IF NOT EXISTS public.user_subscriptions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
     product_id UUID REFERENCES public.products ON DELETE CASCADE NOT NULL,
-    status TEXT NOT NULL DEFAULT 'active', -- 'active', 'expired', 'cancelled'
-    remaining_count INTEGER NOT NULL DEFAULT 0,
+    plan_name TEXT NOT NULL DEFAULT '',           -- 구독 플랜명 (비정규화)
+    status TEXT NOT NULL DEFAULT 'active',        -- 'active', 'expired', 'cancelled'
+    total_limit INTEGER NOT NULL DEFAULT 0,       -- 총 제공 횟수
+    remaining_count INTEGER NOT NULL DEFAULT 0,   -- 남은 횟수
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, product_id)

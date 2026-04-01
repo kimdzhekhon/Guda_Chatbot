@@ -14,10 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChatUsage {
 
-/// 현재까지 사용한 대화 횟수
- int get usedCount;/// 총 허용 대화 횟수
+/// 남은 대화 횟수 (DB 원천 데이터)
+ int get remainingCount;/// 총 허용 대화 횟수
  int get totalLimit;/// 현재 이용 중인 플랜명
- String get planName;
+ String get planName;/// 현재 구독 중인 상품 ID
+ String? get productId;
 /// Create a copy of ChatUsage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +29,16 @@ $ChatUsageCopyWith<ChatUsage> get copyWith => _$ChatUsageCopyWithImpl<ChatUsage>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatUsage&&(identical(other.usedCount, usedCount) || other.usedCount == usedCount)&&(identical(other.totalLimit, totalLimit) || other.totalLimit == totalLimit)&&(identical(other.planName, planName) || other.planName == planName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatUsage&&(identical(other.remainingCount, remainingCount) || other.remainingCount == remainingCount)&&(identical(other.totalLimit, totalLimit) || other.totalLimit == totalLimit)&&(identical(other.planName, planName) || other.planName == planName)&&(identical(other.productId, productId) || other.productId == productId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,usedCount,totalLimit,planName);
+int get hashCode => Object.hash(runtimeType,remainingCount,totalLimit,planName,productId);
 
 @override
 String toString() {
-  return 'ChatUsage(usedCount: $usedCount, totalLimit: $totalLimit, planName: $planName)';
+  return 'ChatUsage(remainingCount: $remainingCount, totalLimit: $totalLimit, planName: $planName, productId: $productId)';
 }
 
 
@@ -48,7 +49,7 @@ abstract mixin class $ChatUsageCopyWith<$Res>  {
   factory $ChatUsageCopyWith(ChatUsage value, $Res Function(ChatUsage) _then) = _$ChatUsageCopyWithImpl;
 @useResult
 $Res call({
- int usedCount, int totalLimit, String planName
+ int remainingCount, int totalLimit, String planName, String? productId
 });
 
 
@@ -65,12 +66,13 @@ class _$ChatUsageCopyWithImpl<$Res>
 
 /// Create a copy of ChatUsage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? usedCount = null,Object? totalLimit = null,Object? planName = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? remainingCount = null,Object? totalLimit = null,Object? planName = null,Object? productId = freezed,}) {
   return _then(_self.copyWith(
-usedCount: null == usedCount ? _self.usedCount : usedCount // ignore: cast_nullable_to_non_nullable
+remainingCount: null == remainingCount ? _self.remainingCount : remainingCount // ignore: cast_nullable_to_non_nullable
 as int,totalLimit: null == totalLimit ? _self.totalLimit : totalLimit // ignore: cast_nullable_to_non_nullable
 as int,planName: null == planName ? _self.planName : planName // ignore: cast_nullable_to_non_nullable
-as String,
+as String,productId: freezed == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -155,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int usedCount,  int totalLimit,  String planName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int remainingCount,  int totalLimit,  String planName,  String? productId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChatUsage() when $default != null:
-return $default(_that.usedCount,_that.totalLimit,_that.planName);case _:
+return $default(_that.remainingCount,_that.totalLimit,_that.planName,_that.productId);case _:
   return orElse();
 
 }
@@ -176,10 +178,10 @@ return $default(_that.usedCount,_that.totalLimit,_that.planName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int usedCount,  int totalLimit,  String planName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int remainingCount,  int totalLimit,  String planName,  String? productId)  $default,) {final _that = this;
 switch (_that) {
 case _ChatUsage():
-return $default(_that.usedCount,_that.totalLimit,_that.planName);case _:
+return $default(_that.remainingCount,_that.totalLimit,_that.planName,_that.productId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +198,10 @@ return $default(_that.usedCount,_that.totalLimit,_that.planName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int usedCount,  int totalLimit,  String planName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int remainingCount,  int totalLimit,  String planName,  String? productId)?  $default,) {final _that = this;
 switch (_that) {
 case _ChatUsage() when $default != null:
-return $default(_that.usedCount,_that.totalLimit,_that.planName);case _:
+return $default(_that.remainingCount,_that.totalLimit,_that.planName,_that.productId);case _:
   return null;
 
 }
@@ -211,15 +213,17 @@ return $default(_that.usedCount,_that.totalLimit,_that.planName);case _:
 
 
 class _ChatUsage extends ChatUsage {
-  const _ChatUsage({required this.usedCount, required this.totalLimit, required this.planName}): super._();
+  const _ChatUsage({required this.remainingCount, required this.totalLimit, required this.planName, this.productId}): super._();
   
 
-/// 현재까지 사용한 대화 횟수
-@override final  int usedCount;
+/// 남은 대화 횟수 (DB 원천 데이터)
+@override final  int remainingCount;
 /// 총 허용 대화 횟수
 @override final  int totalLimit;
 /// 현재 이용 중인 플랜명
 @override final  String planName;
+/// 현재 구독 중인 상품 ID
+@override final  String? productId;
 
 /// Create a copy of ChatUsage
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +235,16 @@ _$ChatUsageCopyWith<_ChatUsage> get copyWith => __$ChatUsageCopyWithImpl<_ChatUs
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatUsage&&(identical(other.usedCount, usedCount) || other.usedCount == usedCount)&&(identical(other.totalLimit, totalLimit) || other.totalLimit == totalLimit)&&(identical(other.planName, planName) || other.planName == planName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatUsage&&(identical(other.remainingCount, remainingCount) || other.remainingCount == remainingCount)&&(identical(other.totalLimit, totalLimit) || other.totalLimit == totalLimit)&&(identical(other.planName, planName) || other.planName == planName)&&(identical(other.productId, productId) || other.productId == productId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,usedCount,totalLimit,planName);
+int get hashCode => Object.hash(runtimeType,remainingCount,totalLimit,planName,productId);
 
 @override
 String toString() {
-  return 'ChatUsage(usedCount: $usedCount, totalLimit: $totalLimit, planName: $planName)';
+  return 'ChatUsage(remainingCount: $remainingCount, totalLimit: $totalLimit, planName: $planName, productId: $productId)';
 }
 
 
@@ -251,7 +255,7 @@ abstract mixin class _$ChatUsageCopyWith<$Res> implements $ChatUsageCopyWith<$Re
   factory _$ChatUsageCopyWith(_ChatUsage value, $Res Function(_ChatUsage) _then) = __$ChatUsageCopyWithImpl;
 @override @useResult
 $Res call({
- int usedCount, int totalLimit, String planName
+ int remainingCount, int totalLimit, String planName, String? productId
 });
 
 
@@ -268,12 +272,13 @@ class __$ChatUsageCopyWithImpl<$Res>
 
 /// Create a copy of ChatUsage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? usedCount = null,Object? totalLimit = null,Object? planName = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? remainingCount = null,Object? totalLimit = null,Object? planName = null,Object? productId = freezed,}) {
   return _then(_ChatUsage(
-usedCount: null == usedCount ? _self.usedCount : usedCount // ignore: cast_nullable_to_non_nullable
+remainingCount: null == remainingCount ? _self.remainingCount : remainingCount // ignore: cast_nullable_to_non_nullable
 as int,totalLimit: null == totalLimit ? _self.totalLimit : totalLimit // ignore: cast_nullable_to_non_nullable
 as int,planName: null == planName ? _self.planName : planName // ignore: cast_nullable_to_non_nullable
-as String,
+as String,productId: freezed == productId ? _self.productId : productId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

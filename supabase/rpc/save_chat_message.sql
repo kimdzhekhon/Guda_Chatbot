@@ -13,6 +13,7 @@ DECLARE
     v_remaining INT;
     v_limit INT;
     v_name TEXT;
+    v_product_id UUID;
 BEGIN
     -- 1. 메시지 테이블 삽입
     INSERT INTO messages (chat_rooms_id, content, sender_role)
@@ -31,26 +32,24 @@ BEGIN
         SELECT user_id INTO v_user_id
         FROM chat_rooms WHERE id = p_chat_room_id;
 
-        -- 활성 구독에서 크레딧 1 차감
-        UPDATE user_subscriptions us
-        SET remaining_count = us.remaining_count - 1,
+        -- 활성 구독에서 크레딧 1 차감 (user_subscriptions 단일 테이블)
+        UPDATE user_subscriptions
+        SET remaining_count = remaining_count - 1,
             updated_at = NOW()
-        FROM products p
-        WHERE us.user_id = v_user_id
-          AND us.product_id = p.id
-          AND us.status = 'active'
-          AND us.remaining_count > 0
-          AND us.product_id = (
-              SELECT us2.product_id
-              FROM user_subscriptions us2
-              WHERE us2.user_id = v_user_id
-                AND us2.status = 'active'
-                AND us2.remaining_count > 0
-              ORDER BY us2.updated_at DESC
+        WHERE user_id = v_user_id
+          AND status = 'active'
+          AND remaining_count > 0
+          AND product_id = (
+              SELECT product_id
+              FROM user_subscriptions
+              WHERE user_id = v_user_id
+                AND status = 'active'
+                AND remaining_count > 0
+              ORDER BY updated_at DESC
               LIMIT 1
           )
-        RETURNING us.remaining_count, p.usage_limit, p.name
-        INTO v_remaining, v_limit, v_name;
+        RETURNING remaining_count, total_limit, plan_name, product_id
+        INTO v_remaining, v_limit, v_name, v_product_id;
 
         IF NOT FOUND THEN
             RAISE EXCEPTION 'NO_CREDITS_REMAINING'
@@ -72,7 +71,8 @@ BEGIN
             'usage', json_build_object(
                 'remaining_count', v_remaining,
                 'total_limit', v_limit,
-                'plan_name', v_name
+                'plan_name', v_name,
+                'product_id', v_product_id
             )
         );
     END IF;

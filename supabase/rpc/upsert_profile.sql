@@ -9,6 +9,8 @@ RETURNS VOID AS $$
 DECLARE
     v_is_new BOOLEAN;
     v_free_product_id UUID;
+    v_free_product_name TEXT;
+    v_free_product_limit INT;
 BEGIN
     -- 신규 유저인지 확인
     SELECT NOT EXISTS (
@@ -36,15 +38,22 @@ BEGIN
     -- 신규 유저인 경우 무료 크레딧 지급
     IF v_is_new THEN
         -- 무료 플랜 상품 조회
-        SELECT id INTO v_free_product_id
+        SELECT id, name, COALESCE(usage_limit, 10)
+        INTO v_free_product_id, v_free_product_name, v_free_product_limit
         FROM products
         WHERE type = 'free'
         LIMIT 1;
 
         -- 무료 상품이 존재하면 구독 생성
         IF v_free_product_id IS NOT NULL THEN
-            INSERT INTO user_subscriptions (user_id, product_id, status, remaining_count)
-            VALUES (p_user_id, v_free_product_id, 'active', 10)
+            INSERT INTO user_subscriptions (
+                user_id, product_id, plan_name, status,
+                total_limit, remaining_count
+            )
+            VALUES (
+                p_user_id, v_free_product_id, v_free_product_name, 'active',
+                v_free_product_limit, v_free_product_limit
+            )
             ON CONFLICT (user_id, product_id) DO NOTHING;
         END IF;
     END IF;

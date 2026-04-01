@@ -45,7 +45,7 @@ class UserProfileCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: GudaSpacing.sm),
-                    // 플랜 배지 (이메일 위치로 이동)
+                    // 플랜 배지
                     if (usage != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -66,7 +66,7 @@ class UserProfileCard extends StatelessWidget {
                       UserUsageStats(
                         label: '대화 사용량',
                         progress: progress,
-                        remainingText: '${usage!.usedCount} / ${usage!.totalLimit}',
+                        remainingText: '${usage!.usedCount} / ${usage!.usedCount + usage!.remainingCount}',
                       )
                     else
                       const SizedBox(
@@ -85,7 +85,7 @@ class UserProfileCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: GudaSpacing.md),
-          // 이메일 (맨 밑으로 이동)
+          // 이메일
           Text(
             user.email,
             style: GudaTypography.body2(color: context.colorScheme.onSurfaceVariant),

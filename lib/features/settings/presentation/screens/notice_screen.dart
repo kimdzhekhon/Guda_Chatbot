@@ -42,7 +42,7 @@ class NoticeScreen extends ConsumerWidget {
                 ),
               )
             : _NoticeList(notices: notices),
-        UiError(message: final msg) => Center(
+        UiError() => Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

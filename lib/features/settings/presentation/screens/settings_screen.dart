@@ -46,8 +46,9 @@ class SettingsScreen extends ConsumerWidget {
     final usage = ref.watch(chatUsageViewModelProvider);
     // totalLimit이 0이더라도 planName이 있으면 로딩이 된 것으로 간주 (무료 플랜 0회 등 케이스 대응)
     final isUsageLoaded = usage.totalLimit > 0 || usage.planName.isNotEmpty;
-    final progress = (isUsageLoaded && usage.totalLimit > 0) 
-        ? usage.usedCount / usage.totalLimit 
+    final totalQuota = usage.usedCount + usage.remainingCount;
+    final progress = (isUsageLoaded && totalQuota > 0)
+        ? usage.usedCount / totalQuota
         : 0.0;
 
     return ListView(
