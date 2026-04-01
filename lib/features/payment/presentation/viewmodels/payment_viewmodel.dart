@@ -73,7 +73,7 @@ class PaymentViewModel extends _$PaymentViewModel {
         .toList();
     
     final chargePlans = allPlans
-        .where((p) => p.type == PaymentType.charge)
+        .where((p) => p.type == PaymentType.charge && p.price > 0)
         .toList();
 
     return PaymentState(

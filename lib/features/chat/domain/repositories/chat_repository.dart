@@ -1,3 +1,4 @@
+import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
@@ -27,4 +28,10 @@ abstract interface class ChatRepository {
     required String topicCode,
     PersonaType? personaId,
   });
+
+  /// 대화 사용량 조회
+  Future<ChatUsage> getChatUsage();
+
+  /// 대화 크레딧 1회 차감
+  Future<ChatUsage> useChatCredit();
 }

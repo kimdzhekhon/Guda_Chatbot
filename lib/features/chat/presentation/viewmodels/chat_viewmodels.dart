@@ -172,8 +172,22 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
     final currentMessages = state.dataOrNull ?? [];
 
-    // 사용량 증가
-    ref.read(chatUsageViewModelProvider.notifier).incrementUsedCount();
+    // 대화 크레딧 차감 (DB 반영)
+    final hasCredit = await ref.read(chatUsageViewModelProvider.notifier).useChatCredit();
+    if (!hasCredit) {
+      if (!ref.mounted) return;
+      state = UiSuccess([
+        ...currentMessages,
+        Message(
+          id: DateTime.now().millisecondsSinceEpoch,
+          chatRoomId: chatRoomId,
+          senderRole: MessageRole.assistant,
+          content: '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.',
+          createdAt: DateTime.now(),
+        ),
+      ]);
+      return;
+    }
 
     // 1. 임시 사용자 메시지 추가 (반응성)
     final tempUserMsg = Message(
