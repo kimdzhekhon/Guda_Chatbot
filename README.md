@@ -58,7 +58,7 @@ lib/
      └─ presentation/ # UI 컴포넌트, 화면(Screen), Riverpod ViewModel
 ```
 
-## 🏗 Architecture & Guidelines (안티 그래비티 아키텍처 핵심)
+## 🏗 Architecture & Guidelines
 
 본 프로젝트는 다음의 개발 원칙을 준수합니다.
 
