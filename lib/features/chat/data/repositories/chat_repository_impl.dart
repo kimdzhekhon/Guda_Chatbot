@@ -41,11 +41,13 @@ class ChatRepositoryImpl implements ChatRepository {
     required String userMessage,
     required String topicCode,
     PersonaType? personaId,
+    String? searchContext,
   }) => _dataSource.streamResponse(
     chatRoomId: chatRoomId,
     userMessage: userMessage,
     topicCode: topicCode,
     personaId: personaId?.name,
+    searchContext: searchContext,
   );
 
   @override

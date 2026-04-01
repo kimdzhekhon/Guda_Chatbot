@@ -29,6 +29,7 @@ abstract interface class ChatRepository {
     required String userMessage,
     required String topicCode,
     PersonaType? personaId,
+    String? searchContext,
   });
 
   /// 대화 사용량 조회

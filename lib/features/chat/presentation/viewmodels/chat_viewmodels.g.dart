@@ -377,7 +377,7 @@ final class SendMessageUseCaseProvider
 }
 
 String _$sendMessageUseCaseHash() =>
-    r'55850c09b954fe0a47d8b252a0ff70bb6cd6e22b';
+    r'3b4623970afeaa605251398f3b3914fb5c1500ad';
 
 @ProviderFor(getChatUsageLogsUseCase)
 final getChatUsageLogsUseCaseProvider = GetChatUsageLogsUseCaseProvider._();

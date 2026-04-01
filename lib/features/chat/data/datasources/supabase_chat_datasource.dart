@@ -132,14 +132,8 @@ class SupabaseChatDataSource {
     required String userMessage,
     required String topicCode,
     String? personaId,
+    String? searchContext,
   }) async* {
-    // 앱 시작 직후 토큰 만료 문제를 방지하기 위해 세션 갱신 시도
-    try {
-      await _supabase.auth.refreshSession();
-    } catch (_) {
-      // 세션 갱신 실패 시에도 일단 진행 (익명 사용자 등 고려)
-    }
-
     // 대화 이력 + 현재 메시지 (시스템 프롬프트 제외)
     final messages = await _buildMessagesForApi(chatRoomId, userMessage);
 
@@ -161,6 +155,7 @@ class SupabaseChatDataSource {
         'topic_code': topicCode,
         if (hexagramId != null) 'hexagram_id': hexagramId,
         if (personaId != null) 'persona_id': personaId,
+        if (searchContext != null) 'search_context': searchContext,
       },
     );
   }
