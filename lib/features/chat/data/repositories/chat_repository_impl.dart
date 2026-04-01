@@ -1,4 +1,5 @@
 import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_datasource.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/conversation.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/features/chat/domain/repositories/chat_repository.dart';
@@ -46,4 +47,10 @@ class ChatRepositoryImpl implements ChatRepository {
     topicCode: topicCode,
     personaId: personaId?.name,
   );
+
+  @override
+  Future<ChatUsage> getChatUsage() => _dataSource.getChatUsage();
+
+  @override
+  Future<ChatUsage> useChatCredit() => _dataSource.useChatCredit();
 }

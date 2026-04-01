@@ -5,6 +5,7 @@ import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 import 'package:guda_chatbot/core/constants/app_personas.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
+import 'package:guda_chatbot/features/chat/domain/entities/chat_usage.dart';
 
 import 'package:guda_chatbot/core/network/rpc_invoker.dart';
 
@@ -71,6 +72,42 @@ class SupabaseChatDataSource {
         'p_sender_role': request.senderRole,
       },
       fromJson: MessageDto.fromJson,
+    );
+  }
+
+  // ── 대화 사용량 관리 ───────────────────────────────
+
+  /// 대화 사용량 조회
+  Future<ChatUsage> getChatUsage() async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) {
+      return const ChatUsage(usedCount: 0, totalLimit: 0, planName: 'None');
+    }
+
+    return _rpcInvoker.invoke(
+      functionName: 'get_chat_usage',
+      params: {'p_user_id': userId},
+      fromJson: (json) => ChatUsage(
+        usedCount: (json['total_limit'] as int) - (json['remaining_count'] as int),
+        totalLimit: json['total_limit'] as int,
+        planName: json['plan_name'] as String,
+      ),
+    );
+  }
+
+  /// 대화 크레딧 1회 차감 후 갱신된 사용량 반환
+  Future<ChatUsage> useChatCredit() async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) throw RpcException('인증이 필요합니다.');
+
+    return _rpcInvoker.invoke(
+      functionName: 'use_chat_credit',
+      params: {'p_user_id': userId},
+      fromJson: (json) => ChatUsage(
+        usedCount: (json['total_limit'] as int) - (json['remaining_count'] as int),
+        totalLimit: json['total_limit'] as int,
+        planName: json['plan_name'] as String,
+      ),
     );
   }
 

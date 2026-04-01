@@ -4,7 +4,6 @@ import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
-import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/message_list.dart';
@@ -73,10 +72,7 @@ class _PendingChatRoomViewState extends ConsumerState<PendingChatRoomView> {
         hexagramId: hexagramId,
       );
 
-      // 4. 사용량 증가
-      ref.read(chatUsageViewModelProvider.notifier).incrementUsedCount();
-
-      // 5. HomeViewModel에 방 ID 등록 → 즉시 PendingChatRoomView가 unmount되고
+      // 4. HomeViewModel에 방 ID 등록 → 즉시 PendingChatRoomView가 unmount되고
       //    ChatRoomView가 마운트됨. 이 시점 이후로 _isSending setState를 호출하면 안 됨.
       ref.read(homeViewModelProvider.notifier).setActiveChatRoomId(newConversation.id);
 
