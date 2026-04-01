@@ -77,11 +77,13 @@ class SupabaseChatDataSource {
 
   // ── 대화 사용량 관리 ───────────────────────────────
 
+  String _mapPlanName(String plan) => plan == 'None' ? 'Free' : plan;
+
   /// 대화 사용량 조회
   Future<ChatUsage> getChatUsage() async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) {
-      return const ChatUsage(usedCount: 0, totalLimit: 0, planName: 'None');
+      return const ChatUsage(usedCount: 0, totalLimit: 0, planName: 'Free');
     }
 
     return _rpcInvoker.invoke(
@@ -90,7 +92,7 @@ class SupabaseChatDataSource {
       fromJson: (json) => ChatUsage(
         usedCount: (json['total_limit'] as int) - (json['remaining_count'] as int),
         totalLimit: json['total_limit'] as int,
-        planName: json['plan_name'] as String,
+        planName: _mapPlanName(json['plan_name'] as String),
       ),
     );
   }
@@ -106,7 +108,7 @@ class SupabaseChatDataSource {
       fromJson: (json) => ChatUsage(
         usedCount: (json['total_limit'] as int) - (json['remaining_count'] as int),
         totalLimit: json['total_limit'] as int,
-        planName: json['plan_name'] as String,
+        planName: _mapPlanName(json['plan_name'] as String),
       ),
     );
   }

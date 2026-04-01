@@ -48,12 +48,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<GudaUser> _getMergedUser(AuthResponseDto dto) async {
     final profile = await _dataSource.getProfile(dto.id);
     if (profile != null) {
-      // DB의 email이 NULL인 경우 Supabase Auth의 이메일을 유지하도록 병합
-      final Map<String, dynamic> profileData = Map.from(profile);
-      if (profileData['email'] == null) {
-        profileData['email'] = dto.email;
-      }
-      
+      // profiles에서 null인 필드는 제거하여 Auth 데이터를 덮어쓰지 않도록 함
+      final profileData = Map<String, dynamic>.from(profile)
+        ..removeWhere((_, v) => v == null);
+
       final mergedJson = dto.toJson()..addAll(profileData);
       return AuthResponseDto.fromJson(mergedJson).toDomain();
     }
@@ -62,22 +60,16 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> updateProfile({
-    required String nickname,
-    required DateTime birthDate,
     required PersonaType persona,
     required bool termsAgreed,
   }) async {
     final user = await _dataSource.getCurrentUser();
     if (user == null) throw Exception('로그인된 사용자가 없습니다.');
-    
-    // architecture 규정상 DTO를 통해 RPC 데이터 전달
+
     final dto = ProfileRegistrationDto(
       userId: user.id,
-      email: user.email, // 필수 필드로 추가됨
-      nickname: nickname,
-      birthDate: birthDate.toIso8601String(),
       persona: persona,
-      termsAgreedAt: DateTime.now().toIso8601String(), // 현재 시각을 동의 시각으로 전송
+      termsAgreedAt: DateTime.now().toIso8601String(),
     );
 
     await _dataSource.updateProfile(dto);

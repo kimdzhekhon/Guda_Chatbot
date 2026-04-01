@@ -44,7 +44,8 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final usage = ref.watch(chatUsageViewModelProvider);
-    final progress = usage.totalLimit > 0 ? usage.usedCount / usage.totalLimit : 0.0;
+    final isUsageLoaded = usage.totalLimit > 0;
+    final progress = isUsageLoaded ? usage.usedCount / usage.totalLimit : 0.0;
 
     return ListView(
       children: [
@@ -54,7 +55,7 @@ class SettingsScreen extends ConsumerWidget {
             title: AppStrings.profileSection,
             child: UserProfileCard(
               user: user,
-              usage: usage,
+              usage: isUsageLoaded ? usage : null,
               progress: progress,
             ),
           ),
@@ -204,7 +205,20 @@ class SettingsScreen extends ConsumerWidget {
                     isDestructive: true,
                   );
                   if (confirm == true && context.mounted) {
+                    // 전체 화면 로딩 오버레이 표시
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      barrierColor: Colors.black.withValues(alpha: 0.8),
+                      builder: (_) => const PopScope(
+                        canPop: false,
+                        child: Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                      ),
+                    );
                     await ref.read(authViewModelProvider.notifier).deleteAccount();
+                    // 탈퇴 성공 시 라우터가 auth로 리다이렉트하므로 다이얼로그 수동 닫기 불필요
                   }
                 },
               ),

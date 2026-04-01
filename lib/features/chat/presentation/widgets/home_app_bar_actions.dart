@@ -24,7 +24,7 @@ class HomeAppBarActions extends ConsumerWidget {
 
     return Row(
       children: [
-        if (activeId != null && !hideChatCount)
+        if (activeId != null && !hideChatCount && usage.totalLimit > 0)
           Center(
             child: Padding(
               padding: const EdgeInsets.only(

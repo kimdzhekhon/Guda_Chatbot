@@ -175,7 +175,7 @@ final class PaymentViewModelProvider
   PaymentViewModel create() => PaymentViewModel();
 }
 
-String _$paymentViewModelHash() => r'd6227c4f9484134a7ba34c18e34e3c1e26bc2bf3';
+String _$paymentViewModelHash() => r'1e3161ee3bd381c13585c386eb139396d4649f73';
 
 abstract class _$PaymentViewModel extends $AsyncNotifier<PaymentState> {
   FutureOr<PaymentState> build();

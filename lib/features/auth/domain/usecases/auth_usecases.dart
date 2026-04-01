@@ -54,14 +54,10 @@ class UpdateProfileUseCase {
 
   /// 프로필 업데이트 실행
   Future<void> call({
-    required String nickname,
-    required DateTime birthDate,
     required PersonaType persona,
     required bool termsAgreed,
   }) =>
       _repository.updateProfile(
-        nickname: nickname,
-        birthDate: birthDate,
         persona: persona,
         termsAgreed: termsAgreed,
       );

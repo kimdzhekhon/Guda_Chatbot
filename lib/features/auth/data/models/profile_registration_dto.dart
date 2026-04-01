@@ -9,9 +9,6 @@ part 'profile_registration_dto.g.dart';
 abstract class ProfileRegistrationDto with _$ProfileRegistrationDto {
   const factory ProfileRegistrationDto({
     @JsonKey(name: 'p_user_id') required String userId,
-    @JsonKey(name: 'p_email') required String email,
-    @JsonKey(name: 'p_nickname') required String nickname,
-    @JsonKey(name: 'p_birth_date') required String birthDate,
     @JsonKey(name: 'p_persona') required PersonaType persona,
     @JsonKey(name: 'p_terms_agreed_at') required String termsAgreedAt,
   }) = _ProfileRegistrationDto;

@@ -22,10 +22,8 @@ abstract interface class AuthRepository {
   /// 인증 상태 스트림 (세션 변경 시 자동 갱신)
   Stream<GudaUser?> authStateChanges();
 
-  /// 프로필 정보 업데이트 (닉네임, 생년월일, 페르소나, 약관동의 등)
+  /// 프로필 정보 업데이트 (페르소나, 약관동의)
   Future<void> updateProfile({
-    required String nickname,
-    required DateTime birthDate,
     required PersonaType persona,
     required bool termsAgreed,
   });

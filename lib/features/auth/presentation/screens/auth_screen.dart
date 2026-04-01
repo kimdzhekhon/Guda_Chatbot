@@ -30,6 +30,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     final state = ref.watch(authViewModelProvider);
     final isLoading = state.isLoading;
 
+    // 로그인 완료 후 라우터가 리다이렉트할 때까지 로딩 상태 유지
+    final user = state is UiSuccess<GudaUser?> ? state.data : null;
+    final isRedirecting = user != null;
+
     ref.listen(authViewModelProvider, (_, next) {
       if (next is UiError<GudaUser?>) {
         GudaSnackBar.show(
@@ -41,9 +45,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     });
 
     return GudaScaffold(
-      isLoading: isLoading,
+      isLoading: isLoading || isRedirecting,
       background: const GudaGradientBackground(child: SizedBox.expand()),
-      body: _buildContent(context, isLoading),
+      body: isRedirecting ? const SizedBox.shrink() : _buildContent(context, isLoading),
     );
   }
 
@@ -80,8 +84,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                   
                   const SizedBox(height: GudaSpacing.xl),
-                  SocialLoginSection(
-                    isSignUp: _isSignUp,
+                  const SocialLoginSection(
                     isLoading: false, // 전역 오버레이를 사용하므로 버튼 자체 로딩은 비활성화
                   ),
                 ],
