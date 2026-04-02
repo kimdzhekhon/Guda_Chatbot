@@ -8,7 +8,6 @@ part 'persona_update_dto.g.dart';
 @freezed
 abstract class PersonaUpdateDto with _$PersonaUpdateDto {
   const factory PersonaUpdateDto({
-    @JsonKey(name: 'p_user_id') required String userId,
     @JsonKey(name: 'p_persona') required PersonaType persona,
   }) = _PersonaUpdateDto;
 

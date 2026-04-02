@@ -1,5 +1,4 @@
--- 메시지 저장 + 크레딧 차감 + 사용 로그 기록 (Atomic 작업)
--- user 메시지일 때만 크레딧을 차감하고 로그를 남김
+-- 메시지 저장 + 크레딧 차감 + 사용 로그 기록 (현재 로그인 유저 세션 기반)
 -- Usage: select * from save_chat_message('방ID', '내용', 'user/assistant');
 CREATE OR REPLACE FUNCTION save_chat_message(
     p_chat_room_id UUID,
@@ -9,12 +8,32 @@ CREATE OR REPLACE FUNCTION save_chat_message(
 RETURNS JSON AS $$
 DECLARE
     v_msg messages;
-    v_user_id UUID;
+    v_user_id UUID := auth.uid();
+    v_room_owner_id UUID;
     v_remaining INT;
     v_limit INT;
     v_name TEXT;
     v_product_id UUID;
 BEGIN
+    -- 0. 인증 및 권한 체크
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'NOT_AUTHENTICATED' USING HINT = '로그인이 필요합니다.';
+    END IF;
+
+    -- sender_role 검증: 클라이언트는 'user' 또는 'assistant'만 허용
+    IF p_sender_role NOT IN ('user', 'assistant') THEN
+        RAISE EXCEPTION 'INVALID_SENDER_ROLE'
+            USING HINT = 'sender_role은 user 또는 assistant만 허용됩니다.';
+    END IF;
+
+    -- 채팅방 소유자 확인
+    SELECT user_id INTO v_room_owner_id
+    FROM chat_rooms WHERE id = p_chat_room_id;
+
+    IF v_room_owner_id IS NULL OR v_room_owner_id != v_user_id THEN
+        RAISE EXCEPTION 'ACCESS_DENIED' USING HINT = '해당 채팅방에 대한 권한이 없습니다.';
+    END IF;
+
     -- 1. 메시지 테이블 삽입
     INSERT INTO messages (chat_rooms_id, content, sender_role)
     VALUES (p_chat_room_id, p_content, p_sender_role)
@@ -28,26 +47,22 @@ BEGIN
 
     -- 3. user 메시지인 경우에만 크레딧 차감 + 로그 기록
     IF p_sender_role = 'user' THEN
-        -- 채팅방 소유자 조회
-        SELECT user_id INTO v_user_id
-        FROM chat_rooms WHERE id = p_chat_room_id;
-
-        -- 활성 구독에서 크레딧 1 차감 (user_subscriptions 단일 테이블)
+        -- CTE로 대상 행 1회 조회 + 잠금 → UPDATE (이중 스캔 방지)
+        WITH target AS (
+            SELECT product_id
+            FROM user_subscriptions
+            WHERE user_id = v_user_id
+              AND status = 'active'
+              AND remaining_count > 0
+            ORDER BY updated_at DESC
+            LIMIT 1
+            FOR UPDATE SKIP LOCKED
+        )
         UPDATE user_subscriptions
         SET remaining_count = remaining_count - 1,
             updated_at = NOW()
         WHERE user_id = v_user_id
-          AND status = 'active'
-          AND remaining_count > 0
-          AND product_id = (
-              SELECT product_id
-              FROM user_subscriptions
-              WHERE user_id = v_user_id
-                AND status = 'active'
-                AND remaining_count > 0
-              ORDER BY updated_at DESC
-              LIMIT 1
-          )
+          AND product_id = (SELECT product_id FROM target)
         RETURNING remaining_count, total_limit, plan_name, product_id
         INTO v_remaining, v_limit, v_name, v_product_id;
 
@@ -89,6 +104,6 @@ BEGIN
         'usage', NULL
     );
 END;
-$$ LANGUAGE plpgsql SECURITY INVOKER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
-COMMENT ON FUNCTION save_chat_message IS '메시지를 저장하고, user 메시지인 경우 크레딧 차감 및 사용 로그를 기록합니다.';
+COMMENT ON FUNCTION save_chat_message IS '메시지를 저장하며, 유저 본인 소유의 방인지 검증 후 크레딧을 차감합니다. (SECURITY DEFINER 적용)';
