@@ -38,10 +38,24 @@ interface DocumentResult {
 
 // ─── CORS 헤더 ────────────────────────────────────────────
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// 허용된 Origin 목록 (운영 배포 시 실제 도메인으로 교체)
+const ALLOWED_ORIGINS = [
+  'http://localhost',
+  'https://guda-chatbot.vercel.app',
+]
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('Origin') || ''
+  // Flutter 앱(capacitor/모바일)은 Origin이 없거나 localhost
+  const allowedOrigin = ALLOWED_ORIGINS.find(o => origin.startsWith(o)) || ALLOWED_ORIGINS[0]
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  }
 }
+
+const VALID_TOPIC_CODES = ['iching', 'tripitaka', 'general']
+const VALID_PERSONA_IDS = ['basic', 'friendly', 'strict']
 
 // ─── 페르소나 프롬프트 ────────────────────────────────────
 
@@ -426,31 +440,78 @@ function createCachedSSEStream(text: string): ReadableStream {
   })
 }
 
+// ─── Supabase 클라이언트 싱글턴 (콜드 스타트 최적화) ─────
+
+let _supabaseClient: ReturnType<typeof createClient> | null = null
+
+function getSupabaseClient() {
+  if (!_supabaseClient) {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    _supabaseClient = createClient(supabaseUrl, supabaseServiceKey)
+  }
+  return _supabaseClient
+}
+
 // ─── 메인 핸들러 ──────────────────────────────────────────
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req)
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    // ── JWT 인증 검증 ──
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: '인증 토큰이 필요합니다.' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    const supabase = getSupabaseClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: '유효하지 않은 인증입니다.' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
+
+    // ── 요청 파싱 + 입력 검증 ──
     const { messages, topic_code, hexagram_id, persona_id, search_context } = await req.json() as ChatRequest
 
-    if (!messages || !Array.isArray(messages)) {
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
       throw new Error('messages 배열이 필요합니다.')
     }
 
+    if (topic_code && !VALID_TOPIC_CODES.includes(topic_code)) {
+      throw new Error(`유효하지 않은 topic_code입니다: ${topic_code}`)
+    }
+
+    if (persona_id && !VALID_PERSONA_IDS.includes(persona_id)) {
+      throw new Error(`유효하지 않은 persona_id입니다: ${persona_id}`)
+    }
+
+    if (hexagram_id) {
+      const hNum = parseInt(hexagram_id, 10)
+      if (isNaN(hNum) || hNum < 1 || hNum > 64) {
+        throw new Error(`유효하지 않은 hexagram_id입니다: ${hexagram_id}`)
+      }
+    }
+
     // ── 환경 변수 로드 ──
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const claudeApiKey = Deno.env.get('ANTHROPIC_API_KEY')
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
 
     if (!claudeApiKey && !geminiApiKey) {
       throw new Error('ANTHROPIC_API_KEY 또는 GEMINI_API_KEY가 필요합니다.')
     }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // ── 마지막 사용자 메시지 추출 (검색 쿼리로 사용) ──
     const userMessages = messages.filter(m => m.role === 'user')
@@ -467,26 +528,31 @@ serve(async (req) => {
     if (topic_code === 'iching' && hexagram_id) {
       // ── 주역 플로우 ──
 
-      // 캐시 확인 (질문이 1개이고 대화 이력이 없는 경우만)
-      if (userMessages.length === 1 && latestUserMessage && hexagramNumber) {
-        const cached = await getCachedResponse(supabase, hexagramNumber, latestUserMessage)
-        if (cached) {
-          console.log('[Cache Hit] 주역 캐시 히트')
-          return new Response(createCachedSSEStream(cached), {
-            headers: {
-              ...corsHeaders,
-              'Content-Type': 'text/event-stream',
-              'Cache-Control': 'no-cache',
-            },
-          })
-        }
-        shouldCache = true
+      const canCache = userMessages.length === 1 && latestUserMessage && hexagramNumber
+
+      // 캐시 확인과 벡터 검색을 병렬 실행
+      const [cached, contexts] = await Promise.all([
+        canCache
+          ? getCachedResponse(supabase, hexagramNumber!, latestUserMessage)
+          : Promise.resolve(null),
+        geminiApiKey
+          ? searchIChingDocuments(supabase, latestUserMessage, geminiApiKey)
+          : Promise.resolve([]),
+      ])
+
+      // 캐시 히트 시 즉시 반환 (검색 결과 무시)
+      if (cached && canCache) {
+        console.log('[Cache Hit] 주역 캐시 히트')
+        return new Response(createCachedSSEStream(cached), {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+          },
+        })
       }
 
-      // 벡터 → 키워드 폴백 검색
-      const contexts = geminiApiKey
-        ? await searchIChingDocuments(supabase, latestUserMessage, geminiApiKey)
-        : []
+      if (canCache) shouldCache = true
 
       // 시스템 프롬프트 구성
       finalMessages.push({

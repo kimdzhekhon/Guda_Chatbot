@@ -25,7 +25,6 @@ class SupabaseChatDataSource {
 
     return _rpcInvoker.invokeList(
       functionName: 'get_chat_rooms',
-      params: {'p_user_id': userId},
       fromJson: ConversationDto.fromJson,
     );
   }
@@ -46,7 +45,6 @@ class SupabaseChatDataSource {
       params: {
         'p_title': request.title,
         'p_topic_code': request.topicCode,
-        'p_user_id': request.userId,
         'p_persona_id': request.personaId,
         'p_hexagram_id': request.hexagramId,
       },
@@ -101,7 +99,6 @@ class SupabaseChatDataSource {
 
     return _rpcInvoker.invoke(
       functionName: 'get_chat_usage',
-      params: {'p_user_id': userId},
       fromJson: (json) => ChatUsage(
         remainingCount: (json['remaining_count'] as num).toInt(),
         totalLimit: (json['total_limit'] as num).toInt(),
@@ -118,7 +115,6 @@ class SupabaseChatDataSource {
 
     return _rpcInvoker.invokeList(
       functionName: 'get_chat_usage_logs',
-      params: {'p_user_id': userId},
       fromJson: ChatUsageLogDto.fromJson,
     );
   }
@@ -131,22 +127,12 @@ class SupabaseChatDataSource {
     required String chatRoomId,
     required String userMessage,
     required String topicCode,
+    String? hexagramId,
     String? personaId,
     String? searchContext,
   }) async* {
     // 대화 이력 + 현재 메시지 (시스템 프롬프트 제외)
     final messages = await _buildMessagesForApi(chatRoomId, userMessage);
-
-    // chat_rooms에서 hexagram_id 조회 (주역인 경우)
-    String? hexagramId;
-    if (topicCode == 'iching') {
-      final chatRoom = await _supabase
-          .from('chat_rooms')
-          .select('hexagram_id')
-          .eq('id', chatRoomId)
-          .single();
-      hexagramId = chatRoom['hexagram_id'] as String?;
-    }
 
     yield* _rpcInvoker.invokeStream(
       functionName: 'chat',

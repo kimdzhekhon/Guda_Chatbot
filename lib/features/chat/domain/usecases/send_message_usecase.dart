@@ -26,10 +26,11 @@ class SendMessageUseCase {
     required String chatRoomId,
     required String content,
     required String topicCode,
+    String? hexagramId,
     PersonaType? personaId,
   }) async {
-    // 1. 사용자 메시지 저장 (크레딧 차감 + 로그 기록 포함)
-    final saveResult = await _repository.saveMessage(
+    // 1. 메시지 저장과 로컬 검색을 병렬 실행
+    final saveFuture = _repository.saveMessage(
       SaveMessageRequestDto(
         chatRoomId: chatRoomId,
         content: content,
@@ -37,43 +38,44 @@ class SendMessageUseCase {
       ),
     );
 
-    // 2. 불경(tripitaka)인 경우 로컬 키워드 매칭 검색 수행 및 로깅
-    String? searchContext;
-    if (topicCode == 'tripitaka') {
-      try {
-        final results = await _searchTripitakaLocalUseCase.execute(content);
-        
-        if (kDebugMode) {
-          debugPrint('🔍 [Tripitaka Search] Query: "$content"');
-          debugPrint('📑 Found ${results.length} matching chunks.');
-          for (var i = 0; i < results.length && i < 3; i++) {
-            final r = results[i];
-            debugPrint('   [$i] ID: ${r.id}');
-            debugPrint('       Source: ${r.metadata.source}');
-            debugPrint('       Content preview: ${r.content.substring(0, 100).replaceAll('\n', ' ')}...');
-          }
-        }
+    final searchFuture = topicCode == 'tripitaka'
+        ? _searchTripitakaLocal(content)
+        : Future.value(null);
 
-        // AI 컨텍스트용 문자열 구성 (최대 3개)
-        if (results.isNotEmpty) {
-          searchContext = results.take(3).map((r) => 
-            '[출처: ${r.metadata.source} / ${r.metadata.chapter}]\n${r.content}'
-          ).join('\n\n---\n\n');
-        }
-      } catch (e) {
-        debugPrint('⚠️ Error during local tripitaka search: $e');
-      }
-    }
+    final results = await Future.wait([saveFuture, searchFuture]);
+    final saveResult = results[0] as SaveMessageResult;
+    final searchContext = results[1] as String?;
 
-    // 3. AI 응답 스트리밍 (검색 결과가 있으면 searchContext 전달)
+    // 2. AI 응답 스트리밍
     final stream = _repository.streamResponse(
       chatRoomId: chatRoomId,
       userMessage: content,
       topicCode: topicCode,
+      hexagramId: hexagramId,
       personaId: personaId,
       searchContext: searchContext,
     );
 
     return SendMessageResponse(saveResult: saveResult, stream: stream);
+  }
+
+  /// 불경 로컬 키워드 검색 (병렬 실행용 헬퍼)
+  Future<String?> _searchTripitakaLocal(String content) async {
+    try {
+      final results = await _searchTripitakaLocalUseCase.execute(content);
+
+      if (kDebugMode && results.isNotEmpty) {
+        debugPrint('[Tripitaka Search] "$content" → ${results.length} chunks');
+      }
+
+      if (results.isNotEmpty) {
+        return results.take(3).map((r) =>
+          '[출처: ${r.metadata.source} / ${r.metadata.chapter}]\n${r.content}'
+        ).join('\n\n---\n\n');
+      }
+    } catch (e) {
+      debugPrint('[Tripitaka Search Error] $e');
+    }
+    return null;
   }
 }

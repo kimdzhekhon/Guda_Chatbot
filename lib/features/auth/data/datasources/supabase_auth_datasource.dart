@@ -82,7 +82,6 @@ class SupabaseAuthDataSource {
 
     final session = _supabase.auth.currentSession;
     if (session == null) throw const AuthException('로그인 세션이 없습니다.');
-    debugPrint('[DeleteAccount] accessToken 앞 20자: ${session.accessToken.substring(0, 20)}...');
 
     final response = await http.post(
       Uri.parse('${AppConfig.supabaseUrl}/functions/v1/delete-account'),
@@ -94,7 +93,6 @@ class SupabaseAuthDataSource {
     );
 
     if (response.statusCode != 200) {
-      debugPrint('[DeleteAccount] Raw response (${response.statusCode}): ${response.body}');
       final body = jsonDecode(response.body) as Map<String, dynamic>;
       final errorMsg = body['error'] ?? body['msg'] ?? body['message'] ?? '계정 삭제에 실패했습니다.';
       throw AuthException(errorMsg.toString());
@@ -133,11 +131,8 @@ class SupabaseAuthDataSource {
 
   /// 프로필 테이블 데이터 업데이트 (RPC 연동)
   Future<void> updateProfile(ProfileRegistrationDto dto) async {
-    final params = dto.toJson();
-    debugPrint('[AuthDS] upsert_profile 호출: $params');
     try {
-      final result = await _supabase.rpc('upsert_profile', params: params);
-      debugPrint('[AuthDS] upsert_profile 결과: $result');
+      await _supabase.rpc('upsert_profile', params: dto.toJson());
     } catch (e) {
       debugPrint('[AuthDS] upsert_profile 에러: $e');
       rethrow;
@@ -149,15 +144,12 @@ class SupabaseAuthDataSource {
     await _supabase.rpc('update_persona', params: dto.toJson());
   }
 
-  /// profiles 테이블에서 추가 정보 조회
+  /// profiles 테이블에서 추가 정보 조회 (RPC 전환으로 아키텍처 준수)
   Future<Map<String, dynamic>?> getProfile(String userId) async {
-    debugPrint('[AuthDS] getProfile 호출: userId=$userId');
-    final result = await _supabase
-        .from('profiles')
-        .select()
-        .eq('id', userId)
-        .maybeSingle();
-    debugPrint('[AuthDS] getProfile 결과: $result');
-    return result;
+    // 직접 테이블 조회를 RPC 호출로 대체 (안티 그래비티 아키텍처 규칙 준수)
+    final List<dynamic> result = await _supabase.rpc('get_my_profile');
+    
+    if (result.isEmpty) return null;
+    return result.first as Map<String, dynamic>;
   }
 }

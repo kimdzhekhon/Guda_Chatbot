@@ -51,6 +51,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
   SupabaseRpcInvoker() : _supabase = Supabase.instance.client;
 
   final SupabaseClient _supabase;
+  static final _streamClient = http.Client();
 
   @override
   Future<T> invoke<T>({
@@ -157,11 +158,11 @@ class SupabaseRpcInvoker implements RpcInvoker {
       request.headers.addAll(headers);
       request.body = jsonEncode(params ?? {});
 
-      final response = await http.Client().send(request);
+      final response = await _streamClient.send(request);
 
       if (response.statusCode != 200) {
         final errorBody = await response.stream.bytesToString();
-        debugPrint('[RPC Stream Error Check] Status: ${response.statusCode}, Body: $errorBody');
+        debugPrint('[RPC Stream Error] Status: ${response.statusCode}');
         throw RpcException('스트리밍 호출 실패 (${response.statusCode})', 
             code: response.statusCode.toString(),
             details: errorBody);

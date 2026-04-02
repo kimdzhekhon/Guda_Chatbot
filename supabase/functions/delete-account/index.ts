@@ -1,12 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// 허용된 Origin 목록 (운영 배포 시 실제 도메인으로 교체)
+const ALLOWED_ORIGINS = [
+  'http://localhost',
+  'https://guda-chatbot.vercel.app',
+]
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('Origin') || ''
+  const allowedOrigin = ALLOWED_ORIGINS.find(o => origin.startsWith(o)) || ALLOWED_ORIGINS[0]
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  }
 }
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req)
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -14,7 +26,7 @@ serve(async (req) => {
   try {
     // 1. 요청자의 JWT에서 사용자 인증 확인
     const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return new Response(
         JSON.stringify({ error: '인증 토큰이 필요합니다.' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
@@ -31,23 +43,20 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await adminClient.auth.getUser(token)
     if (userError || !user) {
       return new Response(
-        JSON.stringify({ error: `유효하지 않은 인증입니다: ${userError?.message}` }),
+        JSON.stringify({ error: '유효하지 않은 인증입니다.' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       )
     }
 
-    // 3. 사용자 데이터 + auth.users 삭제
-
-    // public 테이블 데이터 삭제 (cascade로 messages도 함께 삭제됨)
-    await adminClient.from('chat_rooms').delete().eq('user_id', user.id)
-    await adminClient.from('user_subscriptions').delete().eq('user_id', user.id)
-    await adminClient.from('profiles').delete().eq('id', user.id)
-
-    // auth.users에서 사용자 완전 삭제
+    // 3. 트랜잭션으로 사용자 데이터 삭제 (원자적 처리)
+    //    profiles에 ON DELETE CASCADE가 설정되어 있으므로
+    //    profiles 삭제 시 chat_rooms, user_subscriptions, chat_usage_logs 등이 연쇄 삭제됨.
+    //    단, auth.users 삭제가 실패하면 public 데이터만 남는 것을 방지하기 위해
+    //    auth.users를 먼저 삭제 (auth.users → profiles CASCADE 연쇄)
     const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id)
     if (deleteError) {
       return new Response(
-        JSON.stringify({ error: `계정 삭제 실패: ${deleteError.message}` }),
+        JSON.stringify({ error: '계정 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       )
     }
@@ -58,8 +67,9 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error('[DeleteAccount Error]', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: '서버 오류가 발생했습니다.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
   }
