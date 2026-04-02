@@ -12,6 +12,8 @@ class GudaTile extends StatelessWidget {
     this.icon,
     this.leading,
     this.trailing,
+    this.trailingLabel,
+    this.showChevron = false,
     this.onTap,
     this.isSelected = false,
     this.color,
@@ -24,6 +26,13 @@ class GudaTile extends StatelessWidget {
   final IconData? icon;
   final Widget? leading;
   final Widget? trailing;
+
+  /// trailing 영역에 chevron 앞에 표시할 텍스트 라벨
+  final String? trailingLabel;
+
+  /// trailing 영역에 chevron_right 아이콘을 자동으로 표시
+  final bool showChevron;
+
   final VoidCallback? onTap;
   final bool isSelected;
   final Color? color;
@@ -39,7 +48,7 @@ class GudaTile extends StatelessWidget {
     final effectiveTextColor = isSelected
         ? colorScheme.primary
         : (color ?? (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight));
-    
+
     final effectiveIconColor = iconColor ?? effectiveTextColor;
 
     return InkWell(
@@ -98,6 +107,31 @@ class GudaTile extends StatelessWidget {
             if (trailing != null) ...[
               const SizedBox(width: GudaSpacing.sm),
               trailing!,
+            ] else if (trailingLabel != null || showChevron) ...[
+              const SizedBox(width: GudaSpacing.sm),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (trailingLabel != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3.0),
+                      child: Text(
+                        trailingLabel!,
+                        style: GudaTypography.caption(
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                        ).copyWith(height: 1.2),
+                      ),
+                    ),
+                    if (showChevron) const SizedBox(width: GudaSpacing.xs),
+                  ],
+                  if (showChevron)
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                    ),
+                ],
+              ),
             ],
           ],
         ),
