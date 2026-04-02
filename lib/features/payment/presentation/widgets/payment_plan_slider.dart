@@ -9,10 +9,16 @@ class PaymentPlanSlider extends StatefulWidget {
     super.key,
     required this.plans,
     required this.onPlanSelected,
+    this.currentProductId,
+    this.remainingCount,
+    this.totalLimit,
   });
 
   final List<PaymentPlan> plans;
   final Function(PaymentPlan) onPlanSelected;
+  final String? currentProductId;
+  final int? remainingCount;
+  final int? totalLimit;
 
   @override
   State<PaymentPlanSlider> createState() => _PaymentPlanSliderState();
@@ -70,6 +76,13 @@ class _PaymentPlanSliderState extends State<PaymentPlanSlider> {
                 child: PaymentPlanCard(
                   plan: plan,
                   isSelected: _currentPage == index,
+                  isCurrentPlan: widget.currentProductId == plan.id,
+                  remainingCount: widget.currentProductId == plan.id
+                      ? widget.remainingCount
+                      : null,
+                  totalLimit: widget.currentProductId == plan.id
+                      ? widget.totalLimit
+                      : null,
                   onTap: () => widget.onPlanSelected(plan),
                 ),
               );

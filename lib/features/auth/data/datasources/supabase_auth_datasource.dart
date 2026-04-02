@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
@@ -70,9 +73,33 @@ class SupabaseAuthDataSource {
     return _mapSupabaseUserToDto(user, profile: profile);
   }
 
-  /// 계정 탈퇴
+  /// 계정 탈퇴 — Edge Function으로 auth.users까지 완전 삭제 후 로그아웃
   Future<void> deleteAccount() async {
-    // TODO: 실제 백엔드 연동 전까지 로컬 로그아웃만 수행 (보통 Edge Function이나 RPC로 처리)
+    // 세션 갱신 후 최신 토큰 사용
+    try {
+      await _supabase.auth.refreshSession();
+    } catch (_) {}
+
+    final session = _supabase.auth.currentSession;
+    if (session == null) throw const AuthException('로그인 세션이 없습니다.');
+    debugPrint('[DeleteAccount] accessToken 앞 20자: ${session.accessToken.substring(0, 20)}...');
+
+    final response = await http.post(
+      Uri.parse('${AppConfig.supabaseUrl}/functions/v1/delete-account'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${session.accessToken}',
+        'apikey': AppConfig.supabaseAnonKey,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      debugPrint('[DeleteAccount] Raw response (${response.statusCode}): ${response.body}');
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final errorMsg = body['error'] ?? body['msg'] ?? body['message'] ?? '계정 삭제에 실패했습니다.';
+      throw AuthException(errorMsg.toString());
+    }
+
     await signOut();
   }
 
@@ -91,30 +118,46 @@ class SupabaseAuthDataSource {
       'id': user.id,
       'email': user.email,
       ...user.userMetadata ?? {},
-      if (profile != null) ...profile,
       'created_at': user.createdAt,
     };
+
+    // profile의 null 값은 Auth 데이터를 덮어쓰지 않도록 제거 후 병합
+    if (profile != null) {
+      final filtered = Map<String, dynamic>.from(profile)
+        ..removeWhere((_, v) => v == null);
+      json.addAll(filtered);
+    }
+
     return AuthResponseDto.fromJson(json);
   }
 
   /// 프로필 테이블 데이터 업데이트 (RPC 연동)
   Future<void> updateProfile(ProfileRegistrationDto dto) async {
-    // architecture 규정상 RPC 형식을 준수하여 호출
-    await _supabase.rpc('upsert_profile', params: dto.toJson());
+    final params = dto.toJson();
+    debugPrint('[AuthDS] upsert_profile 호출: $params');
+    try {
+      final result = await _supabase.rpc('upsert_profile', params: params);
+      debugPrint('[AuthDS] upsert_profile 결과: $result');
+    } catch (e) {
+      debugPrint('[AuthDS] upsert_profile 에러: $e');
+      rethrow;
+    }
   }
 
   /// 페르소나 단일 업데이트 (RPC 연동)
   Future<void> updatePersona(PersonaUpdateDto dto) async {
-    // 단일 필드 업데이트를 위해 전용 RPC를 호출합니다.
     await _supabase.rpc('update_persona', params: dto.toJson());
   }
 
   /// profiles 테이블에서 추가 정보 조회
   Future<Map<String, dynamic>?> getProfile(String userId) async {
-    return await _supabase
+    debugPrint('[AuthDS] getProfile 호출: userId=$userId');
+    final result = await _supabase
         .from('profiles')
         .select()
         .eq('id', userId)
         .maybeSingle();
+    debugPrint('[AuthDS] getProfile 결과: $result');
+    return result;
   }
 }

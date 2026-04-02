@@ -44,7 +44,12 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final usage = ref.watch(chatUsageViewModelProvider);
-    final progress = usage.totalLimit > 0 ? usage.usedCount / usage.totalLimit : 0.0;
+    // totalLimit이 0이더라도 planName이 있으면 로딩이 된 것으로 간주 (무료 플랜 0회 등 케이스 대응)
+    final isUsageLoaded = usage.totalLimit > 0 || usage.planName.isNotEmpty;
+    final totalQuota = usage.usedCount + usage.remainingCount;
+    final progress = (isUsageLoaded && totalQuota > 0)
+        ? usage.usedCount / totalQuota
+        : 0.0;
 
     return ListView(
       children: [
@@ -54,7 +59,7 @@ class SettingsScreen extends ConsumerWidget {
             title: AppStrings.profileSection,
             child: UserProfileCard(
               user: user,
-              usage: usage,
+              usage: isUsageLoaded ? usage : null,
               progress: progress,
             ),
           ),
@@ -78,11 +83,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.chevron_right_rounded,
                   color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('준비 중인 기능입니다.')),
-                  );
-                },
+                onTap: () => context.push(RoutePaths.purchaseHistory),
               ),
               const GudaDivider(alpha: 1.0),
               GudaTile(
@@ -92,11 +93,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.chevron_right_rounded,
                   color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                 ),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('준비 중인 기능입니다.')),
-                  );
-                },
+                onTap: () => context.push(RoutePaths.usageHistory),
               ),
             ],
           ),
@@ -141,6 +138,16 @@ class SettingsScreen extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
           child: Column(
             children: [
+              GudaTile(
+                leading: const Icon(Icons.campaign_outlined),
+                title: '공지사항',
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                onTap: () => context.push(RoutePaths.notice),
+              ),
+              const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: AppStrings.appVersionLabel,
@@ -204,7 +211,20 @@ class SettingsScreen extends ConsumerWidget {
                     isDestructive: true,
                   );
                   if (confirm == true && context.mounted) {
+                    // 전체 화면 로딩 오버레이 표시
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      barrierColor: Colors.black.withValues(alpha: 0.8),
+                      builder: (_) => const PopScope(
+                        canPop: false,
+                        child: Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                      ),
+                    );
                     await ref.read(authViewModelProvider.notifier).deleteAccount();
+                    // 탈퇴 성공 시 라우터가 auth로 리다이렉트하므로 다이얼로그 수동 닫기 불필요
                   }
                 },
               ),

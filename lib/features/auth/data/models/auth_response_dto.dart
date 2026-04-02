@@ -13,8 +13,6 @@ abstract class AuthResponseDto with _$AuthResponseDto {
     required String email,
     @JsonKey(name: 'full_name') String? displayName,
     @JsonKey(name: 'avatar_url') String? photoUrl,
-    String? nickname,
-    @JsonKey(name: 'birth_date') String? birthDate,
     PersonaType? persona,
     @JsonKey(name: 'terms_agreed_at') String? termsAgreedAt,
     @JsonKey(name: 'created_at') required String createdAt,
@@ -31,10 +29,8 @@ abstract class AuthResponseDto with _$AuthResponseDto {
     email: email,
     displayName: displayName,
     photoUrl: photoUrl,
-    nickname: nickname,
-    birthDate: birthDate != null ? DateTime.tryParse(birthDate!) : null,
     persona: persona,
-    termsAgreed: termsAgreedAt != null, // 동의 일시가 있으면 동의한 것으로 간주
+    termsAgreed: termsAgreedAt != null,
     createdAt: DateTime.parse(createdAt),
   );
 }

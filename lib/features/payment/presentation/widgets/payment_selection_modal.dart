@@ -9,7 +9,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_bottom_sheet_header.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_toggle_control.dart';
 
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
-
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/payment/presentation/widgets/payment_plan_slider.dart';
 
 class PaymentSelectionModal extends ConsumerWidget {
@@ -18,6 +18,8 @@ class PaymentSelectionModal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(paymentViewModelProvider);
+    final usage = ref.watch(chatUsageViewModelProvider);
+    final currentProductId = usage.productId;
 
     return GudaBottomSheet(
       heightFactor: 0.8,
@@ -87,6 +89,9 @@ class PaymentSelectionModal extends ConsumerWidget {
                       child: PaymentPlanSlider(
                         key: ValueKey(selectedType),
                         plans: plans,
+                        currentProductId: currentProductId,
+                        remainingCount: usage.remainingCount,
+                        totalLimit: usage.totalLimit,
                         onPlanSelected: (plan) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(

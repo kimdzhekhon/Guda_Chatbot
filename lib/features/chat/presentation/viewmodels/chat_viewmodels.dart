@@ -13,6 +13,8 @@ import 'package:guda_chatbot/features/chat/domain/usecases/delete_conversation_u
 import 'package:guda_chatbot/features/chat/domain/usecases/get_conversations_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/get_messages_usecase.dart';
 import 'package:guda_chatbot/features/chat/domain/usecases/send_message_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/get_chat_usage_logs_usecase.dart';
+import 'package:guda_chatbot/features/chat/domain/usecases/search_tripitaka_local_usecase.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
@@ -50,7 +52,13 @@ GetMessagesUseCase getMessagesUseCase(Ref ref) =>
 
 @riverpod
 SendMessageUseCase sendMessageUseCase(Ref ref) =>
-    SendMessageUseCase(ref.watch(chatRepositoryProvider));
+    SendMessageUseCase(
+      ref.watch(chatRepositoryProvider),
+      ref.watch(searchTripitakaLocalUseCaseProvider),
+    );
+@riverpod
+GetChatUsageLogsUseCase getChatUsageLogsUseCase(Ref ref) =>
+    GetChatUsageLogsUseCase(ref.watch(chatRepositoryProvider));
 
 // ── Chat List ViewModel ────────────────────────────
 
@@ -172,9 +180,11 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
     final currentMessages = state.dataOrNull ?? [];
 
-    // 대화 크레딧 차감 (DB 반영)
-    final hasCredit = await ref.read(chatUsageViewModelProvider.notifier).useChatCredit();
-    if (!hasCredit) {
+    // 사전 크레딧 잔여 확인 (네트워크 호출 없이 로컬 상태만 체크)
+    final currentUsage = ref.read(chatUsageViewModelProvider);
+    if (currentUsage.remainingCount <= 0) {
+      _isSending = false;
+      keepAliveLink.close();
       if (!ref.mounted) return;
       state = UiSuccess([
         ...currentMessages,
@@ -184,6 +194,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           senderRole: MessageRole.assistant,
           content: '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.',
           createdAt: DateTime.now(),
+          isSystem: true,
         ),
       ]);
       return;
@@ -214,14 +225,23 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
       final useCase = ref.read(sendMessageUseCaseProvider);
       final personaId = ref.read(personaProvider).dataOrNull;
-      String accumulatedContent = '';
 
-      await for (final chunk in useCase(
+      // 메시지 저장 + 크레딧 차감 + AI 스트리밍을 한 번에 처리
+      final response = await useCase(
         chatRoomId: chatRoomId,
         content: content,
         topicCode: topicCode.name,
         personaId: personaId,
-      )) {
+      );
+
+      // 크레딧 차감 결과를 사용량 ViewModel에 반영
+      if (response.saveResult.usage != null) {
+        ref.read(chatUsageViewModelProvider.notifier).updateUsage(response.saveResult.usage!);
+      }
+
+      String accumulatedContent = '';
+
+      await for (final chunk in response.stream) {
         if (!ref.mounted) break;
         accumulatedContent += chunk;
 
@@ -244,15 +264,19 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
     } catch (e) {
       if (!ref.mounted) return;
-      // 에러 발생 시 전체 화면을 에러로 바꾸지 않고, 현재까지의 메시지 상태를 유지
       debugPrint('${AppStrings.messageSendFail} ${e.toString()}');
 
+      // NO_CREDITS_REMAINING 에러 처리
+      final isNoCredit = e.toString().contains('NO_CREDITS_REMAINING');
       state = UiSuccess([
         ...currentMessages,
         tempUserMsg,
         aiStreamingMsg.copyWith(
-          content: '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+          content: isNoCredit
+              ? '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.'
+              : '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
           isStreaming: false,
+          isSystem: true,
         ),
       ]);
     } finally {

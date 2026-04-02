@@ -26,4 +26,13 @@ abstract final class RoutePaths {
   static const String persona = '/settings/persona';
   
   static const String bookmarks = '/bookmarks';
+
+  /// 공지사항 화면 (SCR_NOTICE)
+  static const String notice = '/settings/notice';
+
+  /// 구매 내역 화면 (SCR_PURCHASE_HISTORY)
+  static const String purchaseHistory = '/settings/purchase-history';
+
+  /// 사용 내역 화면 (SCR_USAGE_HISTORY)
+  static const String usageHistory = '/settings/usage-history';
 }

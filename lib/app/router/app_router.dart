@@ -12,6 +12,9 @@ import 'package:guda_chatbot/features/settings/presentation/screens/license_scre
 import 'package:guda_chatbot/features/settings/presentation/screens/font_size_screen.dart';
 import 'package:guda_chatbot/features/settings/presentation/screens/persona_selection_screen.dart';
 import 'package:guda_chatbot/features/bookmarks/presentation/screens/bookmark_screen.dart';
+import 'package:guda_chatbot/features/settings/presentation/screens/notice_screen.dart';
+import 'package:guda_chatbot/features/payment/presentation/screens/purchase_history_screen.dart';
+import 'package:guda_chatbot/features/chat/presentation/screens/usage_history_screen.dart';
 import 'route_paths.dart';
 
 part 'app_router.g.dart';
@@ -45,7 +48,7 @@ GoRouter appRouter(Ref ref) {
 
       // 미인증 시 로그인 화면으로
       if (!isLoggedIn) {
-        if (isAuth || isSplash) return null;
+        if (isAuth) return null;
         return RoutePaths.auth;
       }
 
@@ -93,6 +96,18 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RoutePaths.bookmarks,
         builder: (_, _) => const BookmarkScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.notice,
+        builder: (_, _) => const NoticeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.purchaseHistory,
+        builder: (_, _) => const PurchaseHistoryScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.usageHistory,
+        builder: (_, _) => const UsageHistoryScreen(),
       ),
     ],
   );

@@ -17,7 +17,7 @@ class UserProfileCard extends StatelessWidget {
   });
 
   final GudaUser user;
-  final ChatUsage usage;
+  final ChatUsage? usage;
   final double progress;
 
   @override
@@ -29,47 +29,66 @@ class UserProfileCard extends StatelessWidget {
         borderRadius: GudaRadius.lgAll,
         boxShadow: GudaShadows.card,
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const GudaLottie(
-            path: AppAssets.lotusLottie,
-            size: 60,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const GudaLottie(
+                path: AppAssets.lotusLottie,
+                size: 60,
+              ),
+              const SizedBox(width: GudaSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: GudaSpacing.sm),
+                    // 플랜 배지
+                    if (usage != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: GudaSpacing.sm,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: GudaRadius.smAll,
+                        ),
+                        child: Text(
+                          usage!.planName,
+                          style: GudaTypography.captionBold(color: context.colorScheme.primary),
+                        ),
+                      ),
+                    const SizedBox(height: GudaSpacing.md),
+                    if (usage != null)
+                      UserUsageStats(
+                        label: '대화 사용량',
+                        progress: progress,
+                        remainingText: '${usage!.usedCount} / ${usage!.usedCount + usage!.remainingCount}',
+                      )
+                    else
+                      const SizedBox(
+                        height: 24,
+                        child: Center(
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: GudaSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 플랜 배지
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: GudaSpacing.sm,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.primary.withValues(alpha: 0.1),
-                    borderRadius: GudaRadius.smAll,
-                  ),
-                  child: Text(
-                    usage.planName,
-                    style: GudaTypography.captionBold(color: context.colorScheme.primary),
-                  ),
-                ),
-                const SizedBox(height: GudaSpacing.xs),
-                // 이메일
-                Text(
-                  user.email,
-                  style: GudaTypography.heading3(color: context.colorScheme.onSurface),
-                ),
-                const SizedBox(height: GudaSpacing.md),
-                UserUsageStats(
-                  label: '대화 사용량',
-                  progress: progress,
-                  remainingText: '${usage.usedCount} / ${usage.totalLimit}',
-                ),
-              ],
-            ),
+          const SizedBox(height: GudaSpacing.md),
+          // 이메일
+          Text(
+            user.email,
+            style: GudaTypography.body2(color: context.colorScheme.onSurfaceVariant),
           ),
         ],
       ),

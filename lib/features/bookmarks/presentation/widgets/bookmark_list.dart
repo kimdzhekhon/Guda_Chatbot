@@ -8,6 +8,10 @@ import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/features/bookmarks/domain/entities/bookmark.dart';
 import 'package:guda_chatbot/features/bookmarks/presentation/viewmodels/bookmark_providers.dart';
 
+import 'package:go_router/go_router.dart';
+import 'package:guda_chatbot/app/router/route_paths.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
+
 class BookmarkList extends ConsumerWidget {
   const BookmarkList({
     super.key,
@@ -42,6 +46,14 @@ class BookmarkList extends ConsumerWidget {
           title: cleanTitle,
           content: cleanContent,
           date: formattedDate,
+          onTap: () {
+            if (bookmark.chatRoomId != null && bookmark.topicCode != null) {
+              ref
+                  .read(homeViewModelProvider.notifier)
+                  .selectChatRoomById(bookmark.chatRoomId!, bookmark.topicCode!);
+              context.go(RoutePaths.chatList);
+            }
+          },
           onDelete: () {
             ref.read(bookmarksProvider.notifier).removeBookmark(bookmark.id);
           },

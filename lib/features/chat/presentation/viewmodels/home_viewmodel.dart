@@ -78,6 +78,16 @@ class HomeViewModel extends _$HomeViewModel {
       activeChatRoomId: conversation.id,
       selectedClassicType: conversation.topicCode,
       phase: CardPhase.input,
+      isPendingNewChat: false,
+    );
+  }
+
+  void selectChatRoomById(String chatRoomId, ClassicType topicCode) {
+    state = state.copyWith(
+      activeChatRoomId: chatRoomId,
+      selectedClassicType: topicCode,
+      phase: CardPhase.input,
+      isPendingNewChat: false,
     );
   }
 

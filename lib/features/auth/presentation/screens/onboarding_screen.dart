@@ -1,13 +1,13 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_gradient_background.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_text_input_field.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_step_indicator.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_menu_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_snack_bar.dart';
-import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
@@ -21,25 +21,17 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int _currentStep = 1;
-  
+
   // Step 1: Terms
   bool _isTermsAgreed = false;
   bool _isPrivacyAgreed = false;
   bool _isTermsExpanded = false;
   bool _isPrivacyExpanded = false;
-  bool _hasReadTerms = false; // 약관 확인 여부
-  bool _hasReadPrivacy = false; // 개인정보 확인 여부
+  bool _hasReadTerms = false;
+  bool _hasReadPrivacy = false;
 
-  // Step 2: Profile
-  final TextEditingController _nicknameController = TextEditingController();
-  DateTime? _selectedBirthDate;
+  // Step 2: Persona
   PersonaType _selectedPersona = PersonaType.basic;
-
-  @override
-  void dispose() {
-    _nicknameController.dispose();
-    super.dispose();
-  }
 
   void _nextStep() {
     if (_currentStep == 1) {
@@ -48,12 +40,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         return;
       }
       setState(() => _currentStep = 2);
-    } else if (_currentStep == 2) {
-      if (_nicknameController.text.isEmpty || _selectedBirthDate == null) {
-        GudaSnackBar.show(context, message: '모든 프로필 정보를 입력해주세요.', isError: true);
-        return;
-      }
-      setState(() => _currentStep = 3);
     } else {
       _submit();
     }
@@ -63,52 +49,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (_currentStep > 1) {
       setState(() => _currentStep--);
     } else {
-      // 1단계에서 뒤로가기 시 세션을 로그아웃하고 로그인 화면으로 돌아감
       ref.read(authViewModelProvider.notifier).signOut();
     }
   }
 
   Future<void> _submit() async {
-    // 3단계 진입 시 이미 2단계 검증이 완료된 상태지만, 안전을 위해 재확인
-    if (_nicknameController.text.isEmpty || _selectedBirthDate == null) {
-      GudaSnackBar.show(context, message: '기본 정보를 모두 입력해주세요.', isError: true);
-      setState(() => _currentStep = 2);
-      return;
-    }
-
     await ref.read(authViewModelProvider.notifier).updateProfile(
-      nickname: _nicknameController.text,
-      birthDate: _selectedBirthDate!,
       persona: _selectedPersona,
       termsAgreed: true,
     );
-  }
-
-  Future<void> _selectDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      locale: const Locale('ko', 'KR'),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: context.colorScheme,
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() => _selectedBirthDate = picked);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(authViewModelProvider);
     final isLoading = state.isLoading;
+
+    // 에러 리스너: RPC 실패 시 스낵바로 표시
+    ref.listen(authViewModelProvider, (prev, next) {
+      if (next is UiError<GudaUser?>) {
+        log('[Onboarding] Auth error: ${next.message}', name: 'Onboarding');
+        GudaSnackBar.show(context, message: next.message, isError: true);
+      }
+      if (next is UiSuccess<GudaUser?>) {
+        log('[Onboarding] Auth success: user=${next.data?.id}, isProfileComplete=${next.data?.isProfileComplete}', name: 'Onboarding');
+      }
+    });
 
     return PopScope(
       canPop: false,
@@ -122,14 +88,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: _currentStep > 1 
+          leading: _currentStep > 1
               ? IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
                   onPressed: _previousStep,
                 )
               : IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: _previousStep, // _previousStep에서 로그아웃 처리
+                  onPressed: _previousStep,
                 ),
           surfaceTintColor: Colors.transparent,
         ),
@@ -143,13 +109,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   children: [
                     GudaStepIndicator(
                       currentStep: _currentStep,
-                      totalSteps: 3,
-                      labels: const ['약관 동의', '기본 정보', '페르소나'],
+                      totalSteps: 2,
+                      labels: const ['약관 동의', '페르소나'],
                     ),
                     const SizedBox(height: GudaSpacing.xxl),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: _buildCurrentStepContent(),
+                        child: _currentStep == 1
+                            ? _buildTermsStep()
+                            : _buildPersonaStep(),
                       ),
                     ),
                   ],
@@ -158,7 +126,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               const SizedBox(height: GudaSpacing.lg),
               GudaMenuButton(
                 onPressed: _nextStep,
-                label: _currentStep < 3 ? '다음으로' : '완료',
+                label: _currentStep < 2 ? '다음으로' : '완료',
                 backgroundColor: GudaColors.primary,
                 foregroundColor: Colors.white,
               ),
@@ -179,46 +147,46 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           style: GudaTypography.heading3(color: Colors.white),
         ),
         const SizedBox(height: GudaSpacing.lg),
-    _buildExpandableRow(
-      label: '서비스 이용약관 (필수)',
-      content: '본 약관은 구다 서비스 이용을 위한 기본 사항을 규정합니다...',
-      value: _isTermsAgreed,
-      isExpanded: _isTermsExpanded,
-      canAgree: _hasReadTerms,
-      onChanged: (val) {
-        if (!_hasReadTerms) {
-          GudaSnackBar.show(context, message: '약관 상세 내용을 펼쳐서 확인해주세요.', isError: true);
-          return;
-        }
-        setState(() => _isTermsAgreed = val ?? false);
-      },
-      onToggle: () {
-        setState(() {
-          _isTermsExpanded = !_isTermsExpanded;
-          if (_isTermsExpanded) _hasReadTerms = true;
-        });
-      },
-    ),
-    _buildExpandableRow(
-      label: '개인정보 수집 및 이용 (필수)',
-      content: '닉네임, 생년월일, 페르소나 정보를 수집합니다...',
-      value: _isPrivacyAgreed,
-      isExpanded: _isPrivacyExpanded,
-      canAgree: _hasReadPrivacy,
-      onChanged: (val) {
-        if (!_hasReadPrivacy) {
-          GudaSnackBar.show(context, message: '개인정보 수집 및 이용 상세 내용을 펼쳐서 확인해주세요.', isError: true);
-          return;
-        }
-        setState(() => _isPrivacyAgreed = val ?? false);
-      },
-      onToggle: () {
-        setState(() {
-          _isPrivacyExpanded = !_isPrivacyExpanded;
-          if (_isPrivacyExpanded) _hasReadPrivacy = true;
-        });
-      },
-    ),
+        _buildExpandableRow(
+          label: '서비스 이용약관 (필수)',
+          content: '본 약관은 구다 서비스 이용을 위한 기본 사항을 규정합니다...',
+          value: _isTermsAgreed,
+          isExpanded: _isTermsExpanded,
+          canAgree: _hasReadTerms,
+          onChanged: (val) {
+            if (!_hasReadTerms) {
+              GudaSnackBar.show(context, message: '약관 상세 내용을 펼쳐서 확인해주세요.', isError: true);
+              return;
+            }
+            setState(() => _isTermsAgreed = val ?? false);
+          },
+          onToggle: () {
+            setState(() {
+              _isTermsExpanded = !_isTermsExpanded;
+              if (_isTermsExpanded) _hasReadTerms = true;
+            });
+          },
+        ),
+        _buildExpandableRow(
+          label: '개인정보 수집 및 이용 (필수)',
+          content: '페르소나 정보를 수집합니다...',
+          value: _isPrivacyAgreed,
+          isExpanded: _isPrivacyExpanded,
+          canAgree: _hasReadPrivacy,
+          onChanged: (val) {
+            if (!_hasReadPrivacy) {
+              GudaSnackBar.show(context, message: '개인정보 수집 및 이용 상세 내용을 펼쳐서 확인해주세요.', isError: true);
+              return;
+            }
+            setState(() => _isPrivacyAgreed = val ?? false);
+          },
+          onToggle: () {
+            setState(() {
+              _isPrivacyExpanded = !_isPrivacyExpanded;
+              if (_isPrivacyExpanded) _hasReadPrivacy = true;
+            });
+          },
+        ),
       ],
     );
   }
@@ -249,7 +217,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   onChanged: onChanged,
                   contentPadding: EdgeInsets.zero,
                   controlAffinity: ListTileControlAffinity.leading,
-                  enabled: true, // 로직에서 안내를 위해 상시 활성 후 onChanged에서 제어
+                  enabled: true,
                 ),
               ),
             ),
@@ -276,67 +244,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               style: GudaTypography.caption2(color: Colors.white70),
             ),
           ),
-      ],
-    );
-  }
-
-  Widget _buildCurrentStepContent() {
-    switch (_currentStep) {
-      case 1:
-        return _buildTermsStep();
-      case 2:
-        return _buildBasicInfoStep();
-      case 3:
-        return _buildPersonaStep();
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  Widget _buildBasicInfoStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '기본 정보를 설정하여\n대화를 시작해보세요',
-          style: GudaTypography.heading3(color: Colors.white),
-        ),
-        const SizedBox(height: GudaSpacing.lg),
-        Text('닉네임', style: GudaTypography.captionBold(color: Colors.white70)),
-        const SizedBox(height: GudaSpacing.xs),
-        GudaTextInputField(
-          controller: _nicknameController,
-          hintText: '사용하실 닉네임을 입력하세요',
-          backgroundColor: Colors.white.withValues(alpha: 0.1),
-          border: Border.all(color: Colors.white24),
-          style: GudaTypography.input(color: Colors.white),
-          hintStyle: GudaTypography.input(color: Colors.white38),
-        ),
-        const SizedBox(height: GudaSpacing.md),
-        Text('생년월일', style: GudaTypography.captionBold(color: Colors.white70)),
-        const SizedBox(height: GudaSpacing.xs),
-        GestureDetector(
-          onTap: _selectDate,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.md, vertical: GudaSpacing.md12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: GudaRadius.lgAll,
-              border: Border.all(color: Colors.white24),
-            ),
-            child: Text(
-              _selectedBirthDate == null 
-                  ? '날짜를 선택하세요' 
-                  : '${_selectedBirthDate!.year}년 ${_selectedBirthDate!.month}월 ${_selectedBirthDate!.day}일',
-              style: GudaTypography.input(
-                color: _selectedBirthDate == null 
-                    ? Colors.white38
-                    : Colors.white,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -373,7 +280,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildPersonaItem(PersonaType id, String label) {
     final isSelected = _selectedPersona == id;
-    
+
     return GestureDetector(
       onTap: () => setState(() => _selectedPersona = id),
       child: Container(
