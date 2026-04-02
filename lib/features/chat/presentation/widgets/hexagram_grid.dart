@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_empty_view.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/hexagram.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_widgets.dart';
@@ -20,8 +20,8 @@ class HexagramGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (hexagrams.isEmpty) {
-      return const GudaEmptyView(
-        message: '검색 결과가 없습니다.',
+      return const GudaEmptyState(
+        title: '검색 결과가 없습니다.',
         icon: Icons.search_off_rounded,
       );
     }
