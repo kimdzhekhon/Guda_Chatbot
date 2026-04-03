@@ -23,6 +23,8 @@ class GudaAvatar extends StatelessWidget {
       return CircleAvatar(
         radius: radius,
         backgroundImage: NetworkImage(photoUrl!),
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        onBackgroundImageError: (_, _) {},
       );
     }
 
