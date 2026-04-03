@@ -97,9 +97,9 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
           onPressed: _handleStart,
           isLoading: _isLoading,
         )
-            .gudaFadeIn(delay: const Duration(milliseconds: 200))
+            .gudaFadeIn(delay: GudaDuration.fast)
             .gudaScaleIn(
-              duration: const Duration(milliseconds: 300),
+              duration: GudaDuration.normal,
               curve: Curves.easeOutBack,
             ),
       ],

@@ -21,8 +21,7 @@ class BookmarksNotifier extends _$BookmarksNotifier {
     state = const AsyncValue.loading();
     try {
       await ref.read(bookmarkRepositoryProvider).addBookmark(bookmark);
-      final newList = await ref.read(bookmarkRepositoryProvider).getBookmarks();
-      state = AsyncValue.data(newList);
+      await _refreshBookmarks();
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -32,11 +31,15 @@ class BookmarksNotifier extends _$BookmarksNotifier {
     state = const AsyncValue.loading();
     try {
       await ref.read(bookmarkRepositoryProvider).removeBookmark(id);
-      final newList = await ref.read(bookmarkRepositoryProvider).getBookmarks();
-      state = AsyncValue.data(newList);
+      await _refreshBookmarks();
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
+  }
+
+  Future<void> _refreshBookmarks() async {
+    final newList = await ref.read(bookmarkRepositoryProvider).getBookmarks();
+    state = AsyncValue.data(newList);
   }
 
   Future<void> removeBookmarkByReferenceId(String referenceId) async {

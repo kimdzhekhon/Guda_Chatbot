@@ -11,6 +11,7 @@ import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/settings/domain/entities/notice.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/notice_viewmodel.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 /// SCR_NOTICE — 공지사항 화면
 class NoticeScreen extends ConsumerWidget {
@@ -21,7 +22,7 @@ class NoticeScreen extends ConsumerWidget {
     final noticeState = ref.watch(noticeProvider);
 
     return GudaScaffold(
-      appBar: const GudaAppBar(title: '공지사항'),
+      appBar: const GudaAppBar(title: AppStrings.noticeTitle),
       body: switch (noticeState) {
         UiLoading() => const GudaLoadingWidget(),
         UiSuccess(data: final notices) => notices.isEmpty

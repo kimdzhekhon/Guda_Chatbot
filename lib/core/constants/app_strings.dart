@@ -106,6 +106,14 @@ abstract final class AppStrings {
   static const String newChat = '새 채팅';
   static const String historyHeader = '대화 기록';
 
+  // 인증 에러
+  static const String googleSignInError = 'Google 로그인에 실패했습니다';
+  static const String appleSignInError = 'Apple 로그인에 실패했습니다';
+  static const String profileUpdateError = '프로필 업데이트에 실패했습니다';
+  static const String logoutError = '로그아웃 중 오류가 발생했습니다';
+  static const String noCreditMessage = '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.';
+  static const String messageSendError = '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+
   // 인증 화면
   static const String authSubtitle = '팔만대장경 · 주역 · 구사론';
   static const String authTitleLine1 = '깊이 있는 지혜의 문답';
@@ -144,6 +152,7 @@ abstract final class AppStrings {
   static const String darkThemeLabel = '다크 모드';
   static const String closeLabel = '닫기';
   static const String bookmarksTitle = '보관함';
+  static const String noticeTitle = '공지사항';
   static const String noBookmarksMessage = '아직 저장된 북마크가 없습니다.';
 
   // 섹션 헤더
