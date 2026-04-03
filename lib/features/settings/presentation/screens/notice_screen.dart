@@ -8,6 +8,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+import 'package:guda_chatbot/core/utils/date_extensions.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/settings/domain/entities/notice.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/notice_viewmodel.dart';
@@ -51,13 +52,16 @@ class _NoticeList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.md),
       itemCount: notices.length,
       separatorBuilder: (_, _) => const GudaDivider(),
-      itemBuilder: (context, index) => _NoticeItem(notice: notices[index]),
+      itemBuilder: (context, index) => _NoticeItem(
+        key: ValueKey(notices[index].id),
+        notice: notices[index],
+      ),
     );
   }
 }
 
 class _NoticeItem extends StatefulWidget {
-  const _NoticeItem({required this.notice});
+  const _NoticeItem({super.key, required this.notice});
 
   final Notice notice;
 
@@ -70,8 +74,7 @@ class _NoticeItemState extends State<_NoticeItem> {
 
   @override
   Widget build(BuildContext context) {
-    final d = widget.notice.updatedAt;
-    final dateStr = '${d.year}.${d.month.toString().padLeft(2, '0')}.${d.day.toString().padLeft(2, '0')}';
+    final dateStr = widget.notice.updatedAt.toYyyyMmDd();
 
     return InkWell(
       onTap: () => setState(() => _isExpanded = !_isExpanded),
