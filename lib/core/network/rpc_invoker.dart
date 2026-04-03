@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/app/config/app_config.dart';
 
@@ -51,7 +51,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
   SupabaseRpcInvoker() : _supabase = Supabase.instance.client;
 
   final SupabaseClient _supabase;
-  static final _streamClient = http.Client();
+  static final _streamDio = Dio();
 
   @override
   Future<T> invoke<T>({
@@ -63,7 +63,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
     try {
       debugPrint('[RPC Call] $functionName with $params');
       response = await _supabase.rpc(functionName, params: params);
-      
+
       if (response == null) {
          throw RpcException('RPC 응답이 비어있습니다.', code: 'EMPTY_RESPONSE');
       }
@@ -118,7 +118,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
     try {
       debugPrint('[RPC List Call] $functionName with $params');
       final response = await _supabase.rpc(functionName, params: params);
-      
+
       if (response == null) return [];
 
       return (response as List)
@@ -141,35 +141,34 @@ class SupabaseRpcInvoker implements RpcInvoker {
     final stopwatch = Stopwatch()..start();
     try {
       debugPrint('[RPC Stream Call] Started: $functionName');
-      
+
       final session = _supabase.auth.currentSession;
       final accessToken = session?.accessToken;
       final supabaseKey = AppConfig.supabaseAnonKey;
-      
-      final headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${accessToken ?? supabaseKey}',
-        'apikey': supabaseKey,
-      };
 
       final functionUrl = '${AppConfig.supabaseUrl}/functions/v1/$functionName';
-      
-      final request = http.Request('POST', Uri.parse(functionUrl));
-      request.headers.addAll(headers);
-      request.body = jsonEncode(params ?? {});
 
-      final response = await _streamClient.send(request);
+      final response = await _streamDio.post<ResponseBody>(
+        functionUrl,
+        data: params ?? {},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${accessToken ?? supabaseKey}',
+            'apikey': supabaseKey,
+          },
+          responseType: ResponseType.stream,
+        ),
+      );
 
       if (response.statusCode != 200) {
-        final errorBody = await response.stream.bytesToString();
-        debugPrint('[RPC Stream Error] Status: ${response.statusCode}');
-        throw RpcException('스트리밍 호출 실패 (${response.statusCode})', 
-            code: response.statusCode.toString(),
-            details: errorBody);
+        throw RpcException('스트리밍 호출 실패 (${response.statusCode})',
+            code: response.statusCode.toString());
       }
 
       final lineBuffer = StringBuffer();
-      await for (final chunk in response.stream.transform(utf8.decoder)) {
+      final stream = response.data!.stream.cast<List<int>>().transform(utf8.decoder);
+      await for (final chunk in stream) {
         lineBuffer.write(chunk);
         final lines = lineBuffer.toString().split('\n');
 
