@@ -61,10 +61,8 @@ lib/
      └─ presentation/ # UI 컴포넌트, 화면(Screen), Riverpod ViewModel
 ```
 
-*   **Supabase 백엔드 구성 및 마이그레이션**: [supabase/README.md](file:///Users/kimjaehyun/Desktop/Guda_Chatbot/supabase/README.md)
 
-## 🏗 Architecture & Guidelines (안티 그래비티 아키텍처 핵심)
-
+## 🏗 Architecture & Guidelines
 본 프로젝트는 다음의 개발 원칙을 준수합니다.
 
 1. **상수 및 토큰 기반 UI (하드코딩 금지)**
