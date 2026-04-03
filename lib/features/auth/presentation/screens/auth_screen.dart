@@ -60,7 +60,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           children: [
             const Spacer(flex: 3), // 상단 여백을 주어 중앙으로 밀어냄
             const AuthBranding().gudaFadeIn(
-              duration: const Duration(milliseconds: 800),
+              duration: GudaDuration.slowest,
             ),
             const SizedBox(height: GudaSpacing.xxl), 
             GudaCard(
@@ -91,8 +91,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
             ).gudaSlideIn(
               begin: const Offset(0, 0.05),
-              delay: const Duration(milliseconds: 300),
-              duration: const Duration(milliseconds: 500),
+              delay: GudaDuration.normal,
+              duration: GudaDuration.slow,
               curve: Curves.easeOut,
             ),
             const SizedBox(height: GudaSpacing.md),
@@ -124,7 +124,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ),
               ),
-            ).gudaFadeIn(delay: const Duration(milliseconds: 600)),
+            ).gudaFadeIn(delay: GudaDuration.slower),
             const Spacer(flex: 4), // 하단 여백을 조금 더 주어 안정감 있게 배치
           ],
         ),

@@ -33,7 +33,7 @@ class GudaBrandHeader extends StatelessWidget {
             width: isLarge ? 120 : 28,
             height: isLarge ? 120 : 28,
           ).gudaScaleIn(
-            duration: const Duration(milliseconds: 700),
+            duration: GudaDuration.slowest,
             curve: Curves.elasticOut,
           ),
         const SizedBox(height: GudaSpacing.sm),
@@ -42,7 +42,7 @@ class GudaBrandHeader extends StatelessWidget {
           style: isLarge
               ? GudaTypography.brand(color: color)
               : GudaTypography.labelSmall(color: color),
-        ).gudaFadeIn(delay: const Duration(milliseconds: 200)),
+        ).gudaFadeIn(delay: GudaDuration.fast),
         if (subtitle != null) ...[
           const SizedBox(height: GudaSpacing.sm),
           Text(

@@ -109,7 +109,7 @@ class SettingsScreen extends ConsumerWidget {
               const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.bookmark_outline_rounded),
-                title: '보관함',
+                title: AppStrings.bookmarksTitle,
                 showChevron: true,
                 onTap: () => context.push(RoutePaths.bookmarks),
               ),
@@ -127,7 +127,7 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               GudaTile(
                 leading: const Icon(Icons.campaign_outlined),
-                title: '공지사항',
+                title: AppStrings.noticeTitle,
                 showChevron: true,
                 onTap: () => context.push(RoutePaths.notice),
               ),

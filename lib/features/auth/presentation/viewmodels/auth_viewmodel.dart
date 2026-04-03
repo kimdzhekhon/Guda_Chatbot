@@ -6,6 +6,7 @@ import 'package:guda_chatbot/features/auth/data/repositories/auth_repository_imp
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/usecases/auth_usecases.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 part 'auth_viewmodel.g.dart';
 
@@ -78,24 +79,24 @@ class AuthViewModel extends _$AuthViewModel {
   }
 
   /// Google 로그인
-  Future<void> signInWithGoogle({bool isSignUp = false}) async {
+  Future<void> signInWithGoogle() async {
     state = const UiLoading();
     try {
       final user = await ref.read(signInWithGoogleUseCaseProvider).call();
       state = UiSuccess(user);
     } catch (e) {
-      state = UiError('Google 로그인에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.googleSignInError}: ${e.toString()}');
     }
   }
 
   /// Apple 로그인
-  Future<void> signInWithApple({bool isSignUp = false}) async {
+  Future<void> signInWithApple() async {
     state = const UiLoading();
     try {
       final user = await ref.read(signInWithAppleUseCaseProvider).call();
       state = UiSuccess(user);
     } catch (e) {
-      state = UiError('Apple 로그인에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.appleSignInError}: ${e.toString()}');
     }
   }
 
@@ -119,7 +120,7 @@ class AuthViewModel extends _$AuthViewModel {
       state = UiSuccess(updatedUser);
     } catch (e, st) {
       log('[updateProfile] 실패: $e', stackTrace: st, name: 'AuthViewModel');
-      state = UiError('프로필 업데이트에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.profileUpdateError}: ${e.toString()}');
     }
   }
 
@@ -130,7 +131,7 @@ class AuthViewModel extends _$AuthViewModel {
       await ref.read(signOutUseCaseProvider).call();
       state = const UiSuccess(null);
     } catch (e) {
-      state = UiError('로그아웃 중 오류가 발생했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.logoutError}: ${e.toString()}');
     }
   }
 
