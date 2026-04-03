@@ -4,7 +4,7 @@ import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
-import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_async_body.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/font_size_viewmodel.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
@@ -15,14 +15,12 @@ class FontSizeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fontScaleAsync = ref.watch(fontSizeViewModelProvider);
-
     return GudaScaffold(
       appBar: const GudaAppBar(title: AppStrings.fontSizeScreenTitle),
-      body: fontScaleAsync.when(
-        data: (scale) => _buildBody(context, ref, scale),
-        loading: () => const GudaLoadingWidget(),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+      body: GudaAsyncBody<double>(
+        asyncValue: ref.watch(fontSizeViewModelProvider),
+        errorMessage: '글자 크기 설정을 불러오지 못했습니다.',
+        builder: (scale) => _buildBody(context, ref, scale),
       ),
     );
   }
@@ -32,7 +30,6 @@ class FontSizeScreen extends ConsumerWidget {
     WidgetRef ref,
     double currentScale,
   ) {
-    // 슬라이더 값 매핑: 0.85 (작게), 1.0 (보통), 1.15 (크게)
     double sliderValue = 1.0;
     if (currentScale <= 0.85) {
       sliderValue = 0.0;
@@ -44,7 +41,6 @@ class FontSizeScreen extends ConsumerWidget {
 
     return Column(
       children: [
-        // ── 미리보기 영역 ─────────────────────────
         Expanded(
           child: Container(
             width: double.infinity,
@@ -73,8 +69,6 @@ class FontSizeScreen extends ConsumerWidget {
             ),
           ),
         ),
-
-        // ── 조절 영역 ─────────────────────────────
         SafeArea(
           top: false,
           child: Padding(

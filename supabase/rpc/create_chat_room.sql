@@ -1,28 +1,27 @@
--- 새 채팅방 생성
--- Usage: select * from create_chat_room('제목', '토픽코드', '유저UUID', 'basic');
-
--- 이전 파라미터(TEXT 4개 등)와의 오버로딩 중복을 피하기 위해 제거
-DROP FUNCTION IF EXISTS public.create_chat_room(TEXT, TEXT, UUID);
-DROP FUNCTION IF EXISTS public.create_chat_room(TEXT, TEXT, UUID, TEXT);
-DROP FUNCTION IF EXISTS public.create_chat_room(TEXT, TEXT, UUID, public.persona_type);
-
+-- 새 채팅방 생성 (현재 로그인 유저 대상)
+-- Usage: select * from create_chat_room('제목', '토픽코드', 'basic');
 CREATE OR REPLACE FUNCTION public.create_chat_room(
     p_title        TEXT,
     p_topic_code   TEXT,
-    p_user_id      UUID,
     p_persona_id   public.persona_type,
     p_hexagram_id  INTEGER DEFAULT NULL
 )
 RETURNS public.chat_rooms AS $$
 DECLARE
+    v_user_id UUID := auth.uid();
     v_room public.chat_rooms;
 BEGIN
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'NOT_AUTHENTICATED' USING HINT = '로그인이 필요합니다.';
+    END IF;
+
     INSERT INTO public.chat_rooms (title, topic_code, user_id, persona_id, hexagram_id)
-    VALUES (p_title, p_topic_code, p_user_id, p_persona_id, p_hexagram_id)
+    VALUES (p_title, p_topic_code, v_user_id, p_persona_id, p_hexagram_id)
     RETURNING * INTO v_room;
+    
     RETURN v_room;
 END;
-$$ LANGUAGE plpgsql SECURITY INVOKER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
-COMMENT ON FUNCTION public.create_chat_room(TEXT, TEXT, UUID, public.persona_type, INTEGER)
-    IS '채팅방을 생성합니다. persona_id는 persona_type ENUM 값(basic/friendly/strict)을 사용하며, hexagram_id는 주역 대화 시 괘 번호(1-64)를 저장합니다.';
+COMMENT ON FUNCTION public.create_chat_room(TEXT, TEXT, public.persona_type, INTEGER)
+    IS '현재 로그인 사용자의 채팅방을 생성합니다. (SECURITY DEFINER 적용)';

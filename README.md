@@ -4,6 +4,9 @@
 
 Guda Chatbot은 동양 고전의 지혜를 바탕으로 사용자와 대화하며 통찰을 제공하는 AI 챗봇 애플리케이션입니다. Flutter 안티 그래비티 아키텍처 지침을 엄격하게 준수하여 안전하고 확장성 있게 설계되었습니다.
 
+> [!IMPORTANT]
+> **보안 및 아키텍처 가이드**: 신규 기능 추가 및 데이터 통신 시 반드시 [DOCS_SECURITY.md](file:///Users/kimjaehyun/Desktop/Guda_Chatbot/DOCS_SECURITY.md)를 참고하십시오.
+
 ## 🛠 사용 기술 및 라이브러리 (Tech Stack & Libraries)
 
 프로젝트에 사용된 프레임워크와 주요 패키지는 다음과 같이 구성되어 있습니다.
@@ -58,15 +61,17 @@ lib/
      └─ presentation/ # UI 컴포넌트, 화면(Screen), Riverpod ViewModel
 ```
 
-## 🏗 Architecture & Guidelines
 
+## 🏗 Architecture & Guidelines
 본 프로젝트는 다음의 개발 원칙을 준수합니다.
 
 1. **상수 및 토큰 기반 UI (하드코딩 금지)**
    - 모든 시각 요소(색상, 곡률, 여백, 그림자 등)는 `core/design_system` 하위의 토큰을 통해서만 구성됩니다.
    - 단일 디바이스용 분기 처리를 지양하며, `AppResponsiveLayout`을 통한 반응형 UI를 기본으로 합니다.
-2. **엄격한 데이터 흐름 제어**
+2. **엄격한 데이터 흐름 제어 (Security Hardening)**
    - API 통신 시 반드시 규격화된 DTO 모델을 통한 RPC 통신을 채택하여 외부 의존성 노출을 최소화합니다.
+   - 모든 테이블은 RLS(Row Level Security)가 활성화되어 있으며, 본인 데이터 외의 무단 수정을 백엔드 수준에서 차단합니다.
+   - 상세한 RPC 보안 설계는 [DOCS_SECURITY.md](file:///Users/kimjaehyun/Desktop/Guda_Chatbot/DOCS_SECURITY.md)를 확인하십시오.
 3. **명확한 상태 관리**
    - `UiState<T>` (loading/success/error) 패턴을 사용하여 UI 상태를 선언적으로 관리합니다.
    - 모든 ViewModel 구현은 Riverpod을 기반으로 이루어집니다.

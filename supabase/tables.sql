@@ -23,7 +23,7 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS public.products (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
-    type TEXT NOT NULL, -- 'free', 'subscription', 'charge'
+    type TEXT NOT NULL CHECK (type IN ('free', 'subscription', 'charge')),
     price INTEGER NOT NULL,
     usage_limit INTEGER,
     description TEXT,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS public.user_subscriptions (
     user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
     product_id UUID REFERENCES public.products ON DELETE CASCADE NOT NULL,
     plan_name TEXT NOT NULL DEFAULT '',           -- 구독 플랜명 (비정규화)
-    status TEXT NOT NULL DEFAULT 'active',        -- 'active', 'expired', 'cancelled'
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'expired', 'cancelled')),
     total_limit INTEGER NOT NULL DEFAULT 0,       -- 총 제공 횟수
     remaining_count INTEGER NOT NULL DEFAULT 0,   -- 남은 횟수
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS public.messages (
     id BIGSERIAL PRIMARY KEY,
     chat_rooms_id UUID REFERENCES public.chat_rooms ON DELETE CASCADE NOT NULL,
     content TEXT NOT NULL,
-    sender_role TEXT NOT NULL, -- 'user', 'assistant'
+    sender_role TEXT NOT NULL CHECK (sender_role IN ('user', 'assistant')),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS public.chat_usage_logs (
     id BIGSERIAL PRIMARY KEY,
     user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
     chat_room_id UUID REFERENCES public.chat_rooms ON DELETE SET NULL,
-    action TEXT NOT NULL,        -- 'credit_used', 'credit_charged', 'credit_expired'
+    action TEXT NOT NULL CHECK (action IN ('credit_used', 'credit_charged', 'credit_expired')),
     amount INTEGER NOT NULL DEFAULT 1,
     remaining INTEGER NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS public.transaction_logs (
     user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
     product_name TEXT NOT NULL,
     amount INTEGER NOT NULL,
-    status TEXT NOT NULL DEFAULT 'success', -- 'success', 'fail', 'cancelled'
+    status TEXT NOT NULL DEFAULT 'success' CHECK (status IN ('success', 'fail', 'cancelled')),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.transaction_logs ENABLE ROW LEVEL SECURITY;

@@ -4,6 +4,9 @@ import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_loading_widget.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_empty_state.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/settings/domain/entities/notice.dart';
@@ -20,49 +23,16 @@ class NoticeScreen extends ConsumerWidget {
     return GudaScaffold(
       appBar: const GudaAppBar(title: '공지사항'),
       body: switch (noticeState) {
-        UiLoading() => const Center(child: CircularProgressIndicator()),
+        UiLoading() => const GudaLoadingWidget(),
         UiSuccess(data: final notices) => notices.isEmpty
-            ? Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.notifications_none_rounded,
-                      size: 48,
-                      color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                    ),
-                    const SizedBox(height: GudaSpacing.md),
-                    Text(
-                      '공지사항이 없습니다.',
-                      style: GudaTypography.body2(
-                        color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
+            ? const GudaEmptyState(
+                title: '공지사항이 없습니다.',
+                icon: Icons.notifications_none_rounded,
               )
             : _NoticeList(notices: notices),
-        UiError() => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '공지사항을 불러올 수 없습니다.',
-                  style: GudaTypography.body2(
-                    color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                  ),
-                ),
-                const SizedBox(height: GudaSpacing.md),
-                TextButton.icon(
-                  onPressed: () => ref.read(noticeProvider.notifier).refresh(),
-                  icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: const Text('다시 시도'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: context.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
+        UiError() => GudaErrorWidget(
+            message: '공지사항을 불러올 수 없습니다.',
+            onRetry: () => ref.read(noticeProvider.notifier).refresh(),
           ),
       },
     );

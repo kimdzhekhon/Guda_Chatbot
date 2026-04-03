@@ -8,7 +8,6 @@ part 'profile_registration_dto.g.dart';
 @freezed
 abstract class ProfileRegistrationDto with _$ProfileRegistrationDto {
   const factory ProfileRegistrationDto({
-    @JsonKey(name: 'p_user_id') required String userId,
     @JsonKey(name: 'p_persona') required PersonaType persona,
     @JsonKey(name: 'p_terms_agreed_at') required String termsAgreedAt,
   }) = _ProfileRegistrationDto;

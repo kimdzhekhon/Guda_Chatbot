@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
@@ -172,6 +173,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
   Future<void> sendMessage({
     required String content,
     required ClassicType topicCode,
+    String? hexagramId,
   }) async {
     // autoDispose 방지: 위젯 전환(PendingChatRoomView → ChatRoomView) 동안
     // watcher가 없어도 provider가 폐기되지 않도록 유지
@@ -231,6 +233,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         chatRoomId: chatRoomId,
         content: content,
         topicCode: topicCode.name,
+        hexagramId: hexagramId,
         personaId: personaId,
       );
 
@@ -240,19 +243,25 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       }
 
       String accumulatedContent = '';
+      Timer? batchTimer;
 
       await for (final chunk in response.stream) {
         if (!ref.mounted) break;
         accumulatedContent += chunk;
 
-        // UI 상태 업데이트
-        state = UiSuccess([
-          ...currentMessages,
-          tempUserMsg,
-          aiStreamingMsg.copyWith(content: accumulatedContent),
-        ]);
+        // 배치 업데이트: 100ms마다 한 번만 UI 갱신 (리빌드 횟수 대폭 감소)
+        batchTimer?.cancel();
+        batchTimer = Timer(const Duration(milliseconds: 100), () {
+          if (!ref.mounted) return;
+          state = UiSuccess([
+            ...currentMessages,
+            tempUserMsg,
+            aiStreamingMsg.copyWith(content: accumulatedContent),
+          ]);
+        });
       }
 
+      batchTimer?.cancel();
       if (!ref.mounted) return;
 
       // 스트리밍 종료 후 상태 확정
@@ -282,10 +291,6 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     } finally {
       _isSending = false;
       keepAliveLink.close();
-      // 전송 완료 후 DB에서 실제 메시지를 로드하여 임시 ID를 정식 ID로 교체
-      if (ref.mounted) {
-        _loadMessages();
-      }
     }
   }
 }
