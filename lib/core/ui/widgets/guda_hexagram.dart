@@ -86,13 +86,15 @@ class GudaHexagram extends StatelessWidget {
         color ??
         (isDark ? GudaColors.onSurfaceDark : GudaColors.onSurfaceLight);
 
-    return CustomPaint(
-      size: Size(size, size * 0.8), // 6줄이므로 약간 가로가 긴 비율이 안정적
-      painter: HexagramPainter(
-        lines: lines,
-        color: strokeColor,
-        strokeWidth: size * 0.08,
-        gapWidth: size * 0.15,
+    return RepaintBoundary(
+      child: CustomPaint(
+        size: Size(size, size * 0.8), // 6줄이므로 약간 가로가 긴 비율이 안정적
+        painter: HexagramPainter(
+          lines: lines,
+          color: strokeColor,
+          strokeWidth: size * 0.08,
+          gapWidth: size * 0.15,
+        ),
       ),
     );
   }

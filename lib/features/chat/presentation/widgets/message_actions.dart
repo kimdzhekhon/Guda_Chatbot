@@ -23,9 +23,9 @@ class GudaMessageActions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bookmarksAsync = ref.watch(bookmarksProvider);
-    final isBookmarked =
-        bookmarksAsync.value?.any((b) => b.referenceId == message.id.toString()) ?? false;
+    final isBookmarked = ref.watch(bookmarksProvider.select(
+      (state) => state.value?.any((b) => b.referenceId == message.id.toString()) ?? false,
+    ));
 
     return Row(
       mainAxisSize: MainAxisSize.min,

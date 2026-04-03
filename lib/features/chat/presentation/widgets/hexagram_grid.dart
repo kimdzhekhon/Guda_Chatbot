@@ -74,10 +74,7 @@ class _HexagramItem extends StatelessWidget {
           ),
           const SizedBox(height: GudaSpacing.sm),
           Text(
-            hexagram.name
-                .replaceAll('중', '')
-                .replaceAll('천', '')
-                .replaceAll('지', ''),
+            hexagram.shortName,
             textAlign: TextAlign.center,
             style: GudaTypography.captionSemiBold(
               color: context.onSurfaceColor,
