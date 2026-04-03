@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
@@ -83,18 +82,22 @@ class SupabaseAuthDataSource {
     final session = _supabase.auth.currentSession;
     if (session == null) throw const AuthException('로그인 세션이 없습니다.');
 
-    final response = await http.post(
-      Uri.parse('${AppConfig.supabaseUrl}/functions/v1/delete-account'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${session.accessToken}',
-        'apikey': AppConfig.supabaseAnonKey,
-      },
-    );
-
-    if (response.statusCode != 200) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      final errorMsg = body['error'] ?? body['msg'] ?? body['message'] ?? '계정 삭제에 실패했습니다.';
+    try {
+      await Dio().post(
+        '${AppConfig.supabaseUrl}/functions/v1/delete-account',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${session.accessToken}',
+            'apikey': AppConfig.supabaseAnonKey,
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      final body = e.response?.data;
+      final errorMsg = body is Map
+          ? (body['error'] ?? body['msg'] ?? body['message'] ?? '계정 삭제에 실패했습니다.')
+          : '계정 삭제에 실패했습니다.';
       throw AuthException(errorMsg.toString());
     }
 
