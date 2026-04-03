@@ -128,7 +128,7 @@ class GudaDialog extends StatelessWidget {
         ),
       ),
     ).gudaScaleIn(
-      duration: const Duration(milliseconds: 300),
+      duration: GudaDuration.normal,
       curve: Curves.easeOutBack,
     );
   }

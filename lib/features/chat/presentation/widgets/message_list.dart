@@ -48,7 +48,7 @@ class MessageList extends StatelessWidget {
           ),
         ),
       ).gudaFadeScaleIn(
-        duration: const Duration(milliseconds: 600),
+        duration: GudaDuration.slower,
         beginScale: 0.95,
       );
     }

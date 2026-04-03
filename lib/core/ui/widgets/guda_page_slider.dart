@@ -95,7 +95,7 @@ class _GudaPageSliderState<T> extends State<GudaPageSlider<T>> {
               if (widget.enableScale) {
                 return AnimatedScale(
                   scale: isActive ? 1.0 : 0.9,
-                  duration: const Duration(milliseconds: 300),
+                  duration: GudaDuration.normal,
                   child: child,
                 );
               }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:guda_chatbot/core/design_system/tokens/animation_tokens.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
@@ -194,7 +195,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           id: DateTime.now().millisecondsSinceEpoch,
           chatRoomId: chatRoomId,
           senderRole: MessageRole.assistant,
-          content: '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.',
+          content: AppStrings.noCreditMessage,
           createdAt: DateTime.now(),
           isSystem: true,
         ),
@@ -251,7 +252,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
         // 배치 업데이트: 100ms마다 한 번만 UI 갱신 (리빌드 횟수 대폭 감소)
         batchTimer?.cancel();
-        batchTimer = Timer(const Duration(milliseconds: 100), () {
+        batchTimer = Timer(GudaDuration.fastest, () {
           if (!ref.mounted) return;
           state = UiSuccess([
             ...currentMessages,
@@ -282,8 +283,8 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         tempUserMsg,
         aiStreamingMsg.copyWith(
           content: isNoCredit
-              ? '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.'
-              : '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+              ? AppStrings.noCreditMessage
+              : AppStrings.messageSendError,
           isStreaming: false,
           isSystem: true,
         ),
