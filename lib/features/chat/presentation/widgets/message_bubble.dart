@@ -22,29 +22,26 @@ class MessageBubble extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        if (!isUser) const MessageAvatar(),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              GudaMessageItem(
+    return RepaintBoundary(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isUser) const MessageAvatar(),
+          Flexible(
+            child: GudaMessageItem(
+              isUser: isUser,
+              isStreaming: message.isStreaming,
+              child: MessageContent(
+                message: message,
                 isUser: isUser,
-                isStreaming: message.isStreaming,
-                child: MessageContent(
-                  message: message,
-                  isUser: isUser,
-                  showActions: showActions,
-                  shareKey: _shareKey,
-                ),
+                showActions: showActions,
+                shareKey: _shareKey,
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -37,7 +37,7 @@ class GudaMessageItem extends StatelessWidget {
           if (isStreaming)
             const Padding(
               padding: EdgeInsets.only(top: GudaSpacing.xs),
-              child: GudaStreamingDots(),
+              child: RepaintBoundary(child: GudaStreamingDots()),
             ),
         ],
       ),
