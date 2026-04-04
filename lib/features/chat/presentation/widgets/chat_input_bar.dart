@@ -7,13 +7,21 @@ import 'package:guda_chatbot/features/chat/presentation/widgets/chat_send_button
 
 /// 채팅 입력창 위젯
 class ChatInputBar extends StatefulWidget {
-  const ChatInputBar({super.key, required this.onSend, this.isLoading = false});
+  const ChatInputBar({
+    super.key,
+    required this.onSend,
+    this.isLoading = false,
+    this.maxLength,
+  });
 
   /// 메시지 전송 콜백
   final ValueChanged<String> onSend;
 
   /// 전송 중 로딩 여부 (스트리밍 응답 대기 시 입력 비활성화)
   final bool isLoading;
+
+  /// 입력 최대 글자수 (null이면 제한 없음)
+  final int? maxLength;
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -57,6 +65,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 child: ChatInputTextField(
                   controller: _controller,
                   enabled: !widget.isLoading,
+                  maxLength: widget.maxLength,
                   onSubmitted: (_) => _send(),
                 ),
               ),

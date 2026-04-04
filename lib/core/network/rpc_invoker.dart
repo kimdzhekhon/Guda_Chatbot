@@ -61,7 +61,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
   }) async {
     dynamic response;
     try {
-      debugPrint('[RPC Call] $functionName with $params');
+      if (kDebugMode) debugPrint('[RPC Call] $functionName');
       response = await _supabase.rpc(functionName, params: params);
 
       if (response == null) {
@@ -83,11 +83,10 @@ class SupabaseRpcInvoker implements RpcInvoker {
 
       return fromJson(json);
     } on PostgrestException catch (e) {
-      debugPrint('[RPC Error] $e');
+      if (kDebugMode) debugPrint('[RPC Error] $e');
       throw RpcException(e.message, code: e.code, details: e.details);
     } catch (e) {
-      debugPrint('[RPC Unhandled Error] $e');
-      debugPrint('[RPC Raw Response Context] ${response.toString()}');
+      if (kDebugMode) debugPrint('[RPC Unhandled Error] $e');
       throw RpcException('알 수 없는 통신 오류가 발생했습니다: $e');
     }
   }
@@ -98,13 +97,13 @@ class SupabaseRpcInvoker implements RpcInvoker {
     Map<String, dynamic>? params,
   }) async {
     try {
-      debugPrint('[RPC Void Call] $functionName with $params');
+      if (kDebugMode) debugPrint('[RPC Void Call] $functionName');
       await _supabase.rpc(functionName, params: params);
     } on PostgrestException catch (e) {
-      debugPrint('[RPC Void Error] $e');
+      if (kDebugMode) debugPrint('[RPC Void Error] $e');
       throw RpcException(e.message, code: e.code, details: e.details);
     } catch (e) {
-      debugPrint('[RPC Void Unhandled Error] $e');
+      if (kDebugMode) debugPrint('[RPC Void Unhandled Error] $e');
       throw RpcException('알 수 없는 통신 오류가 발생했습니다: $e');
     }
   }
@@ -116,7 +115,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
     required T Function(Map<String, dynamic> json) fromJson,
   }) async {
     try {
-      debugPrint('[RPC List Call] $functionName with $params');
+      if (kDebugMode) debugPrint('[RPC List Call] $functionName');
       final response = await _supabase.rpc(functionName, params: params);
 
       if (response == null) return [];
@@ -125,10 +124,10 @@ class SupabaseRpcInvoker implements RpcInvoker {
           .map((json) => fromJson(json as Map<String, dynamic>))
           .toList();
     } on PostgrestException catch (e) {
-      debugPrint('[RPC List Error] $e');
+      if (kDebugMode) debugPrint('[RPC List Error] $e');
       throw RpcException(e.message, code: e.code, details: e.details);
     } catch (e) {
-      debugPrint('[RPC List Unhandled Error] $e');
+      if (kDebugMode) debugPrint('[RPC List Unhandled Error] $e');
       throw RpcException('알 수 없는 통신 오류가 발생했습니다: $e');
     }
   }
@@ -140,7 +139,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
   }) async* {
     final stopwatch = Stopwatch()..start();
     try {
-      debugPrint('[RPC Stream Call] Started: $functionName');
+      if (kDebugMode) debugPrint('[RPC Stream Call] Started: $functionName');
 
       final session = _supabase.auth.currentSession;
       final accessToken = session?.accessToken;
@@ -182,7 +181,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
           if (trimmed.isEmpty) continue;
 
           if (trimmed == 'data: [DONE]') {
-            debugPrint('[RPC Stream Call] Completed in ${stopwatch.elapsedMilliseconds}ms');
+            if (kDebugMode) debugPrint('[RPC Stream Call] Completed in ${stopwatch.elapsedMilliseconds}ms');
             return;
           }
 
@@ -194,13 +193,13 @@ class SupabaseRpcInvoker implements RpcInvoker {
                 yield data['text'] as String;
               }
             } catch (e) {
-              debugPrint('[RPC Stream Parse Error] $e for line: $trimmed');
+              if (kDebugMode) debugPrint('[RPC Stream Parse Error] $e');
             }
           }
         }
       }
     } catch (e) {
-      debugPrint('[RPC Stream Critical Error] $e');
+      if (kDebugMode) debugPrint('[RPC Stream Critical Error] $e');
       if (e is RpcException) rethrow;
       throw RpcException('스트리밍 중 오류 발생: $e');
     } finally {

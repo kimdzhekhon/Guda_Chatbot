@@ -107,3 +107,33 @@ DROP POLICY IF EXISTS "Anyone can view system config" ON system_config;
 CREATE POLICY "Anyone can view system config"
   ON system_config FOR SELECT
   USING (true);
+
+-- 9. I Ching Documents (인증 사용자 조회 허용)
+CREATE POLICY "i_ching_documents_select" ON i_ching_documents
+  FOR SELECT TO authenticated USING (true);
+
+-- 10. Tripitaka Documents (인증 사용자 조회 허용)
+CREATE POLICY "tripitaka_documents_select" ON tripitaka_documents
+  FOR SELECT TO authenticated USING (true);
+
+-- 11. I Ching Cache (service_role 전용)
+CREATE POLICY "i_ching_cache_service_select" ON i_ching_cache
+  FOR SELECT TO service_role USING (true);
+CREATE POLICY "i_ching_cache_service_insert" ON i_ching_cache
+  FOR INSERT TO service_role WITH CHECK (true);
+
+-- 12. Deleted Accounts (service_role 전용)
+CREATE POLICY "deleted_accounts_service_insert"
+  ON deleted_accounts FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "deleted_accounts_service_select"
+  ON deleted_accounts FOR SELECT TO service_role USING (true);
+CREATE POLICY "deleted_accounts_service_delete"
+  ON deleted_accounts FOR DELETE TO service_role USING (true);
+
+-- 13. Bookmarks
+CREATE POLICY "Users can view own bookmarks"
+  ON bookmarks FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own bookmarks"
+  ON bookmarks FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own bookmarks"
+  ON bookmarks FOR DELETE USING (auth.uid() = user_id);

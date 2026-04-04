@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
@@ -19,6 +20,7 @@ class GudaTextInputField extends StatelessWidget {
     this.borderRadius,
     this.border,
     this.contentPadding,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -33,6 +35,7 @@ class GudaTextInputField extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final BoxBorder? border;
   final EdgeInsetsGeometry? contentPadding;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +54,7 @@ class GudaTextInputField extends StatelessWidget {
         maxLines: maxLines,
         autofocus: autofocus,
         enabled: enabled,
+        inputFormatters: inputFormatters,
         style: style ?? GudaTypography.input(color: colorScheme.onSurface),
         decoration: InputDecoration(
           hintText: hintText,

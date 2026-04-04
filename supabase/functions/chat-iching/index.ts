@@ -24,12 +24,9 @@ interface DocumentResult { content: string; metadata?: Record<string, unknown> }
 
 // ─── CORS ────────────────────────────────────────────
 
-const ALLOWED_ORIGINS = ['http://localhost', 'https://guda-chatbot.vercel.app']
-
-function corsHeaders(req: Request) {
-  const origin = req.headers.get('Origin') || ''
+function corsHeaders() {
   return {
-    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.find(o => origin.startsWith(o)) || ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   }
 }
@@ -269,7 +266,7 @@ function createCachedSSEStream(text: string): ReadableStream {
 // ─── 메인 핸들러 ─────────────────────────────────────
 
 serve(async (req) => {
-  const cors = corsHeaders(req)
+  const cors = corsHeaders()
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
 
   try {
@@ -296,6 +293,12 @@ serve(async (req) => {
     const { messages, hexagram_id, persona_id, debug_embedding } = await req.json() as ChatRequest
 
     if (!messages?.length) throw new Error('messages 배열이 필요합니다.')
+    if (messages.length > 50) throw new Error('messages는 최대 50개까지 허용됩니다.')
+    for (const m of messages) {
+      if (typeof m.content !== 'string' || m.content.length > 10000) {
+        throw new Error('유효하지 않은 메시지 형식입니다.')
+      }
+    }
 
     const hNum = parseInt(hexagram_id, 10)
     if (!hexagram_id || isNaN(hNum) || hNum < 1 || hNum > 64) {
@@ -393,7 +396,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('[Error]', error)
-    return new Response(JSON.stringify({ error: error.message }), {
+    const clientMsg = error.message?.startsWith('유효하지 않은') || error.message?.startsWith('messages')
+      ? error.message
+      : '요청을 처리할 수 없습니다.'
+    return new Response(JSON.stringify({ error: clientMsg }), {
       status: 400, headers: { ...cors, 'Content-Type': 'application/json' },
     })
   }

@@ -7,9 +7,14 @@ RETURNS VOID AS $$
 DECLARE
     v_user_id UUID := auth.uid();
 BEGIN
-    if v_user_id IS NULL THEN
+    IF v_user_id IS NULL THEN
         RAISE EXCEPTION 'NOT_AUTHENTICATED'
             USING HINT = '로그인이 필요합니다.';
+    END IF;
+
+    IF p_persona NOT IN ('basic', 'friendly', 'strict') THEN
+        RAISE EXCEPTION 'INVALID_PERSONA'
+            USING HINT = '유효하지 않은 페르소나입니다. (basic, friendly, strict)';
     END IF;
 
     UPDATE profiles

@@ -29,3 +29,8 @@ BEGIN
   -- transaction_logs는 보존 (결제/환불 감사 이력)
 END;
 $$;
+
+-- service_role만 호출 가능
+REVOKE EXECUTE ON FUNCTION delete_user_data(UUID) FROM public;
+REVOKE EXECUTE ON FUNCTION delete_user_data(UUID) FROM authenticated;
+GRANT EXECUTE ON FUNCTION delete_user_data(UUID) TO service_role;

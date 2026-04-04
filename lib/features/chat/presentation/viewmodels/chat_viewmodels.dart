@@ -277,11 +277,9 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       }
 
       streamDone = true;
-      await revealCompleter.future;
-      revealTimer.cancel();
-      if (!ref.mounted) return;
 
       // 스트리밍 종료 후 AI 응답을 DB에 저장
+      // ref.mounted 여부와 무관하게 저장 (앱 종료/화면 이탈 시에도 보존)
       if (accumulatedContent.isNotEmpty) {
         try {
           await ref.read(chatRepositoryProvider).saveMessage(
@@ -295,6 +293,10 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           debugPrint('[AI Save Error] $e');
         }
       }
+
+      await revealCompleter.future;
+      revealTimer.cancel();
+      if (!ref.mounted) return;
 
       // 스트리밍 종료 후 상태 확정
       state = UiSuccess([

@@ -19,13 +19,13 @@ class AuthInterceptor extends Interceptor {
 class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    debugPrint('[HTTP] ${options.method} ${options.uri}');
+    if (kDebugMode) debugPrint('[HTTP] ${options.method} ${options.uri.path}');
     handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    debugPrint('[HTTP Error] ${err.response?.statusCode} ${err.message}');
+    if (kDebugMode) debugPrint('[HTTP Error] ${err.response?.statusCode} ${err.message}');
     handler.next(err);
   }
 }
