@@ -18,21 +18,28 @@ class ClassicCardSlider extends ConsumerStatefulWidget {
 }
 
 class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
-  bool _isLoading = false;
+  // ValueNotifier로 로딩 상태를 분리 → setState 없이 버튼만 리빌드 (전체 슬라이더 리빌드 방지)
+  final _isLoading = ValueNotifier(false);
+
+  @override
+  void dispose() {
+    _isLoading.dispose();
+    super.dispose();
+  }
 
   void _onPageChanged(int index) {
-    if (_isLoading) return;
+    if (_isLoading.value) return;
     final type = index == 0 ? ClassicType.tripitaka : ClassicType.iching;
     ref.read(homeViewModelProvider.notifier).selectClassicType(type);
   }
 
   Future<void> _handleStart() async {
-    setState(() => _isLoading = true);
+    _isLoading.value = true;
     try {
       await ref.read(homeViewModelProvider.notifier).startNewChat();
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+        _isLoading.value = false;
       }
     }
   }
@@ -53,49 +60,54 @@ class _ClassicCardSliderState extends ConsumerState<ClassicCardSlider> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GudaPageSlider<_ClassicCardData>(
-          items: const [
-            _ClassicCardData(
-              type: ClassicType.tripitaka,
-              title: AppStrings.tripitakaName,
-              description: AppStrings.tripitakaDesc,
-              contentsSubtitle: AppStrings.tripitakaContentsSubtitle,
-              contents: [
-                AppStrings.tripitakaContents1,
-                AppStrings.tripitakaContents2,
-                AppStrings.tripitakaContents3,
-              ],
+        ValueListenableBuilder<bool>(
+          valueListenable: _isLoading,
+          builder: (context, isLoading, child) => GudaPageSlider<_ClassicCardData>(
+            items: const [
+              _ClassicCardData(
+                type: ClassicType.tripitaka,
+                title: AppStrings.tripitakaName,
+                description: AppStrings.tripitakaDesc,
+                contentsSubtitle: AppStrings.tripitakaContentsSubtitle,
+                contents: [
+                  AppStrings.tripitakaContents1,
+                  AppStrings.tripitakaContents2,
+                  AppStrings.tripitakaContents3,
+                ],
+              ),
+              _ClassicCardData(
+                type: ClassicType.iching,
+                title: AppStrings.ichingName,
+                description: AppStrings.ichingDesc,
+                contentsSubtitle: AppStrings.ichingContentsSubtitle,
+                contents: [
+                  AppStrings.ichingContents1,
+                  AppStrings.ichingContents2,
+                ],
+              ),
+            ],
+            height: height,
+            initialPage: initialPage,
+            showIndicator: false,
+            isScrollable: !isLoading,
+            onPageChanged: _onPageChanged,
+            itemBuilder: (context, data, isActive) => ClassicCard(
+              type: data.type,
+              title: data.title,
+              description: data.description,
+              contentsSubtitle: data.contentsSubtitle,
+              contents: data.contents,
             ),
-            _ClassicCardData(
-              type: ClassicType.iching,
-              title: AppStrings.ichingName,
-              description: AppStrings.ichingDesc,
-              contentsSubtitle: AppStrings.ichingContentsSubtitle,
-              contents: [
-                AppStrings.ichingContents1,
-                AppStrings.ichingContents2,
-              ],
-            ),
-          ],
-          height: height,
-          initialPage: initialPage,
-          showIndicator: false,
-          isScrollable: !_isLoading,
-          onPageChanged: _onPageChanged,
-          itemBuilder: (context, data, isActive) => ClassicCard(
-            type: data.type,
-            title: data.title,
-            description: data.description,
-            contentsSubtitle: data.contentsSubtitle,
-            contents: data.contents,
           ),
         )
-            .gudaFadeIn(duration: const Duration(milliseconds: 400))
-            .gudaSlideIn(begin: const Offset(0, 0.05)),
+            .gudaFadeSlideIn(duration: const Duration(milliseconds: 400), begin: const Offset(0, 0.05)),
         const SizedBox(height: GudaSpacing.xl),
-        ClassicStartButton(
-          onPressed: _handleStart,
-          isLoading: _isLoading,
+        ValueListenableBuilder<bool>(
+          valueListenable: _isLoading,
+          builder: (context, isLoading, _) => ClassicStartButton(
+            onPressed: _handleStart,
+            isLoading: isLoading,
+          ),
         )
             .gudaFadeIn(delay: GudaDuration.fast)
             .gudaScaleIn(

@@ -255,28 +255,34 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         ref.read(chatUsageViewModelProvider.notifier).updateUsage(response.saveResult.usage!);
       }
 
-      String accumulatedContent = '';
+      final contentBuffer = StringBuffer();
       int displayedLength = 0;
       bool streamDone = false;
       final revealCompleter = Completer<void>();
 
-      // 타자기 효과: 35ms마다 1글자씩 점진적으로 표시
-      final revealTimer = Timer.periodic(const Duration(milliseconds: 35), (_) {
+      // 타자기 효과: 50ms마다 청크 단위로 점진적 표시 (리빌드 횟수 대폭 감소)
+      // 기존: 35ms × 1글자 = ~28 rebuilds/sec → 개선: 50ms × 3~5글자 = ~10 rebuilds/sec
+      final revealTimer = Timer.periodic(const Duration(milliseconds: 50), (_) {
         if (!ref.mounted) {
           if (!revealCompleter.isCompleted) revealCompleter.complete();
           return;
         }
-        if (displayedLength >= accumulatedContent.length) {
+        final totalLength = contentBuffer.length;
+        if (displayedLength >= totalLength) {
           if (streamDone && !revealCompleter.isCompleted) revealCompleter.complete();
           return;
         }
 
-        displayedLength = min(displayedLength + 1, accumulatedContent.length);
+        // 남은 글자 수에 비례하여 청크 크기 동적 조절 (자연스러운 타자기 효과 유지)
+        final remaining = totalLength - displayedLength;
+        final chunkSize = remaining > 20 ? 5 : remaining > 10 ? 3 : 1;
+        displayedLength = min(displayedLength + chunkSize, totalLength);
+        final displayed = contentBuffer.toString().substring(0, displayedLength);
         state = UiSuccess([
           ...currentMessages,
           tempUserMsg,
           aiStreamingMsg.copyWith(
-            content: accumulatedContent.substring(0, displayedLength),
+            content: displayed,
             isStreaming: false, // dots 숨기고 실제 텍스트 표시
           ),
         ]);
@@ -284,10 +290,11 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
 
       await for (final chunk in response.stream) {
         if (!ref.mounted) break;
-        accumulatedContent += chunk;
+        contentBuffer.write(chunk);
       }
 
       streamDone = true;
+      final accumulatedContent = contentBuffer.toString();
 
       // 스트리밍 종료 후 AI 응답을 DB에 저장
       // ref.mounted 여부와 무관하게 저장 (앱 종료/화면 이탈 시에도 보존)

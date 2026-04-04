@@ -5,6 +5,7 @@ import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 
 /// Guda 공통 마크다운 위젯
 /// 디자인 시스템의 타이포그래피와 색상을 일관되게 적용합니다.
+/// 동일 content + theme 조합의 MarkdownBody를 캐싱하여 재파싱 비용을 절감합니다.
 class GudaMarkdown extends StatelessWidget {
   const GudaMarkdown({
     super.key,
@@ -18,6 +19,10 @@ class GudaMarkdown extends StatelessWidget {
   // 라이트/다크 모드별 StyleSheet를 캐싱하여 매 빌드마다 재생성 방지
   static MarkdownStyleSheet? _cachedLightSheet;
   static MarkdownStyleSheet? _cachedDarkSheet;
+
+  // MarkdownBody 위젯 캐시: (content + isDark) → 위젯 (LRU 방식, 최대 50개)
+  static final Map<int, Widget> _bodyCache = {};
+  static const int _maxCacheSize = 50;
 
   static MarkdownStyleSheet _getStyleSheet(bool isDark) {
     if (isDark) {
@@ -53,10 +58,33 @@ class GudaMarkdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MarkdownBody(
-      data: data.isEmpty ? '...' : data,
+    final isDark = context.isDark;
+    final content = data.isEmpty ? '...' : data;
+
+    // 스트리밍 중(짧은 content)은 캐시하지 않음 — 자주 변경되므로 캐시 오염 방지
+    if (content.length < 20) {
+      return MarkdownBody(
+        data: content,
+        selectable: selectable,
+        styleSheet: _getStyleSheet(isDark),
+      );
+    }
+
+    final cacheKey = Object.hash(content, isDark, selectable);
+    final cached = _bodyCache[cacheKey];
+    if (cached != null) return cached;
+
+    final body = MarkdownBody(
+      data: content,
       selectable: selectable,
-      styleSheet: _getStyleSheet(context.isDark),
+      styleSheet: _getStyleSheet(isDark),
     );
+
+    // LRU 캐시: 초과 시 가장 오래된 항목 제거
+    if (_bodyCache.length >= _maxCacheSize) {
+      _bodyCache.remove(_bodyCache.keys.first);
+    }
+    _bodyCache[cacheKey] = body;
+    return body;
   }
 }

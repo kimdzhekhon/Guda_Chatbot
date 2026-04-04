@@ -40,9 +40,8 @@ class GudaMessageItem extends StatelessWidget {
               )
             : child,
       ),
-    ).gudaFadeIn(
+    ).gudaFadeSlideIn(
       duration: const Duration(milliseconds: 250),
-    ).gudaSlideIn(
       begin: const Offset(0, 0.05),
     );
   }
