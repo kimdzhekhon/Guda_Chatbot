@@ -67,7 +67,7 @@ class _ToggleItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: GudaDuration.fast,
         padding: const EdgeInsets.symmetric(
           horizontal: GudaSpacing.lg,
           vertical: GudaSpacing.sm,

@@ -34,37 +34,39 @@ class _GudaStreamingDotsState extends State<GudaStreamingDots>
     final colorScheme = Theme.of(context).colorScheme;
     final dotColor = widget.color ?? colorScheme.primary;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, (index) {
-        return AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final delay = index * 0.2;
-            double value = (_controller.value - delay) % 1.0;
-            if (value < 0) value += 1.0;
+    return RepaintBoundary(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(3, (index) {
+          return AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final delay = index * 0.2;
+              double value = (_controller.value - delay) % 1.0;
+              if (value < 0) value += 1.0;
 
-            double scale = 0.5;
-            if (value < 0.4) {
-              scale = 0.5 + (0.5 * (value / 0.4));
-            } else if (value < 0.8) {
-              scale = 1.0 - (0.5 * ((value - 0.4) / 0.4));
-            }
+              double scale = 0.5;
+              if (value < 0.4) {
+                scale = 0.5 + (0.5 * (value / 0.4));
+              } else if (value < 0.8) {
+                scale = 1.0 - (0.5 * ((value - 0.4) / 0.4));
+              }
 
-            return Container(
-              width: 6,
-              height: 6,
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: dotColor,
-              ),
-              transform: Matrix4.diagonal3Values(scale, scale, 1.0),
-              transformAlignment: Alignment.center,
-            );
-          },
-        );
-      }),
+              return Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: dotColor,
+                ),
+                transform: Matrix4.diagonal3Values(scale, scale, 1.0),
+                transformAlignment: Alignment.center,
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 }

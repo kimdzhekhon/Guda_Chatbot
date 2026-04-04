@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 
 /// Guda 앱 테마 팩토리 — 디자인 시스템 토큰 기반으로 ThemeData 조합
-/// 하드코딩 값 없음, 모든 값은 디자인 토큰에서 참조
+/// ThemeData를 캐싱하여 매 빌드마다 재생성 방지
 abstract final class AppTheme {
-  /// 라이트 모드 ThemeData
-  static ThemeData light() => _build(
+  static ThemeData? _lightCache;
+  static ThemeData? _darkCache;
+
+  /// 라이트 모드 ThemeData (캐싱)
+  static ThemeData light() => _lightCache ??= _build(
     colorScheme: GudaColorScheme.light(),
     brightness: Brightness.light,
     scaffoldBg: GudaColors.backgroundLight,
   );
 
-  /// 다크 모드 ThemeData
-  static ThemeData dark() => _build(
+  /// 다크 모드 ThemeData (캐싱)
+  static ThemeData dark() => _darkCache ??= _build(
     colorScheme: GudaColorScheme.dark(),
     brightness: Brightness.dark,
     scaffoldBg: GudaColors.backgroundDark,

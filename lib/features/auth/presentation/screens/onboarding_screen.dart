@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_gradient_background.dart';
@@ -11,6 +12,7 @@ import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_persona_selector.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -148,8 +150,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
         const SizedBox(height: GudaSpacing.lg),
         _buildExpandableRow(
-          label: '서비스 이용약관 (필수)',
-          content: '본 약관은 구다 서비스 이용을 위한 기본 사항을 규정합니다...',
+          label: AppStrings.termsRequired,
+          content: AppStrings.termsOfServiceContent,
           value: _isTermsAgreed,
           isExpanded: _isTermsExpanded,
           canAgree: _hasReadTerms,
@@ -168,8 +170,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           },
         ),
         _buildExpandableRow(
-          label: '개인정보 수집 및 이용 (필수)',
-          content: '페르소나 정보를 수집합니다...',
+          label: AppStrings.privacyRequired,
+          content: AppStrings.privacyPolicyContent,
           value: _isPrivacyAgreed,
           isExpanded: _isPrivacyExpanded,
           canAgree: _hasReadPrivacy,
@@ -259,14 +261,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         const SizedBox(height: GudaSpacing.lg),
         Text('페르소나 설정', style: GudaTypography.captionBold(color: Colors.white70)),
         const SizedBox(height: GudaSpacing.md12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildPersonaItem(PersonaType.basic, '현명한 현자'),
-            const SizedBox(height: GudaSpacing.md12),
-            _buildPersonaItem(PersonaType.friendly, '따뜻한 친구'),
-            const SizedBox(height: GudaSpacing.md12),
-            _buildPersonaItem(PersonaType.strict, '냉철한 분석가'),
+        GudaPersonaSelector(
+          isDarkBackground: true,
+          selectedId: _selectedPersona,
+          onSelected: (id) => setState(() => _selectedPersona = id),
+          items: const [
+            PersonaSelectorItem(id: PersonaType.basic, label: '현명한 현자'),
+            PersonaSelectorItem(id: PersonaType.friendly, label: '따뜻한 친구'),
+            PersonaSelectorItem(id: PersonaType.strict, label: '냉철한 분석가'),
           ],
         ),
         const SizedBox(height: GudaSpacing.md),
@@ -275,45 +277,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           style: GudaTypography.caption(color: Colors.white60),
         ),
       ],
-    );
-  }
-
-  Widget _buildPersonaItem(PersonaType id, String label) {
-    final isSelected = _selectedPersona == id;
-
-    return GestureDetector(
-      onTap: () => setState(() => _selectedPersona = id),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: GudaSpacing.md,
-          vertical: GudaSpacing.md12,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: isSelected ? 0.15 : 0.08),
-          borderRadius: GudaRadius.lgAll,
-          border: Border.all(
-            color: isSelected ? GudaColors.primary : Colors.white24,
-            width: isSelected ? 1.5 : 1.0,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color: isSelected ? GudaColors.primary : Colors.white38,
-              size: 20,
-            ),
-            const SizedBox(width: GudaSpacing.sm),
-            Text(
-              label,
-              style: isSelected
-                  ? GudaTypography.body1Bold(color: Colors.white)
-                  : GudaTypography.body1(color: Colors.white70),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

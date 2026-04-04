@@ -15,34 +15,48 @@ class GudaMarkdown extends StatelessWidget {
   final String data;
   final bool selectable;
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = context.isDark;
+  // 라이트/다크 모드별 StyleSheet를 캐싱하여 매 빌드마다 재생성 방지
+  static MarkdownStyleSheet? _cachedLightSheet;
+  static MarkdownStyleSheet? _cachedDarkSheet;
+
+  static MarkdownStyleSheet _getStyleSheet(bool isDark) {
+    if (isDark) {
+      return _cachedDarkSheet ??= _buildStyleSheet(isDark: true);
+    }
+    return _cachedLightSheet ??= _buildStyleSheet(isDark: false);
+  }
+
+  static MarkdownStyleSheet _buildStyleSheet({required bool isDark}) {
     final textColor = isDark
         ? GudaColors.onAssistantBubbleDark
         : GudaColors.onAssistantBubbleLight;
 
+    return MarkdownStyleSheet(
+      p: GudaTypography.body1(color: textColor),
+      h1: GudaTypography.heading1(color: textColor),
+      h2: GudaTypography.heading2(color: textColor),
+      h3: GudaTypography.heading3(color: textColor),
+      listBullet: GudaTypography.body1(color: textColor),
+      code: GudaTypography.classicQuote(color: GudaColors.accent),
+      codeblockDecoration: BoxDecoration(
+        color: isDark ? Colors.black26 : Colors.black.withValues(alpha: 0.05),
+        borderRadius: GudaRadius.smAll,
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border.all(
+          color: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
+          width: 0.5,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MarkdownBody(
       data: data.isEmpty ? '...' : data,
       selectable: selectable,
-      styleSheet: MarkdownStyleSheet(
-        p: GudaTypography.body1(color: textColor),
-        h1: GudaTypography.heading1(color: textColor),
-        h2: GudaTypography.heading2(color: textColor),
-        h3: GudaTypography.heading3(color: textColor),
-        listBullet: GudaTypography.body1(color: textColor),
-        code: GudaTypography.classicQuote(color: GudaColors.accent),
-        codeblockDecoration: BoxDecoration(
-          color: isDark ? Colors.black26 : Colors.black.withValues(alpha: 0.05),
-          borderRadius: GudaRadius.smAll,
-        ),
-        horizontalRuleDecoration: BoxDecoration(
-          border: Border.all(
-            color: isDark ? GudaColors.dividerDark : GudaColors.dividerLight,
-            width: 0.5,
-          ),
-        ),
-      ),
+      styleSheet: _getStyleSheet(context.isDark),
     );
   }
 }

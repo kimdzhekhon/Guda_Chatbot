@@ -25,7 +25,7 @@ class GudaActionCircleButton extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: GudaDuration.fast,
       child: Material(
         color: isEnabled && !isLoading
             ? colorScheme.primary

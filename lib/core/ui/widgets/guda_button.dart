@@ -119,11 +119,11 @@ class GudaButton extends StatelessWidget {
   }
 
   Widget _buildButton(BuildContext context, ColorScheme cs, Widget child) {
-    VoidCallback? effectiveOnPressed = isLoading
+    VoidCallback? effectiveOnPressed = (isLoading || onPressed == null)
         ? null
         : () {
             HapticFeedback.lightImpact();
-            onPressed?.call();
+            onPressed!.call();
           };
 
     switch (variant) {

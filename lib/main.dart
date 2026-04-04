@@ -60,14 +60,15 @@ class GudaApp extends ConsumerWidget {
       locale: const Locale('ko', 'KR'),
       routerConfig: router,
       builder: (context, child) {
+        final scale = fontScale.maybeWhen(
+          data: (scale) => scale,
+          orElse: () => 1.0,
+        );
+        // scale이 기본값(1.0)이면 MediaQuery 래핑 자체를 건너뛰어 리빌드 비용 절감
+        if (scale == 1.0) return child!;
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(
-              fontScale.maybeWhen(
-                data: (scale) => scale,
-                orElse: () => 1.0,
-              ),
-            ),
+            textScaler: TextScaler.linear(scale),
           ),
           child: child!,
         );

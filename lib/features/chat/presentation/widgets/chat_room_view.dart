@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guda_chatbot/core/design_system/tokens/animation_tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_error_widget.dart';
@@ -35,7 +36,7 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
+        duration: GudaDuration.normal,
         curve: Curves.easeOut,
       );
     }

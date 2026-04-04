@@ -21,15 +21,6 @@ class ChatInputBar extends StatefulWidget {
 
 class _ChatInputBarState extends State<ChatInputBar> {
   final _controller = TextEditingController();
-  bool _hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(() {
-      setState(() => _hasText = _controller.text.trim().isNotEmpty);
-    });
-  }
 
   @override
   void dispose() {
@@ -71,11 +62,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
               ),
               const SizedBox(width: GudaSpacing.sm),
 
-              // ── 전송 버튼 ─────────────────────────
-              ChatSendButton(
-                onPressed: _send,
-                isLoading: widget.isLoading,
-                isEnabled: _hasText,
+              // ── 전송 버튼 (입력 변경 시에만 리빌드) ──
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _controller,
+                builder: (context, value, _) => ChatSendButton(
+                  onPressed: _send,
+                  isLoading: widget.isLoading,
+                  isEnabled: value.text.trim().isNotEmpty,
+                ),
               ),
             ],
           ),

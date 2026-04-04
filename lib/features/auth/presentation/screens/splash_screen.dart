@@ -40,19 +40,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               AppAssets.appLogoTransparent,
               width: 100,
               height: 100,
-            ).gudaScaleIn(duration: const Duration(milliseconds: 600), curve: Curves.elasticOut),
+            ).gudaScaleIn(duration: GudaDuration.slower, curve: Curves.elasticOut),
             const SizedBox(height: GudaSpacing.lg),
             Text(
               AppStrings.brandName,
               style: GudaTypography.brand(color: context.primaryColor),
-            ).gudaScaleIn(duration: const Duration(milliseconds: 600), curve: Curves.elasticOut),
+            ).gudaScaleIn(duration: GudaDuration.slower, curve: Curves.elasticOut),
             const SizedBox(height: GudaSpacing.sm),
             Text(
               AppStrings.splashMessage,
               style: GudaTypography.body2(
                 color: context.onSurfaceVariantColor,
               ),
-            ).gudaFadeIn(delay: const Duration(milliseconds: 500), duration: const Duration(milliseconds: 500)),
+            ).gudaFadeIn(delay: GudaDuration.slow, duration: GudaDuration.slow),
           ],
         ),
       ),
