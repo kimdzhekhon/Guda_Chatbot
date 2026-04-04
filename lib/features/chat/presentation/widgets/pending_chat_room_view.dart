@@ -82,6 +82,7 @@ class _PendingChatRoomViewState extends ConsumerState<PendingChatRoomView> {
           .sendMessage(
             content: finalContent,
             topicCode: widget.topicCode,
+            hexagramId: hexagramId,
           );
     } catch (e) {
       // 에러 시 위젯이 아직 살아있는 경우에만 상태 복원
