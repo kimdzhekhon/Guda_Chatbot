@@ -23,6 +23,13 @@ abstract final class AppConfig {
     defaultValue: '575817137306-o114r5ntdvj65qrvdn7butcrjjjondff.apps.googleusercontent.com',
   );
 
+  /// Android용 Google Web Client ID (서버 클라이언트 ID)
+  /// Google Cloud Console > OAuth 2.0 Client IDs > Web application 타입의 Client ID
+  static const String googleWebClientId = String.fromEnvironment(
+    'GOOGLE_WEB_CLIENT_ID',
+    defaultValue: '575817137306-nf2157tvldrkcvjl1dv1tgod2ad1tbcd.apps.googleusercontent.com',
+  );
+
   // ── 앱 메타데이터 ─────────────────────────────────
   static const String appName = 'Guda';
   static const String appVersion = '1.0.0';

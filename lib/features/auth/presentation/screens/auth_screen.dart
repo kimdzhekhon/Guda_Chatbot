@@ -63,84 +63,85 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildContent(BuildContext context, bool isLoading) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth < 360 ? GudaSpacing.md : GudaSpacing.lg;
+    final cardPadding = screenWidth < 360 ? GudaSpacing.md : GudaSpacing.xl;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: IntrinsicHeight(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
-                child: Column(
-                  children: [
-                    const Spacer(flex: 3), // 상단 여백을 주어 중앙으로 밀어냄
-            const AuthBranding().gudaFadeIn(
-              duration: GudaDuration.slowest,
-            ),
-            const SizedBox(height: GudaSpacing.xxl), 
-            GudaCard(
-              padding: const EdgeInsets.all(GudaSpacing.xl),
-              backgroundColor: context.colorScheme.surface,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    _isSignUp ? '회원가입' : '반갑습니다',
-                    style: GudaTypography.heading3(
-                      color: context.colorScheme.onSurface,
+                  SizedBox(height: constraints.maxHeight * 0.12),
+                  const AuthBranding().gudaFadeIn(
+                    duration: GudaDuration.slowest,
+                  ),
+                  const SizedBox(height: GudaSpacing.xxl),
+                  GudaCard(
+                    padding: EdgeInsets.all(cardPadding),
+                    backgroundColor: context.colorScheme.surface,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _isSignUp ? '회원가입' : '반갑습니다',
+                          style: GudaTypography.heading3(
+                            color: context.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: GudaSpacing.xs),
+                        Text(
+                          _isSignUp ? '지혜의 여정을 시작해보세요' : '다시 오신 것을 환영합니다',
+                          style: GudaTypography.body2(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: GudaSpacing.xl),
+                        const SocialLoginSection(
+                          isLoading: false,
+                        ),
+                      ],
                     ),
+                  ).gudaSlideIn(
+                    begin: const Offset(0, 0.05),
+                    delay: GudaDuration.normal,
                   ),
-                  const SizedBox(height: GudaSpacing.xs),
-                  Text(
-                    _isSignUp ? '지혜의 여정을 시작해보세요' : '다시 오신 것을 환영합니다',
-                    style: GudaTypography.body2(
-                      color: context.colorScheme.onSurfaceVariant,
+                  const SizedBox(height: GudaSpacing.md),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => setState(() => _isSignUp = !_isSignUp),
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: const EdgeInsets.symmetric(vertical: GudaSpacing.xs),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: _isSignUp ? '이미 계정이 있으신가요? ' : '처음이신가요? ',
+                              style: GudaTypography.caption(
+                                color: GudaColors.onSurfaceVariantLight,
+                              ),
+                            ),
+                            TextSpan(
+                              text: _isSignUp ? '로그인' : '회원가입',
+                              style: GudaTypography.captionBold(
+                                color: GudaColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  
-                  const SizedBox(height: GudaSpacing.xl),
-                  const SocialLoginSection(
-                    isLoading: false, // 전역 오버레이를 사용하므로 버튼 자체 로딩은 비활성화
-                  ),
+                  ).gudaFadeIn(delay: GudaDuration.slower),
+                  SizedBox(height: constraints.maxHeight * 0.15),
                 ],
-              ),
-            ).gudaSlideIn(
-              begin: const Offset(0, 0.05),
-              delay: GudaDuration.normal,
-            ),
-            const SizedBox(height: GudaSpacing.md),
-            // 회원가입 링크
-            Center(
-              child: TextButton(
-                onPressed: () => setState(() => _isSignUp = !_isSignUp),
-                style: TextButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.symmetric(vertical: GudaSpacing.xs),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: _isSignUp ? '이미 계정이 있으신가요? ' : '처음이신가요? ',
-                        style: GudaTypography.caption(
-                          color: GudaColors.onSurfaceVariantLight,
-                        ),
-                      ),
-                      TextSpan(
-                        text: _isSignUp ? '로그인' : '회원가입',
-                        style: GudaTypography.captionBold(
-                          color: GudaColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ).gudaFadeIn(delay: GudaDuration.slower),
-            const Spacer(flex: 4), // 하단 여백을 조금 더 주어 안정감 있게 배치
-                  ],
-                ),
               ),
             ),
           ),

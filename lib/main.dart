@@ -47,7 +47,7 @@ class GudaApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: themeMode.maybeWhen(
         data: (mode) => mode,
-        orElse: () => ThemeMode.system,
+        orElse: () => ThemeMode.light,
       ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
