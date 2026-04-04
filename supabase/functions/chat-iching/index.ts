@@ -24,10 +24,16 @@ interface DocumentResult { content: string; metadata?: Record<string, unknown> }
 
 // ─── CORS ────────────────────────────────────────────
 
-function corsHeaders() {
+function corsHeaders(req?: Request) {
+  const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
+  const origin = req?.headers.get('Origin') ?? ''
+  const isAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin)
   return {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0] || '',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
   }
 }
 
@@ -266,8 +272,17 @@ function createCachedSSEStream(text: string): ReadableStream {
 // ─── 메인 핸들러 ─────────────────────────────────────
 
 serve(async (req) => {
-  const cors = corsHeaders()
+  const cors = corsHeaders(req)
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'POST 메서드만 허용됩니다.' }),
+      { status: 405, headers: { ...cors, 'Content-Type': 'application/json' } })
+  }
+  const contentLength = parseInt(req.headers.get('content-length') || '0')
+  if (contentLength > 512000) {
+    return new Response(JSON.stringify({ error: '요청이 너무 큽니다.' }),
+      { status: 413, headers: { ...cors, 'Content-Type': 'application/json' } })
+  }
 
   try {
     // 인증
@@ -302,7 +317,7 @@ serve(async (req) => {
 
     const hNum = parseInt(hexagram_id, 10)
     if (!hexagram_id || isNaN(hNum) || hNum < 1 || hNum > 64) {
-      throw new Error(`유효하지 않은 hexagram_id: ${hexagram_id}`)
+      throw new Error('유효하지 않은 hexagram_id입니다.')
     }
 
     // 환경변수
@@ -322,8 +337,8 @@ serve(async (req) => {
       searchDocuments(supabase, latestQuestion, geminiApiKey),
     ])
 
-    // 디버그 임베딩 모드
-    if (debug_embedding) {
+    // 디버그 임베딩 모드 (프로덕션에서 비활성화)
+    if (debug_embedding && Deno.env.get("ENVIRONMENT") === "development") {
       return new Response(JSON.stringify({
         debug: true,
         input_text: latestQuestion,

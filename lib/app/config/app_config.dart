@@ -1,6 +1,10 @@
 /// Guda 앱 환경 설정
 /// 빌드 시 --dart-define으로 주입: flutter run --dart-define-from-file=.env
 /// 프로덕션 빌드 시 CI/CD에서 환경변수로 주입
+///
+/// NOTE: defaultValue는 개발 편의를 위한 값입니다.
+/// Supabase anon key는 RLS로 보호되므로 클라이언트 노출은 설계상 허용됩니다.
+/// 단, service_role key는 절대 클라이언트에 포함하지 마세요.
 abstract final class AppConfig {
   // ── Supabase 설정 ─────────────────────────────────
   static const String supabaseUrl = String.fromEnvironment(
