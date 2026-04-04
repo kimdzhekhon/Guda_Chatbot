@@ -181,12 +181,12 @@ class SupabaseRpcInvoker implements RpcInvoker {
           final trimmed = line.trim();
           if (trimmed.isEmpty) continue;
 
-          if (trimmed == 'tripitaka: [DONE]') {
+          if (trimmed == 'data: [DONE]') {
             debugPrint('[RPC Stream Call] Completed in ${stopwatch.elapsedMilliseconds}ms');
             return;
           }
 
-          if (trimmed.startsWith('tripitaka: ')) {
+          if (trimmed.startsWith('data: ')) {
             try {
               final jsonStr = trimmed.substring(6);
               final data = jsonDecode(jsonStr) as Map<String, dynamic>;
