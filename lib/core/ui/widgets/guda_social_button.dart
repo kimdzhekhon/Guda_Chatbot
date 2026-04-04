@@ -55,7 +55,7 @@ class GudaSocialButton extends StatelessWidget {
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       borderColor: borderColor,
-      iconSize: 24, // Increased from default
+      iconSize: 28,
       isLoading: isLoading,
       height: height,
       isIconLeftAligned: true,

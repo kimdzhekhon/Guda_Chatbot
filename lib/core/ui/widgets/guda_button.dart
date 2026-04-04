@@ -111,11 +111,16 @@ class GudaButton extends StatelessWidget {
         children: [
           Icon(icon, size: 18),
           const SizedBox(width: GudaSpacing.sm),
-          Text(label, style: GudaTypography.button()),
+          Flexible(child: Text(label, style: GudaTypography.button(), maxLines: 1, overflow: TextOverflow.ellipsis)),
         ],
       );
     }
-    return Text(label, style: GudaTypography.button());
+    return Text(
+      label,
+      style: GudaTypography.button(),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
   Widget _buildButton(BuildContext context, ColorScheme cs, Widget child) {
@@ -134,7 +139,7 @@ class GudaButton extends StatelessWidget {
             backgroundColor: backgroundColor ?? cs.primary,
             foregroundColor: foregroundColor ?? cs.onPrimary,
             padding: const EdgeInsets.symmetric(
-              horizontal: GudaSpacing.lg,
+              horizontal: GudaSpacing.md,
               vertical: GudaSpacing.md12,
             ),
             shape: const RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
@@ -148,7 +153,7 @@ class GudaButton extends StatelessWidget {
             foregroundColor: cs.primary,
             side: BorderSide(color: cs.outline),
             padding: const EdgeInsets.symmetric(
-              horizontal: GudaSpacing.lg,
+              horizontal: GudaSpacing.md,
               vertical: GudaSpacing.md12,
             ),
             shape: const RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),

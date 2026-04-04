@@ -57,29 +57,47 @@ class GudaMenuButton extends StatelessWidget {
                 height: GudaSpacing.md20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isIconLeftAligned ? 10 : GudaSpacing.md,
-                ),
-                child: Row(
-                  mainAxisAlignment: isIconLeftAligned
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
-                  children: [
-                    if (iconPath != null)
-                      Image.asset(iconPath!, width: iconSize, height: iconSize)
-                    else if (icon != null)
-                      Icon(icon, size: iconSize),
-                    const SizedBox(width: GudaSpacing.md),
-                    Text(
-                      label,
-                      style: GudaTypography.button(
-                        color: foregroundColor,
+            : isIconLeftAligned
+                ? Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // 아이콘: 왼쪽 고정
+                      Positioned(
+                        left: GudaSpacing.md,
+                        child: iconPath != null
+                            ? Image.asset(iconPath!, width: iconSize, height: iconSize)
+                            : Icon(icon, size: iconSize),
                       ),
+                      // 텍스트: 중앙 정렬
+                      Text(
+                        label,
+                        style: GudaTypography.button(
+                          color: foregroundColor,
+                        ),
+                      ),
+                    ],
+                  )
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: GudaSpacing.md,
                     ),
-                  ],
-                ),
-              ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (iconPath != null)
+                          Image.asset(iconPath!, width: iconSize, height: iconSize)
+                        else if (icon != null)
+                          Icon(icon, size: iconSize),
+                        const SizedBox(width: GudaSpacing.md),
+                        Text(
+                          label,
+                          style: GudaTypography.button(
+                            color: foregroundColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
       ),
     );
   }
