@@ -195,7 +195,12 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                       ),
                     );
-                    await ref.read(authViewModelProvider.notifier).deleteAccount();
+                    try {
+                      await ref.read(authViewModelProvider.notifier).deleteAccount();
+                    } catch (_) {
+                      // 에러 시 로딩 다이얼로그 닫기
+                      if (context.mounted) Navigator.of(context).pop();
+                    }
                   }
                 },
               ),

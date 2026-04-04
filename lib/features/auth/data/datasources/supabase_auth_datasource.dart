@@ -46,7 +46,10 @@ class SupabaseAuthDataSource {
     final user = response.user;
     if (user == null) throw const AuthException('Supabase 인증에 실패했습니다.');
 
-    // 4. 프로필 정보 조회 및 병합
+    // 4. 탈퇴 후 30일 재가입 차단 확인
+    await _checkDeletedAccount(user.email ?? '');
+
+    // 5. 프로필 정보 조회 및 병합
     final profile = await getProfile(user.id);
     return _mapSupabaseUserToDto(user, profile: profile);
   }
@@ -145,6 +148,27 @@ class SupabaseAuthDataSource {
   /// 페르소나 단일 업데이트 (RPC 연동)
   Future<void> updatePersona(PersonaUpdateDto dto) async {
     await _supabase.rpc('update_persona', params: dto.toJson());
+  }
+
+  /// 탈퇴 후 30일 재가입 차단 확인
+  Future<void> _checkDeletedAccount(String email) async {
+    if (email.isEmpty) return;
+    try {
+      final List<dynamic> result = await _supabase.rpc(
+        'check_deleted_account',
+        params: {'check_email': email},
+      );
+      if (result.isNotEmpty && result.first['is_blocked'] == true) {
+        final days = result.first['remaining_days'] as int;
+        // 차단 대상이면 즉시 로그아웃하고 에러
+        await signOut();
+        throw AuthException('탈퇴 후 30일간 재가입이 불가합니다. ($days일 남음)');
+      }
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      // RPC 실패 시 차단하지 않음 (테이블 미생성 등)
+      debugPrint('[AuthDS] check_deleted_account 에러: $e');
+    }
   }
 
   /// profiles 테이블에서 추가 정보 조회 (RPC 전환으로 아키텍처 준수)
