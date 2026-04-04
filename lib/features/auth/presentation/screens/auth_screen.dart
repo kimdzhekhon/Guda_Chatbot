@@ -13,7 +13,9 @@ import 'package:guda_chatbot/features/auth/presentation/widgets/auth_branding.da
 import 'package:guda_chatbot/features/auth/presentation/widgets/social_login_section.dart';
 
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -36,11 +38,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
     ref.listen(authViewModelProvider, (_, next) {
       if (next is UiError<GudaUser?>) {
-        GudaSnackBar.show(
-          context,
-          message: next.message,
-          isError: true,
-        );
+        if (next.errorCode == AppStrings.errCodeReRegistrationForbidden) {
+          GudaDialog.show(
+            context,
+            title: AppStrings.reRegistrationForbiddenTitle,
+            content: next.message,
+            showCancel: false,
+          );
+        } else {
+          GudaSnackBar.show(
+            context,
+            message: next.message,
+            isError: true,
+          );
+        }
       }
     });
 
@@ -111,13 +122,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       TextSpan(
                         text: _isSignUp ? '이미 계정이 있으신가요? ' : '처음이신가요? ',
                         style: GudaTypography.caption(
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: GudaColors.onSurfaceVariantLight,
                         ),
                       ),
                       TextSpan(
                         text: _isSignUp ? '로그인' : '회원가입',
                         style: GudaTypography.captionBold(
-                          color: Colors.white,
+                          color: GudaColors.primary,
                         ),
                       ),
                     ],

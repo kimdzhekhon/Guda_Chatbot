@@ -53,9 +53,9 @@ class _GudaStreamingDotsState extends State<GudaStreamingDots>
               }
 
               return Container(
-                width: 6,
-                height: 6,
-                margin: const EdgeInsets.symmetric(horizontal: 2),
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: dotColor,

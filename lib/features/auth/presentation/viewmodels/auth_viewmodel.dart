@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/datasources/supabase_auth_datasource.dart';
 import 'package:guda_chatbot/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
@@ -85,7 +86,14 @@ class AuthViewModel extends _$AuthViewModel {
       final user = await ref.read(signInWithGoogleUseCaseProvider).call();
       state = UiSuccess(user);
     } catch (e) {
-      state = UiError('${AppStrings.googleSignInError}: ${e.toString()}');
+      final errorMsg = e is AuthException ? e.message : e.toString();
+      final is30DaysError = errorMsg.contains('30일');
+      
+      if (is30DaysError) {
+        state = UiError(errorMsg, errorCode: AppStrings.errCodeReRegistrationForbidden);
+      } else {
+        state = UiError('${AppStrings.googleSignInError}: $errorMsg');
+      }
     }
   }
 
@@ -96,7 +104,14 @@ class AuthViewModel extends _$AuthViewModel {
       final user = await ref.read(signInWithAppleUseCaseProvider).call();
       state = UiSuccess(user);
     } catch (e) {
-      state = UiError('${AppStrings.appleSignInError}: ${e.toString()}');
+      final errorMsg = e is AuthException ? e.message : e.toString();
+      final is30DaysError = errorMsg.contains('30일');
+      
+      if (is30DaysError) {
+        state = UiError(errorMsg, errorCode: AppStrings.errCodeReRegistrationForbidden);
+      } else {
+        state = UiError('${AppStrings.appleSignInError}: $errorMsg');
+      }
     }
   }
 

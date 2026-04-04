@@ -7,6 +7,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_section.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
@@ -175,40 +176,144 @@ class SettingsScreen extends ConsumerWidget {
                 leading: Icon(Icons.person_remove_outlined, color: context.colorScheme.error),
                 title: AppStrings.deleteAccountConfirmTitle,
                 color: context.colorScheme.error,
-                onTap: () async {
-                  final confirm = await GudaDialog.show(
-                    context,
-                    title: AppStrings.deleteAccountConfirmTitle,
-                    content: AppStrings.deleteAccountConfirmMessage,
-                    confirmLabel: AppStrings.deleteAccountConfirmTitle,
-                    isDestructive: true,
-                  );
-                  if (confirm == true && context.mounted) {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      barrierColor: Colors.black.withValues(alpha: 0.8),
-                      builder: (_) => const PopScope(
-                        canPop: false,
-                        child: Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      ),
-                    );
-                    try {
-                      await ref.read(authViewModelProvider.notifier).deleteAccount();
-                    } catch (_) {
-                      // 에러 시 로딩 다이얼로그 닫기
-                      if (context.mounted) Navigator.of(context).pop();
-                    }
-                  }
-                },
+                onTap: () => _showDeleteAccountDialog(context, ref),
               ),
             ],
           ),
         ),
         const SizedBox(height: GudaSpacing.xxl),
       ],
+    );
+  }
+}
+
+void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
+  showDialog(
+    context: context,
+    builder: (dialogContext) => _DeleteAccountDialog(
+      onConfirm: () async {
+        // 로딩 다이얼로그 표시
+        showDialog(
+          context: dialogContext,
+          barrierDismissible: false,
+          barrierColor: Colors.black.withValues(alpha: 0.8),
+          builder: (_) => const PopScope(
+            canPop: false,
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
+          ),
+        );
+        try {
+          await ref.read(authViewModelProvider.notifier).deleteAccount();
+        } catch (_) {
+          if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+        }
+      },
+    ),
+  );
+}
+
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog({required this.onConfirm});
+
+  final VoidCallback onConfirm;
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  bool _isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Dialog(
+      shape: const RoundedRectangleBorder(borderRadius: GudaRadius.lgAll),
+      backgroundColor: colorScheme.surface,
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
+      child: Padding(
+        padding: const EdgeInsets.all(GudaSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              AppStrings.deleteAccountConfirmTitle,
+              style: GudaTypography.heading3(color: colorScheme.onSurface),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: GudaSpacing.lg),
+            Container(
+              padding: const EdgeInsets.all(GudaSpacing.lg),
+              decoration: BoxDecoration(
+                color: colorScheme.error.withValues(alpha: 0.08),
+                borderRadius: GudaRadius.mdAll,
+              ),
+              child: Text(
+                AppStrings.deleteAccountWarning,
+                style: GudaTypography.body2(color: colorScheme.error),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: GudaSpacing.lg),
+            GestureDetector(
+              onTap: () => setState(() => _isChecked = !_isChecked),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Checkbox(
+                      value: _isChecked,
+                      onChanged: (v) => setState(() => _isChecked = v ?? false),
+                      activeColor: colorScheme.error,
+                    ),
+                  ),
+                  const SizedBox(width: GudaSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      AppStrings.deleteAccountCheckbox,
+                      style: GudaTypography.caption(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: GudaSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: GudaButton.outlined(
+                    label: AppStrings.cancel,
+                    onPressed: () => Navigator.pop(context, false),
+                  ),
+                ),
+                const SizedBox(width: GudaSpacing.md),
+                Expanded(
+                  child: GudaButton.filled(
+                    label: AppStrings.deleteAccountConfirmTitle,
+                    onPressed: _isChecked
+                        ? () {
+                            Navigator.pop(context, true);
+                            widget.onConfirm();
+                          }
+                        : null,
+                    backgroundColor: colorScheme.error,
+                    foregroundColor: colorScheme.onError,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

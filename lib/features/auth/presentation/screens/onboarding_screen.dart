@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_gradient_background.dart';
@@ -149,8 +150,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
         const SizedBox(height: GudaSpacing.lg),
         _buildExpandableRow(
-          label: '서비스 이용약관 (필수)',
-          content: '본 약관은 구다 서비스 이용을 위한 기본 사항을 규정합니다...',
+          label: AppStrings.termsRequired,
+          content: AppStrings.termsOfServiceContent,
           value: _isTermsAgreed,
           isExpanded: _isTermsExpanded,
           canAgree: _hasReadTerms,
@@ -169,8 +170,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           },
         ),
         _buildExpandableRow(
-          label: '개인정보 수집 및 이용 (필수)',
-          content: '페르소나 정보를 수집합니다...',
+          label: AppStrings.privacyRequired,
+          content: AppStrings.privacyPolicyContent,
           value: _isPrivacyAgreed,
           isExpanded: _isPrivacyExpanded,
           canAgree: _hasReadPrivacy,
