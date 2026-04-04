@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/features/bookmarks/domain/entities/bookmark.dart';
 import 'package:guda_chatbot/features/bookmarks/presentation/viewmodels/bookmark_providers.dart';
@@ -45,10 +46,11 @@ class GudaMessageActions extends ConsumerWidget {
                   .removeBookmarkByReferenceId(message.id.toString());
             } else {
               final topicCode = ref.read(homeViewModelProvider.select((s) => s.selectedClassicType));
+              final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
               ref.read(bookmarksProvider.notifier).addBookmark(
                     Bookmark(
                       id: _generateId(),
-                      userId: 'user-1',
+                      userId: userId,
                       title: message.content.length > 20
                           ? '${message.content.substring(0, 20)}...'
                           : message.content,

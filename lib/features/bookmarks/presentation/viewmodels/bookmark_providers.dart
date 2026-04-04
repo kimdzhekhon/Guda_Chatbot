@@ -2,12 +2,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/features/bookmarks/domain/entities/bookmark.dart';
 import 'package:guda_chatbot/features/bookmarks/domain/repositories/bookmark_repository.dart';
 import 'package:guda_chatbot/features/bookmarks/data/repositories/bookmark_repository_impl.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 
 part 'bookmark_providers.g.dart';
 
 @riverpod
 BookmarkRepository bookmarkRepository(Ref ref) {
-  return BookmarkRepositoryImpl();
+  return BookmarkRepositoryImpl(ref.watch(rpcInvokerProvider));
 }
 
 @riverpod

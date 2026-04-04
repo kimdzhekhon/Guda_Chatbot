@@ -29,7 +29,15 @@ class GudaMessageItem extends StatelessWidget {
       child: GudaChatBubble(
         isUser: isUser,
         child: isStreaming
-            ? const RepaintBoundary(child: GudaStreamingDots())
+            ? const RepaintBoundary(
+                child: SizedBox(
+                  height: 19 * 1.75, // body1 한 줄 높이와 동일
+                  child: Center(
+                    widthFactor: 1.0, // dots 크기에 맞춰 가로 축소
+                    child: GudaStreamingDots(),
+                  ),
+                ),
+              )
             : child,
       ),
     ).gudaFadeIn(

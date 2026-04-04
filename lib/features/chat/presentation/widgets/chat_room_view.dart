@@ -89,12 +89,13 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
   }
 
   Future<void> _handleSendMessage(String text) async {
-    final type = ref.read(homeViewModelProvider.select((s) => s.selectedClassicType));
+    final homeState = ref.read(homeViewModelProvider);
     await ref
         .read(chatRoomViewModelProvider(widget.activeChatRoomId).notifier)
         .sendMessage(
           content: text,
-          topicCode: type,
+          topicCode: homeState.selectedClassicType,
+          hexagramId: homeState.selectedHexagram?.id.toString(),
         );
   }
 }
