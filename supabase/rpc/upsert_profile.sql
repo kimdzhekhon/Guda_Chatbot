@@ -17,9 +17,9 @@ BEGIN
             USING HINT = '로그인이 필요합니다.';
     END IF;
 
-    -- 신규 유저인지 확인
+    -- 무료 구독이 없는 유저인지 확인 (handle_new_user trigger가 profiles를 먼저 생성하므로)
     SELECT NOT EXISTS (
-        SELECT 1 FROM profiles WHERE id = v_user_id
+        SELECT 1 FROM user_subscriptions WHERE user_id = v_user_id
     ) INTO v_is_new;
 
     -- 프로필 업서트
