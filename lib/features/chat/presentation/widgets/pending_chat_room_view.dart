@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/chat_input_bar.dart';
@@ -39,6 +41,18 @@ class _PendingChatRoomViewState extends ConsumerState<PendingChatRoomView> {
   /// 3. ChatRoomViewModel이 이어받아 메시지를 전송
   Future<void> _handleFirstMessage(String text) async {
     if (_isSending) return;
+
+    // 남은 대화 횟수 사전 체크 — 대화방 생성 전에 차단
+    final usage = ref.read(chatUsageViewModelProvider);
+    if (usage.remainingCount <= 0) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(AppStrings.noCreditMessage)),
+        );
+      }
+      return;
+    }
+
     if (mounted) setState(() => _isSending = true);
 
     try {

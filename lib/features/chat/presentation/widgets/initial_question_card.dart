@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/design_system/tokens/animation_tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/domain/constants/hexagram_data.dart';
+import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/hexagram_selection_bottom_sheet.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/initial_question/animation_phase_view.dart';
@@ -49,7 +51,21 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
     super.dispose();
   }
 
+  /// 남은 대화 횟수가 있는지 확인하고, 없으면 스낵바를 표시합니다.
+  bool _hasCredit() {
+    final usage = ref.read(chatUsageViewModelProvider);
+    if (usage.remainingCount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.noCreditMessage)),
+      );
+      return false;
+    }
+    return true;
+  }
+
   void _handleThrow() {
+    if (!_hasCredit()) return;
+
     ref.read(homeViewModelProvider.notifier).updatePhase(CardPhase.animating);
 
     // 애니메이션 종료 후 입력 단계로 전환
@@ -62,6 +78,8 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
   }
 
   void _handleSelect() {
+    if (!_hasCredit()) return;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
