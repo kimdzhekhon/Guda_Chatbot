@@ -19,9 +19,14 @@ class GudaDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(chatListViewModelProvider);
+    // .select로 activeChatRoomId의 null 여부만 감지 → 실제 ID 변경 시 불필요 리빌드 방지
+    final hasActiveRoom = ref.watch(
+      homeViewModelProvider.select((s) => s.activeChatRoomId != null),
+    );
 
+    final drawerWidth = (MediaQuery.of(context).size.width * 0.75).clamp(240.0, 320.0);
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.75,
+      width: drawerWidth,
       child: Drawer(
         backgroundColor: context.surfaceColor,
         child: SafeArea(
@@ -30,7 +35,7 @@ class GudaDrawer extends ConsumerWidget {
               const GudaDrawerHeader(),
               Expanded(
                 child: switch (state) {
-                  UiLoading() => GudaLoadingWidget(message: AppStrings.loadingChatList),
+                  UiLoading() => const GudaLoadingWidget(message: AppStrings.loadingChatList),
                   UiError(message: final msg) => GudaErrorWidget(
                     message: msg,
                     onRetry: () =>
@@ -48,7 +53,7 @@ class GudaDrawer extends ConsumerWidget {
                   ),
                 },
               ),
-              if (ref.watch(homeViewModelProvider).activeChatRoomId != null)
+              if (hasActiveRoom)
                 const DrawerUserFooter(),
             ],
           ),
@@ -57,4 +62,3 @@ class GudaDrawer extends ConsumerWidget {
     );
   }
 }
-

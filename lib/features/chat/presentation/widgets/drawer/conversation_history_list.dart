@@ -23,7 +23,7 @@ class ConversationHistoryList extends ConsumerWidget {
     final activeId = ref.watch(homeViewModelProvider.select((s) => s.activeChatRoomId));
 
     if (sorted.isEmpty) {
-      return GudaEmptyState(
+      return const GudaEmptyState(
         lottiePath: AppAssets.lotusLottie,
         lottieSize: 160,
         title: AppStrings.noConversations,
@@ -33,7 +33,7 @@ class ConversationHistoryList extends ConsumerWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
       itemCount: sorted.length,
-      separatorBuilder: (_, index) => GudaDivider(
+      separatorBuilder: (_, index) => const GudaDivider(
         indent: GudaSpacing.md,
         alpha: 0.3,
       ),
@@ -42,6 +42,7 @@ class ConversationHistoryList extends ConsumerWidget {
         final isActive = activeId == conv.id;
 
         return ConversationHistoryItem(
+          key: ValueKey(conv.id),
           conversation: conv,
           isActive: isActive,
           onTap: () {
@@ -54,7 +55,6 @@ class ConversationHistoryList extends ConsumerWidget {
               title: AppStrings.deleteConversationTitle,
               content: AppStrings.deleteConversationMessage,
               confirmLabel: AppStrings.deleteLabel,
-              cancelLabel: AppStrings.cancel,
               isDestructive: true,
             );
             if (confirm == true) {

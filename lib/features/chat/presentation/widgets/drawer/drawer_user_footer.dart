@@ -19,7 +19,7 @@ class DrawerUserFooter extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const GudaDivider(height: 1),
+          const GudaDivider(),
           const SizedBox(height: GudaSpacing.md),
           Row(
             children: [

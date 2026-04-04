@@ -46,11 +46,14 @@ class SupabaseAuthDataSource {
     final user = response.user;
     if (user == null) throw const AuthException('Supabase 인증에 실패했습니다.');
 
-    // 4. 탈퇴 후 30일 재가입 차단 확인
-    await _checkDeletedAccount(user.email ?? '');
+    // 4. 탈퇴 확인 + 프로필 조회를 병렬로 수행 (로그인 속도 개선)
+    final results = await Future.wait([
+      _checkDeletedAccount(user.email ?? ''),
+      getProfile(user.id),
+    ]);
 
-    // 5. 프로필 정보 조회 및 병합
-    final profile = await getProfile(user.id);
+    // 5. 프로필 정보 병합
+    final profile = results[1] as Map<String, dynamic>?;
     return _mapSupabaseUserToDto(user, profile: profile);
   }
 

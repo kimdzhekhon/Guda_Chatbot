@@ -1,26 +1,26 @@
 -- ==========================================
--- History Access RPC Functions
+-- History Access RPC Functions (Paginated)
 -- ==========================================
 
--- 1. 구매 내역 테이블 생성 (기존에 없다면 생성)
 CREATE TABLE IF NOT EXISTS public.transaction_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
     product_name TEXT NOT NULL,
     amount INTEGER NOT NULL,
-    status TEXT NOT NULL, -- 'success', 'fail', 'cancelled'
+    status TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- RLS 활성화 및 권한 설정
 ALTER TABLE public.transaction_logs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can view own transactions" ON public.transaction_logs;
 CREATE POLICY "Users can view own transactions" ON public.transaction_logs
     FOR SELECT USING (auth.uid() = user_id);
 
--- 2. 사용 내역 조회 RPC 함수 생성 (현재 로그인 유저 대상)
--- Usage: select * from get_chat_usage_logs();
-CREATE OR REPLACE FUNCTION public.get_chat_usage_logs()
+-- 사용 내역 조회 (페이지네이션, 기본 100건, 최대 500건)
+CREATE OR REPLACE FUNCTION public.get_chat_usage_logs(
+    p_limit INT DEFAULT 100,
+    p_offset INT DEFAULT 0
+)
 RETURNS TABLE (
     id BIGINT,
     action TEXT,
@@ -35,25 +35,24 @@ BEGIN
     IF v_user_id IS NULL THEN
         RAISE EXCEPTION 'NOT_AUTHENTICATED' USING HINT = '로그인이 필요합니다.';
     END IF;
+    IF p_limit > 500 THEN p_limit := 500; END IF;
 
     RETURN QUERY
-    SELECT
-        l.id,
-        l.action,
-        l.amount,
-        l.remaining,
-        l.created_at,
-        r.title as chat_room_title
+    SELECT l.id, l.action, l.amount, l.remaining, l.created_at,
+           r.title as chat_room_title
     FROM public.chat_usage_logs l
     LEFT JOIN public.chat_rooms r ON l.chat_room_id = r.id
     WHERE l.user_id = v_user_id
-    ORDER BY l.created_at DESC;
+    ORDER BY l.created_at DESC
+    LIMIT p_limit OFFSET p_offset;
 END;
 $$;
 
--- 3. 구매 내역 조회 RPC 함수 생성 (현재 로그인 유저 대상)
--- Usage: select * from get_transaction_logs();
-CREATE OR REPLACE FUNCTION public.get_transaction_logs()
+-- 구매 내역 조회 (페이지네이션)
+CREATE OR REPLACE FUNCTION public.get_transaction_logs(
+    p_limit INT DEFAULT 100,
+    p_offset INT DEFAULT 0
+)
 RETURNS TABLE (
     id UUID,
     product_name TEXT,
@@ -67,16 +66,13 @@ BEGIN
     IF v_user_id IS NULL THEN
         RAISE EXCEPTION 'NOT_AUTHENTICATED' USING HINT = '로그인이 필요합니다.';
     END IF;
+    IF p_limit > 500 THEN p_limit := 500; END IF;
 
     RETURN QUERY
-    SELECT
-        t.id,
-        t.product_name,
-        t.amount,
-        t.status,
-        t.created_at
+    SELECT t.id, t.product_name, t.amount, t.status, t.created_at
     FROM public.transaction_logs t
     WHERE t.user_id = v_user_id
-    ORDER BY t.created_at DESC;
+    ORDER BY t.created_at DESC
+    LIMIT p_limit OFFSET p_offset;
 END;
 $$;

@@ -37,7 +37,6 @@ class ClassicCard extends StatelessWidget {
       boxShadow: GudaShadows.bubble,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // ── 상단 아이콘 ──────────────────────────────
           Container(

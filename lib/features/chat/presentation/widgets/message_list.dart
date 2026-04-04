@@ -49,7 +49,6 @@ class MessageList extends StatelessWidget {
         ),
       ).gudaFadeScaleIn(
         duration: GudaDuration.slower,
-        beginScale: 0.95,
       );
     }
 
@@ -57,6 +56,8 @@ class MessageList extends StatelessWidget {
       controller: scrollController,
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
       itemCount: messages.length,
+      // Riverpod이 상태 관리하므로 자동 keepAlive 불필요 → 메모리 절약
+      addAutomaticKeepAlives: false,
       itemBuilder: (context, index) => MessageBubble(
             key: ValueKey(messages[index].id),
             message: messages[index],

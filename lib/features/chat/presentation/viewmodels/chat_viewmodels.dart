@@ -100,8 +100,9 @@ class ChatListViewModel extends _$ChatListViewModel {
         personaId: personaId,
       );
       
-      // 목록 갱신
-      await refresh();
+      // 낙관적 업데이트: 새 대화를 로컬 리스트에 즉시 추가 (네트워크 재요청 생략)
+      final currentData = state.dataOrNull ?? [];
+      state = UiSuccess([newConv, ...currentData]);
       return newConv;
     } catch (e) {
       state = UiError('${AppStrings.conversationCreateFail}: ${e.toString()}');
@@ -125,7 +126,17 @@ class ChatListViewModel extends _$ChatListViewModel {
 @riverpod
 List<Conversation> sortedConversations(Ref ref) {
   final chatListState = ref.watch(chatListViewModelProvider);
-  final data = chatListState.dataOrNull ?? [];
+  final data = chatListState.dataOrNull;
+  if (data == null || data.isEmpty) return const [];
+  // 이미 정렬된 상태인지 확인 (대부분의 경우 서버에서 정렬되어 옴)
+  bool isSorted = true;
+  for (int i = 0; i < data.length - 1; i++) {
+    if (data[i].lastMessageAt.compareTo(data[i + 1].lastMessageAt) < 0) {
+      isSorted = false;
+      break;
+    }
+  }
+  if (isSorted) return data;
   return [...data]..sort((a, b) => b.lastMessageAt.compareTo(a.lastMessageAt));
 }
 

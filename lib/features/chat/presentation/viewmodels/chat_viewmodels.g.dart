@@ -531,7 +531,7 @@ final class SortedConversationsProvider
 }
 
 String _$sortedConversationsHash() =>
-    r'91168d36a13fb58cf8f30ad5a7d32170db6a2552';
+    r'5acba332ea78bb7d0346823497665a010a5d58c1';
 
 @ProviderFor(ChatRoomViewModel)
 final chatRoomViewModelProvider = ChatRoomViewModelFamily._();
@@ -582,7 +582,7 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'96d4c284cf21f1626be1d5cf8819649e867bcd34';
+String _$chatRoomViewModelHash() => r'25b35e77c5ea3c7a70ae1a24df02e9698ba094ce';
 
 final class ChatRoomViewModelFamily extends $Family
     with

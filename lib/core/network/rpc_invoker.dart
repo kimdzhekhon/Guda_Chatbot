@@ -51,7 +51,15 @@ class SupabaseRpcInvoker implements RpcInvoker {
   SupabaseRpcInvoker() : _supabase = Supabase.instance.client;
 
   final SupabaseClient _supabase;
-  static final _streamDio = Dio();
+
+  // 스트리밍 전용 Dio 인스턴스 — 타임아웃 및 커넥션 풀 설정
+  static final _streamDio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 120),
+      headers: {'Content-Type': 'application/json'},
+    ),
+  );
 
   @override
   Future<T> invoke<T>({
@@ -143,7 +151,7 @@ class SupabaseRpcInvoker implements RpcInvoker {
 
       final session = _supabase.auth.currentSession;
       final accessToken = session?.accessToken;
-      final supabaseKey = AppConfig.supabaseAnonKey;
+      const supabaseKey = AppConfig.supabaseAnonKey;
 
       final functionUrl = '${AppConfig.supabaseUrl}/functions/v1/$functionName';
 
@@ -167,7 +175,8 @@ class SupabaseRpcInvoker implements RpcInvoker {
 
       final lineBuffer = StringBuffer();
       final stream = response.data!.stream.cast<List<int>>().transform(utf8.decoder);
-      await for (final chunk in stream) {
+      // 전체 스트리밍 120초 타임아웃 (서버가 연결만 유지하고 데이터 안 보내는 경우 방지)
+      await for (final chunk in stream.timeout(const Duration(seconds: 120))) {
         lineBuffer.write(chunk);
         final lines = lineBuffer.toString().split('\n');
 

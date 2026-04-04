@@ -36,7 +36,7 @@ class GudaHistoryList<T> extends StatelessWidget {
     final listView = ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.md),
       itemCount: items.length,
-      separatorBuilder: (context, index) => const GudaDivider(alpha: 0.5),
+      separatorBuilder: (context, index) => const GudaDivider(),
       itemBuilder: (context, index) => itemBuilder(context, items[index]),
     );
 

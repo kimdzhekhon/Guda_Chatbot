@@ -31,7 +31,6 @@ class PaymentPlanCard extends StatelessWidget {
     return GudaCard(
       margin: const EdgeInsets.symmetric(horizontal: GudaSpacing.sm),
       padding: EdgeInsets.zero,
-      showBorder: true,
       backgroundColor: context.surfaceColor,
       borderRadius: GudaRadius.lgAll,
       child: InkWell(
@@ -46,7 +45,6 @@ class PaymentPlanCard extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(GudaSpacing.lg),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               if (isCurrentPlan)
@@ -156,7 +154,6 @@ class PaymentPlanCard extends StatelessWidget {
               isCurrentPlan
                   ? GudaButton.outlined(
                       label: '현재 구독 중',
-                      onPressed: null,
                       isFullWidth: true,
                     )
                   : GudaButton.filled(

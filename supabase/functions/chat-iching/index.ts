@@ -7,7 +7,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0"
-import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts"
+// crypto 모듈 제거 — Web Crypto API(globalThis.crypto) 사용으로 cold start 개선
 
 // ─── 타입 ────────────────────────────────────────────
 
@@ -24,16 +24,21 @@ interface DocumentResult { content: string; metadata?: Record<string, unknown> }
 
 // ─── CORS ────────────────────────────────────────────
 
+// CORS 허용 오리진을 모듈 레벨에서 1회 파싱 (매 요청 재파싱 방지)
+const _allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
+const _validRoles = new Set(['system', 'user', 'assistant'])
+
 function corsHeaders(req?: Request) {
-  const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
   const origin = req?.headers.get('Origin') ?? ''
-  const isAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin)
+  const isAllowed = _allowedOrigins.includes(origin)
   return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0] || '',
+    'Access-Control-Allow-Origin': isAllowed ? origin : _allowedOrigins[0] || '',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
   }
 }
 
@@ -124,30 +129,30 @@ async function searchDocuments(
     const { data, error } = await supabase.rpc('match_i_ching_documents', {
       query_embedding: embedding,
       match_threshold: 0.3,
-      match_count: 10,
+      match_count: 4,
     })
 
     if (!error && data && data.length > 0) {
       console.log(`[Search] 벡터 검색 ${data.length}건 히트`)
-      return { contexts: data.slice(0, 4), embeddingInfo }
+      return { contexts: data, embeddingInfo }
     }
   } catch (e) {
-    console.error('[Search] 벡터 검색 실패, 키워드 폴백:', e)
+    console.error('[Search] 벡터 검색 실패, 키워드 폴백:', e?.message ?? 'unknown')
   }
 
   // 2차: 키워드 검색 폴백
   const { data, error } = await supabase.rpc('search_i_ching_by_keyword', {
     query_text: query,
-    match_count: 10,
+    match_count: 4,
   })
 
   if (error) {
-    console.error('[Search] 키워드 검색도 실패:', error)
+    console.error('[Search] 키워드 검색도 실패:', error?.message ?? 'unknown')
     return { contexts: [], embeddingInfo }
   }
 
   console.log(`[Search] 키워드 검색 ${data?.length ?? 0}건 히트`)
-  return { contexts: (data ?? []).slice(0, 4), embeddingInfo }
+  return { contexts: data ?? [], embeddingInfo }
 }
 
 // ─── 캐시 ────────────────────────────────────────────
@@ -164,20 +169,13 @@ async function getCachedResponse(
   question: string,
 ): Promise<string | null> {
   const queryHash = await sha256(question.trim().toLowerCase())
-  const { data } = await supabase
-    .from('i_ching_cache')
-    .select('interpretation, hit_count')
-    .eq('query_hash', queryHash)
-    .single()
 
-  if (data?.interpretation) {
-    await supabase
-      .from('i_ching_cache')
-      .update({ hit_count: (data.hit_count || 0) + 1 })
-      .eq('query_hash', queryHash)
-  }
+  // SELECT + hit_count UPDATE를 단일 RPC로 통합 (DB 라운드트립 2→1회)
+  const { data } = await supabase.rpc('get_and_hit_cache', {
+    p_query_hash: queryHash,
+  })
 
-  return data?.interpretation ?? null
+  return data ?? null
 }
 
 async function setCachedResponse(
@@ -259,7 +257,7 @@ function transformGeminiStream(src: ReadableStream): ReadableStream {
 
 function createCachedSSEStream(text: string): ReadableStream {
   const encoder = new TextEncoder()
-  const chunks = text.match(/.{1,50}/g) || [text]
+  const chunks = text.match(/.{1,512}/g) || [text]
   let i = 0
   return new ReadableStream({
     pull(ctrl) {
@@ -310,6 +308,9 @@ serve(async (req) => {
     if (!messages?.length) throw new Error('messages 배열이 필요합니다.')
     if (messages.length > 50) throw new Error('messages는 최대 50개까지 허용됩니다.')
     for (const m of messages) {
+      if (!_validRoles.has(m.role)) {
+        throw new Error('유효하지 않은 메시지 형식입니다.')
+      }
       if (typeof m.content !== 'string' || m.content.length > 10000) {
         throw new Error('유효하지 않은 메시지 형식입니다.')
       }
@@ -330,12 +331,21 @@ serve(async (req) => {
     const userMessages = messages.filter(m => m.role === 'user')
     const latestQuestion = userMessages[userMessages.length - 1]?.content || ''
 
-    // 캐시 확인 + 벡터 검색을 병렬 실행
+    // 첫 질문이면 캐시 먼저 확인 → 히트 시 벡터 검색 스킵 (임베딩 API 비용 절약)
     const isFirstQuestion = userMessages.length === 1
-    const [cached, searchResult] = await Promise.all([
-      isFirstQuestion ? getCachedResponse(supabase, hNum, latestQuestion) : Promise.resolve(null),
-      searchDocuments(supabase, latestQuestion, geminiApiKey),
-    ])
+    let cached: string | null = null
+    if (isFirstQuestion) {
+      cached = await getCachedResponse(supabase, hNum, latestQuestion)
+      if (cached) {
+        console.log('[Cache Hit] 벡터 검색 스킵')
+        return new Response(createCachedSSEStream(cached), {
+          headers: { ...cors, 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        })
+      }
+    }
+
+    // 캐시 미스: 벡터 검색 수행
+    const searchResult = await searchDocuments(supabase, latestQuestion, geminiApiKey)
 
     // 디버그 임베딩 모드 (프로덕션에서 비활성화)
     if (debug_embedding && Deno.env.get("ENVIRONMENT") === "development") {
@@ -344,16 +354,8 @@ serve(async (req) => {
         input_text: latestQuestion,
         embedding: searchResult.embeddingInfo,
         search_results: searchResult.contexts.length,
-        cached: !!cached,
+        cached: false,
       }), { headers: { ...cors, 'Content-Type': 'application/json' } })
-    }
-
-    // 캐시 히트
-    if (cached && isFirstQuestion) {
-      console.log('[Cache Hit]')
-      return new Response(createCachedSSEStream(cached), {
-        headers: { ...cors, 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-      })
     }
 
     // 프롬프트 구성

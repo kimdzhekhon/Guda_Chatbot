@@ -63,13 +63,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildContent(BuildContext context, bool isLoading) {
-    return SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
-        child: Column(
-          children: [
-            const Spacer(flex: 3), // 상단 여백을 주어 중앙으로 밀어냄
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
+                child: Column(
+                  children: [
+                    const Spacer(flex: 3), // 상단 여백을 주어 중앙으로 밀어냄
             const AuthBranding().gudaFadeIn(
               duration: GudaDuration.slowest,
             ),
@@ -103,8 +107,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ).gudaSlideIn(
               begin: const Offset(0, 0.05),
               delay: GudaDuration.normal,
-              duration: GudaDuration.slow,
-              curve: Curves.easeOut,
             ),
             const SizedBox(height: GudaSpacing.md),
             // 회원가입 링크
@@ -137,9 +139,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
             ).gudaFadeIn(delay: GudaDuration.slower),
             const Spacer(flex: 4), // 하단 여백을 조금 더 주어 안정감 있게 배치
-          ],
-        ),
-      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

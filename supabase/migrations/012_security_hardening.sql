@@ -14,10 +14,9 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- 2. deleted_accounts: 30일 이전 레코드 정리용 인덱스
-CREATE INDEX IF NOT EXISTS idx_deleted_accounts_cleanup
-  ON deleted_accounts (deleted_at)
-  WHERE deleted_at < NOW() - INTERVAL '30 days';
+-- 2. deleted_accounts: 탈퇴 기록 조회 성능 향상 인덱스
+CREATE INDEX IF NOT EXISTS idx_deleted_accounts_deleted_at
+  ON deleted_accounts (deleted_at);
 
 -- 3. messages: content 길이 제한 추가 (DB 레벨 방어)
 DO $$ BEGIN
@@ -58,15 +57,5 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- 6. profiles: avatar_url 길이 제한 (SSRF 방지)
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'chk_profiles_avatar_url_length' AND table_name = 'profiles'
-  ) THEN
-    ALTER TABLE profiles ADD CONSTRAINT chk_profiles_avatar_url_length CHECK (avatar_url IS NULL OR LENGTH(avatar_url) <= 2048);
-  END IF;
-END $$;
-
--- 7. check_deleted_account에 search_path 설정
+-- 6. check_deleted_account에 search_path 설정
 ALTER FUNCTION check_deleted_account(TEXT) SET search_path = public;

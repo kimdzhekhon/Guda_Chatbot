@@ -130,9 +130,9 @@ class SupabaseChatDataSource {
 
     final session = _supabase.auth.currentSession;
     final accessToken = session?.accessToken;
-    final anonKey = AppConfig.supabaseAnonKey;
+    const anonKey = AppConfig.supabaseAnonKey;
 
-    final functionUrl = '${AppConfig.supabaseUrl}/functions/v1/chat-iching';
+    const functionUrl = '${AppConfig.supabaseUrl}/functions/v1/chat-iching';
 
     final dio = Dio();
     final response = await dio.post<Map<String, dynamic>>(
@@ -199,21 +199,27 @@ class SupabaseChatDataSource {
   }
 
   /// 대화 기록을 API 포맷으로 변환 (시스템 프롬프트 없이 순수 대화만)
+  /// 최대 전송 메시지 수 (토큰 절약 + 응답 속도 향상)
+  static const _maxHistoryMessages = 20;
+
   Future<List<Map<String, String>>> _buildMessagesForApi(
     String chatRoomId,
     String userMessage,
   ) async {
     final history = await getMessages(GetMessagesRequestDto(chatRoomId: chatRoomId));
 
+    // 최근 N개만 전송하여 토큰 사용량 절감 및 Edge Function 응답 속도 향상
+    final recentHistory = history.length > _maxHistoryMessages
+        ? history.sublist(history.length - _maxHistoryMessages)
+        : history;
+
     final List<Map<String, String>> messages = [];
 
-    // 대화 기록 추가
-    messages.addAll(history.map((m) => {
+    messages.addAll(recentHistory.map((m) => {
           'role': m.senderRole,
           'content': m.content,
         }));
 
-    // 현재 사용자 메시지 추가
     messages.add({'role': 'user', 'content': userMessage});
 
     return messages;

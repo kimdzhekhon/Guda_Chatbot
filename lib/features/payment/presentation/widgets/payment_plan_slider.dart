@@ -21,9 +21,12 @@ class PaymentPlanSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final responsiveHeight = (screenHeight * 0.45).clamp(300.0, 480.0);
+
     return GudaPageSlider<PaymentPlan>(
       items: plans,
-      height: 420,
+      height: responsiveHeight,
       enableScale: true,
       itemBuilder: (context, plan, isActive) {
         return PaymentPlanCard(

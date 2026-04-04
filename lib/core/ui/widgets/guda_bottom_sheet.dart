@@ -16,6 +16,7 @@ class GudaBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(
       height: MediaQuery.of(context).size.height * heightFactor,
@@ -26,7 +27,10 @@ class GudaBottomSheet extends StatelessWidget {
         ),
         boxShadow: GudaShadows.bubble,
       ),
-      child: child,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        child: child,
+      ),
     );
   }
 }

@@ -56,7 +56,7 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: GudaRadius.mdAll,
           borderSide: BorderSide.none,
         ),
@@ -78,12 +78,12 @@ abstract final class AppTheme {
       ),
 
       // ── 리스트 타일 ───────────────────────────────
-      listTileTheme: ListTileThemeData(
-        contentPadding: const EdgeInsets.symmetric(
+      listTileTheme: const ListTileThemeData(
+        contentPadding: EdgeInsets.symmetric(
           horizontal: GudaSpacing.md,
           vertical: GudaSpacing.xs,
         ),
-        shape: const RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
+        shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
       ),
 
       // ── 아이콘 ────────────────────────────────────

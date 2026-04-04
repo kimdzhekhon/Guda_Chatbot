@@ -21,7 +21,6 @@ class Notice {
       id: row['id'] as int? ?? 0,
       title: row['notice_title'] as String? ?? '제목 없음',
       content: row['notice_content'] as String? ?? '',
-      isActive: true, // 특정 활성화 여부가 필요하다면 칼럼을 추가해야 하지만, 현재는 조회된 모든 공지를 활성으로 간주
       updatedAt: DateTime.tryParse(updatedAtStr) ?? DateTime.now(),
     );
   }

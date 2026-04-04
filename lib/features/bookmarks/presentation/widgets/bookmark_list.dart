@@ -12,6 +12,10 @@ import 'package:go_router/go_router.dart';
 import 'package:guda_chatbot/app/router/route_paths.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 
+// 매 빌드마다 Regex를 생성하지 않도록 static 캐싱
+final _headingContentRegex = RegExp(r'^#+ ', multiLine: true);
+final _headingTitleRegex = RegExp(r'^#+ ');
+
 class BookmarkList extends ConsumerWidget {
   const BookmarkList({
     super.key,
@@ -36,13 +40,14 @@ class BookmarkList extends ConsumerWidget {
       itemBuilder: (context, index) {
         final bookmark = bookmarks[index];
         final cleanContent = bookmark.content
-            .replaceAll(RegExp(r'^#+ ', multiLine: true), '')
+            .replaceAll(_headingContentRegex, '')
             .trim();
-        final cleanTitle = bookmark.title.replaceAll(RegExp(r'^#+ '), '');
-        final formattedDate =
-            '${bookmark.createdAt.year}.${bookmark.createdAt.month}.${bookmark.createdAt.day}';
+        final cleanTitle = bookmark.title.replaceAll(_headingTitleRegex, '');
+        final d = bookmark.createdAt;
+        final formattedDate = '${d.year}.${d.month}.${d.day}';
 
         return GudaBookmarkTile(
+          key: ValueKey(bookmark.id),
           title: cleanTitle,
           content: cleanContent,
           date: formattedDate,

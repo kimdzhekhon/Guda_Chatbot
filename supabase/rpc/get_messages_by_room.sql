@@ -3,7 +3,7 @@
 -- Usage: select * from get_messages_by_room('방ID', 50, 0);
 CREATE OR REPLACE FUNCTION get_messages_by_room(
     p_chat_room_id UUID,
-    p_limit INT DEFAULT 200,
+    p_limit INT DEFAULT 50,
     p_offset INT DEFAULT 0
 )
 RETURNS SETOF messages AS $$

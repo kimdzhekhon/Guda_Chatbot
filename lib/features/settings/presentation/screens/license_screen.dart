@@ -78,7 +78,6 @@ class LicenseScreen extends StatelessWidget {
       content: '$name은 $licenseType 하애 배포되는 배포물입니다.\n\n'
                '상세 라이선스 전문은 해당 오픈소스 저장소에서 확인하실 수 있습니다.',
       showCancel: false,
-      confirmLabel: AppStrings.confirmLabel,
     );
   }
 }
