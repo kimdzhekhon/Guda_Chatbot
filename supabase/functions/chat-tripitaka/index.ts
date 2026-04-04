@@ -26,10 +26,16 @@ interface DocumentResult {
 
 // ─── CORS ────────────────────────────────────────────
 
-function corsHeaders() {
+function corsHeaders(req?: Request) {
+  const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
+  const origin = req?.headers.get('Origin') ?? ''
+  const isAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin)
   return {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0] || '',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
   }
 }
 
@@ -154,8 +160,17 @@ function transformGeminiStream(src: ReadableStream): ReadableStream {
 // ─── 메인 핸들러 ─────────────────────────────────────
 
 serve(async (req) => {
-  const cors = corsHeaders()
+  const cors = corsHeaders(req)
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'POST 메서드만 허용됩니다.' }),
+      { status: 405, headers: { ...cors, 'Content-Type': 'application/json' } })
+  }
+  const contentLength = parseInt(req.headers.get('content-length') || '0')
+  if (contentLength > 512000) {
+    return new Response(JSON.stringify({ error: '요청이 너무 큽니다.' }),
+      { status: 413, headers: { ...cors, 'Content-Type': 'application/json' } })
+  }
 
   try {
     // 인증
@@ -179,6 +194,7 @@ serve(async (req) => {
 
     // 요청 파싱
     const { messages, persona_id, search_context } = await req.json() as ChatRequest
+    const safeSearchContext = search_context ? search_context.slice(0, 20000) : undefined
     if (!messages?.length) throw new Error('messages 배열이 필요합니다.')
     if (messages.length > 50) throw new Error('messages는 최대 50개까지 허용됩니다.')
     for (const m of messages) {
@@ -199,7 +215,7 @@ serve(async (req) => {
 
     // 프롬프트 구성
     const finalMessages: ChatMessage[] = [
-      { role: 'system', content: buildSystemPrompt(contexts, search_context) },
+      { role: 'system', content: buildSystemPrompt(contexts, safeSearchContext) },
     ]
     if (persona_id && PERSONA[persona_id]) {
       finalMessages.push({ role: 'system', content: PERSONA[persona_id] })
