@@ -25,6 +25,7 @@ interface ChatRequest {
   hexagram_id?: string      // 주역 괘 이름 (예: "건괘")
   persona_id?: string       // 'basic' | 'friendly' | 'strict'
   search_context?: string   // Flutter에서 전달된 로컬 검색 결과
+  debug_embedding?: boolean // 임베딩 테스트 모드 (임시)
 }
 
 interface DocumentResult {
@@ -440,19 +441,6 @@ function createCachedSSEStream(text: string): ReadableStream {
   })
 }
 
-// ─── Supabase 클라이언트 싱글턴 (콜드 스타트 최적화) ─────
-
-let _supabaseClient: ReturnType<typeof createClient> | null = null
-
-function getSupabaseClient() {
-  if (!_supabaseClient) {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    _supabaseClient = createClient(supabaseUrl, supabaseServiceKey)
-  }
-  return _supabaseClient
-}
-
 // ─── 메인 핸들러 ──────────────────────────────────────────
 
 serve(async (req) => {
@@ -472,9 +460,12 @@ serve(async (req) => {
       )
     }
 
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+    const authClient = createClient(supabaseUrl, supabaseServiceKey)
     const token = authHeader.replace('Bearer ', '')
-    const supabase = getSupabaseClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    const { data: { user }, error: authError } = await authClient.auth.getUser(token)
 
     if (authError || !user) {
       return new Response(
@@ -484,7 +475,7 @@ serve(async (req) => {
     }
 
     // ── 요청 파싱 + 입력 검증 ──
-    const { messages, topic_code, hexagram_id, persona_id, search_context } = await req.json() as ChatRequest
+    const { messages, topic_code, hexagram_id, persona_id, search_context, debug_embedding } = await req.json() as ChatRequest
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       throw new Error('messages 배열이 필요합니다.')
@@ -513,9 +504,31 @@ serve(async (req) => {
       throw new Error('ANTHROPIC_API_KEY 또는 GEMINI_API_KEY가 필요합니다.')
     }
 
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
     // ── 마지막 사용자 메시지 추출 (검색 쿼리로 사용) ──
     const userMessages = messages.filter(m => m.role === 'user')
     const latestUserMessage = userMessages[userMessages.length - 1]?.content || ''
+
+    // ── 임베딩 디버그 모드 (임시) ──
+    if (debug_embedding) {
+      if (!geminiApiKey) {
+        throw new Error('GEMINI_API_KEY가 설정되지 않았습니다.')
+      }
+      const startTime = Date.now()
+      const embedding = await generateEmbedding(latestUserMessage, geminiApiKey)
+      const elapsed = Date.now() - startTime
+      return new Response(
+        JSON.stringify({
+          debug: true,
+          input_text: latestUserMessage,
+          embedding_dimension: embedding.length,
+          embedding_preview: embedding.slice(0, 5),
+          elapsed_ms: elapsed,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
 
     // ── topic_code별 RAG 검색 + 시스템 프롬프트 구성 ──
     const finalMessages: ChatMessage[] = []

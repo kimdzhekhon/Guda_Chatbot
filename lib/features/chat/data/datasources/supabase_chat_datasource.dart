@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:guda_chatbot/app/config/app_config.dart';
 import 'package:guda_chatbot/features/chat/data/models/conversation_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/message_dto.dart';
 import 'package:guda_chatbot/features/chat/data/models/chat_usage_log_dto.dart';
@@ -119,6 +122,44 @@ class SupabaseChatDataSource {
     );
   }
 
+  // ── 임베딩 디버그 테스트 (임시) ────────────────────
+
+  /// Gemini 임베딩 API 동작 검증용 (디버그 빌드 전용)
+  Future<void> debugTestEmbedding(String text) async {
+    final session = _supabase.auth.currentSession;
+    final accessToken = session?.accessToken;
+    final anonKey = AppConfig.supabaseAnonKey;
+
+    final functionUrl = '${AppConfig.supabaseUrl}/functions/v1/chat-iching';
+
+    final dio = Dio();
+    final response = await dio.post<Map<String, dynamic>>(
+      functionUrl,
+      data: {
+        'messages': [
+          {'role': 'user', 'content': text}
+        ],
+        'hexagram_id': '1',
+        'debug_embedding': true,
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${accessToken ?? anonKey}',
+          'apikey': anonKey,
+        },
+      ),
+    );
+
+    final data = response.data!;
+    debugPrint('════════════════════════════════════════');
+    debugPrint('[Embedding Debug] input: "${data['input_text']}"');
+    debugPrint('[Embedding Debug] embedding: ${data['embedding']}');
+    debugPrint('[Embedding Debug] search_results: ${data['search_results']}');
+    debugPrint('[Embedding Debug] cached: ${data['cached']}');
+    debugPrint('════════════════════════════════════════');
+  }
+
   // ── AI 응답 스트리밍 ───────────────────────────────
 
   /// Edge Function 기반 AI 응답 스트리밍
@@ -134,15 +175,29 @@ class SupabaseChatDataSource {
     // 대화 이력 + 현재 메시지 (시스템 프롬프트 제외)
     final messages = await _buildMessagesForApi(chatRoomId, userMessage);
 
-    yield* _rpcInvoker.invokeStream(
-      functionName: 'chat',
-      params: {
+    // topic_code에 따라 분리된 Edge Function 호출
+    final String functionName;
+    final Map<String, dynamic> params;
+
+    if (topicCode == 'iching') {
+      functionName = 'chat-iching';
+      params = {
         'messages': messages,
-        'topic_code': topicCode,
-        if (hexagramId != null) 'hexagram_id': hexagramId,
+        'hexagram_id': hexagramId ?? '1',
+        if (personaId != null) 'persona_id': personaId,
+      };
+    } else {
+      functionName = 'chat-tripitaka';
+      params = {
+        'messages': messages,
         if (personaId != null) 'persona_id': personaId,
         if (searchContext != null) 'search_context': searchContext,
-      },
+      };
+    }
+
+    yield* _rpcInvoker.invokeStream(
+      functionName: functionName,
+      params: params,
     );
   }
 
