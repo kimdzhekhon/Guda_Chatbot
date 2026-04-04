@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_scaffold.dart';
-import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_viewmodels.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/guda_drawer.dart';
@@ -16,9 +15,15 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final homeState = ref.watch(homeViewModelProvider);
-    final activeId = homeState.activeChatRoomId;
-    final isPending = homeState.isPendingNewChat;
+    final activeId = ref.watch(
+      homeViewModelProvider.select((s) => s.activeChatRoomId),
+    );
+    final isPending = ref.watch(
+      homeViewModelProvider.select((s) => s.isPendingNewChat),
+    );
+    final selectedType = ref.watch(
+      homeViewModelProvider.select((s) => s.selectedClassicType),
+    );
 
     final isMessagesEmpty = activeId != null
         ? ref.watch(chatRoomViewModelProvider(activeId).select(
@@ -26,18 +31,15 @@ class HomeScreen extends ConsumerWidget {
           ))
         : true;
 
-    // 뒤로가기: 실제 방에서 메시지가 없거나 Pending 상태일 때
-    final showBackButton = (activeId != null && isMessagesEmpty) || isPending;
-    final hideChatCount = activeId != null &&
-        isMessagesEmpty &&
-        homeState.selectedClassicType != ClassicType.tripitaka &&
-        homeState.phase != CardPhase.input;
+    final homeState = ref.read(homeViewModelProvider);
+    final showBackButton = homeState.shouldShowBackButton(isMessagesEmpty);
+    final hideChatCount = homeState.shouldHideChatCount(isMessagesEmpty);
 
     Widget body;
     if (isPending) {
       // Pending: DB에 방이 없는 새 대화 상태 → 첫 메시지 입력 대기
       body = PendingChatRoomView(
-        topicCode: homeState.selectedClassicType,
+        topicCode: selectedType,
       );
     } else if (activeId != null) {
       // 기존 대화방 선택 상태

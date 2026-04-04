@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/models/auth_response_dto.dart';
 import 'package:guda_chatbot/features/auth/data/models/profile_registration_dto.dart';
@@ -47,7 +46,10 @@ class SupabaseAuthDataSource {
     final user = response.user;
     if (user == null) throw const AuthException('Supabase 인증에 실패했습니다.');
 
-    // 4. 프로필 정보 조회 및 병합
+    // 4. 탈퇴 후 30일 재가입 차단 확인
+    await _checkDeletedAccount(user.email ?? '');
+
+    // 5. 프로필 정보 조회 및 병합
     final profile = await getProfile(user.id);
     return _mapSupabaseUserToDto(user, profile: profile);
   }
@@ -82,21 +84,23 @@ class SupabaseAuthDataSource {
 
     final session = _supabase.auth.currentSession;
     if (session == null) throw const AuthException('로그인 세션이 없습니다.');
-    debugPrint('[DeleteAccount] accessToken 앞 20자: ${session.accessToken.substring(0, 20)}...');
 
-    final response = await http.post(
-      Uri.parse('${AppConfig.supabaseUrl}/functions/v1/delete-account'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${session.accessToken}',
-        'apikey': AppConfig.supabaseAnonKey,
-      },
-    );
-
-    if (response.statusCode != 200) {
-      debugPrint('[DeleteAccount] Raw response (${response.statusCode}): ${response.body}');
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      final errorMsg = body['error'] ?? body['msg'] ?? body['message'] ?? '계정 삭제에 실패했습니다.';
+    try {
+      await Dio().post(
+        '${AppConfig.supabaseUrl}/functions/v1/delete-account',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${session.accessToken}',
+            'apikey': AppConfig.supabaseAnonKey,
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      final body = e.response?.data;
+      final errorMsg = body is Map
+          ? (body['error'] ?? body['msg'] ?? body['message'] ?? '계정 삭제에 실패했습니다.')
+          : '계정 삭제에 실패했습니다.';
       throw AuthException(errorMsg.toString());
     }
 
@@ -133,11 +137,8 @@ class SupabaseAuthDataSource {
 
   /// 프로필 테이블 데이터 업데이트 (RPC 연동)
   Future<void> updateProfile(ProfileRegistrationDto dto) async {
-    final params = dto.toJson();
-    debugPrint('[AuthDS] upsert_profile 호출: $params');
     try {
-      final result = await _supabase.rpc('upsert_profile', params: params);
-      debugPrint('[AuthDS] upsert_profile 결과: $result');
+      await _supabase.rpc('upsert_profile', params: dto.toJson());
     } catch (e) {
       debugPrint('[AuthDS] upsert_profile 에러: $e');
       rethrow;
@@ -149,15 +150,33 @@ class SupabaseAuthDataSource {
     await _supabase.rpc('update_persona', params: dto.toJson());
   }
 
-  /// profiles 테이블에서 추가 정보 조회
+  /// 탈퇴 후 30일 재가입 차단 확인
+  Future<void> _checkDeletedAccount(String email) async {
+    if (email.isEmpty) return;
+    try {
+      final List<dynamic> result = await _supabase.rpc(
+        'check_deleted_account',
+        params: {'check_email': email},
+      );
+      if (result.isNotEmpty && result.first['is_blocked'] == true) {
+        final days = result.first['remaining_days'] as int;
+        // 차단 대상이면 즉시 로그아웃하고 에러
+        await signOut();
+        throw AuthException('탈퇴 후 30일간 재가입이 불가합니다. ($days일 남음)');
+      }
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      // RPC 실패 시 차단하지 않음 (테이블 미생성 등)
+      debugPrint('[AuthDS] check_deleted_account 에러: $e');
+    }
+  }
+
+  /// profiles 테이블에서 추가 정보 조회 (RPC 전환으로 아키텍처 준수)
   Future<Map<String, dynamic>?> getProfile(String userId) async {
-    debugPrint('[AuthDS] getProfile 호출: userId=$userId');
-    final result = await _supabase
-        .from('profiles')
-        .select()
-        .eq('id', userId)
-        .maybeSingle();
-    debugPrint('[AuthDS] getProfile 결과: $result');
-    return result;
+    // 직접 테이블 조회를 RPC 호출로 대체 (안티 그래비티 아키텍처 규칙 준수)
+    final List<dynamic> result = await _supabase.rpc('get_my_profile');
+    
+    if (result.isEmpty) return null;
+    return result.first as Map<String, dynamic>;
   }
 }

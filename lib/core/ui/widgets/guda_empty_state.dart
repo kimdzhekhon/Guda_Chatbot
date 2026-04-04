@@ -3,22 +3,24 @@ import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_lottie.dart';
 
+/// Guda 공통 빈 상태 위젯
+/// 빈 데이터, 검색 결과 없음 등의 상태를 일관되게 표시합니다.
 class GudaEmptyState extends StatelessWidget {
   const GudaEmptyState({
     super.key,
+    required this.title,
+    this.subtitle,
     this.icon,
     this.lottiePath,
     this.lottieSize = 120,
-    required this.title,
-    this.subtitle,
     this.action,
   });
 
+  final String title;
+  final String? subtitle;
   final IconData? icon;
   final String? lottiePath;
   final double lottieSize;
-  final String title;
-  final String? subtitle;
   final Widget? action;
 
   @override

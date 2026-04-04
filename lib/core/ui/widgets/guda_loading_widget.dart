@@ -37,6 +37,6 @@ class GudaLoadingWidget extends StatelessWidget {
           ],
         ],
       ),
-    ).gudaFadeIn(duration: const Duration(milliseconds: 300));
+    ).gudaFadeIn(duration: GudaDuration.normal);
   }
 }

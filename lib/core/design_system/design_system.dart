@@ -6,3 +6,4 @@ export 'tokens/typography_tokens.dart';
 export 'tokens/spacing_tokens.dart';
 export 'tokens/radius_tokens.dart';
 export 'tokens/shadow_tokens.dart';
+export 'tokens/animation_tokens.dart';

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:guda_chatbot/core/design_system/tokens/animation_tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_card.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/classic_type.dart';
@@ -79,7 +80,7 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
 
     return GudaCard(
       child: AnimatedSize(
-        duration: const Duration(milliseconds: 300),
+        duration: GudaDuration.normal,
         curve: Curves.easeInOut,
         child: _buildContent(homeState),
       ),

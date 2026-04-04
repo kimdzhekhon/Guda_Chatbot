@@ -473,7 +473,7 @@ final class AuthViewModelProvider
   }
 }
 
-String _$authViewModelHash() => r'581e27d8cf05c2c4c62e16c01425adeff1d8edfe';
+String _$authViewModelHash() => r'4380b56e9f3d9e147608afb0e0d9b54b9cf43122';
 
 /// Auth ViewModel — Google/Apple 로그인 및 인증 상태 관리
 

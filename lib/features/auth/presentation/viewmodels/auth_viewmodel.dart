@@ -1,11 +1,13 @@
 import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:guda_chatbot/features/auth/data/datasources/supabase_auth_datasource.dart';
 import 'package:guda_chatbot/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:guda_chatbot/features/auth/domain/entities/guda_user.dart';
 import 'package:guda_chatbot/features/auth/domain/usecases/auth_usecases.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/persona_type.dart';
+import 'package:guda_chatbot/core/constants/app_strings.dart';
 
 part 'auth_viewmodel.g.dart';
 
@@ -78,24 +80,38 @@ class AuthViewModel extends _$AuthViewModel {
   }
 
   /// Google 로그인
-  Future<void> signInWithGoogle({bool isSignUp = false}) async {
+  Future<void> signInWithGoogle() async {
     state = const UiLoading();
     try {
       final user = await ref.read(signInWithGoogleUseCaseProvider).call();
       state = UiSuccess(user);
     } catch (e) {
-      state = UiError('Google 로그인에 실패했습니다: ${e.toString()}');
+      final errorMsg = e is AuthException ? e.message : e.toString();
+      final is30DaysError = errorMsg.contains('30일');
+      
+      if (is30DaysError) {
+        state = UiError(errorMsg, errorCode: AppStrings.errCodeReRegistrationForbidden);
+      } else {
+        state = UiError('${AppStrings.googleSignInError}: $errorMsg');
+      }
     }
   }
 
   /// Apple 로그인
-  Future<void> signInWithApple({bool isSignUp = false}) async {
+  Future<void> signInWithApple() async {
     state = const UiLoading();
     try {
       final user = await ref.read(signInWithAppleUseCaseProvider).call();
       state = UiSuccess(user);
     } catch (e) {
-      state = UiError('Apple 로그인에 실패했습니다: ${e.toString()}');
+      final errorMsg = e is AuthException ? e.message : e.toString();
+      final is30DaysError = errorMsg.contains('30일');
+      
+      if (is30DaysError) {
+        state = UiError(errorMsg, errorCode: AppStrings.errCodeReRegistrationForbidden);
+      } else {
+        state = UiError('${AppStrings.appleSignInError}: $errorMsg');
+      }
     }
   }
 
@@ -119,7 +135,7 @@ class AuthViewModel extends _$AuthViewModel {
       state = UiSuccess(updatedUser);
     } catch (e, st) {
       log('[updateProfile] 실패: $e', stackTrace: st, name: 'AuthViewModel');
-      state = UiError('프로필 업데이트에 실패했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.profileUpdateError}: ${e.toString()}');
     }
   }
 
@@ -130,7 +146,7 @@ class AuthViewModel extends _$AuthViewModel {
       await ref.read(signOutUseCaseProvider).call();
       state = const UiSuccess(null);
     } catch (e) {
-      state = UiError('로그아웃 중 오류가 발생했습니다: ${e.toString()}');
+      state = UiError('${AppStrings.logoutError}: ${e.toString()}');
     }
   }
 
@@ -142,6 +158,7 @@ class AuthViewModel extends _$AuthViewModel {
       state = const UiSuccess(null);
     } catch (e) {
       state = previousState;
+      rethrow;
     }
   }
 

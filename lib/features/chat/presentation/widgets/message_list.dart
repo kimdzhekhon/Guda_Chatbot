@@ -48,7 +48,7 @@ class MessageList extends StatelessWidget {
           ),
         ),
       ).gudaFadeScaleIn(
-        duration: const Duration(milliseconds: 600),
+        duration: GudaDuration.slower,
         beginScale: 0.95,
       );
     }
@@ -57,8 +57,10 @@ class MessageList extends StatelessWidget {
       controller: scrollController,
       padding: const EdgeInsets.symmetric(vertical: GudaSpacing.sm),
       itemCount: messages.length,
-      itemBuilder: (context, index) =>
-          MessageBubble(message: messages[index]),
+      itemBuilder: (context, index) => MessageBubble(
+            key: ValueKey(messages[index].id),
+            message: messages[index],
+          ),
     );
   }
 }

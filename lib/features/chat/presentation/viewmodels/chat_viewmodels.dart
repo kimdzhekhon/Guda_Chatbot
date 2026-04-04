@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:guda_chatbot/core/design_system/tokens/animation_tokens.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
@@ -172,6 +174,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
   Future<void> sendMessage({
     required String content,
     required ClassicType topicCode,
+    String? hexagramId,
   }) async {
     // autoDispose 방지: 위젯 전환(PendingChatRoomView → ChatRoomView) 동안
     // watcher가 없어도 provider가 폐기되지 않도록 유지
@@ -192,7 +195,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
           id: DateTime.now().millisecondsSinceEpoch,
           chatRoomId: chatRoomId,
           senderRole: MessageRole.assistant,
-          content: '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.',
+          content: AppStrings.noCreditMessage,
           createdAt: DateTime.now(),
           isSystem: true,
         ),
@@ -231,6 +234,7 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         chatRoomId: chatRoomId,
         content: content,
         topicCode: topicCode.name,
+        hexagramId: hexagramId,
         personaId: personaId,
       );
 
@@ -240,19 +244,25 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       }
 
       String accumulatedContent = '';
+      Timer? batchTimer;
 
       await for (final chunk in response.stream) {
         if (!ref.mounted) break;
         accumulatedContent += chunk;
 
-        // UI 상태 업데이트
-        state = UiSuccess([
-          ...currentMessages,
-          tempUserMsg,
-          aiStreamingMsg.copyWith(content: accumulatedContent),
-        ]);
+        // 배치 업데이트: 100ms마다 한 번만 UI 갱신 (리빌드 횟수 대폭 감소)
+        batchTimer?.cancel();
+        batchTimer = Timer(GudaDuration.fastest, () {
+          if (!ref.mounted) return;
+          state = UiSuccess([
+            ...currentMessages,
+            tempUserMsg,
+            aiStreamingMsg.copyWith(content: accumulatedContent),
+          ]);
+        });
       }
 
+      batchTimer?.cancel();
       if (!ref.mounted) return;
 
       // 스트리밍 종료 후 상태 확정
@@ -273,8 +283,8 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
         tempUserMsg,
         aiStreamingMsg.copyWith(
           content: isNoCredit
-              ? '남은 대화 횟수가 없습니다. 추가 대화권을 구매해 주세요.'
-              : '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+              ? AppStrings.noCreditMessage
+              : AppStrings.messageSendError,
           isStreaming: false,
           isSystem: true,
         ),
@@ -282,10 +292,6 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
     } finally {
       _isSending = false;
       keepAliveLink.close();
-      // 전송 완료 후 DB에서 실제 메시지를 로드하여 임시 ID를 정식 ID로 교체
-      if (ref.mounted) {
-        _loadMessages();
-      }
     }
   }
 }

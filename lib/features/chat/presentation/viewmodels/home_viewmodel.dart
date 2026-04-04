@@ -31,6 +31,17 @@ class HomeState {
     this.isPendingNewChat = false,
   });
 
+  /// 뒤로가기 버튼 표시 여부 (메시지가 없는 실제 방 또는 Pending 상태)
+  bool shouldShowBackButton(bool isMessagesEmpty) =>
+      (activeChatRoomId != null && isMessagesEmpty) || isPendingNewChat;
+
+  /// 잔여 대화 횟수 숨김 여부
+  bool shouldHideChatCount(bool isMessagesEmpty) =>
+      activeChatRoomId != null &&
+      isMessagesEmpty &&
+      selectedClassicType != ClassicType.tripitaka &&
+      phase != CardPhase.input;
+
   HomeState copyWith({
     String? activeChatRoomId,
     ClassicType? selectedClassicType,

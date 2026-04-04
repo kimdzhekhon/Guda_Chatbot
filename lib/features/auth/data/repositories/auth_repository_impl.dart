@@ -40,7 +40,12 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<GudaUser?> authStateChanges() {
     return _dataSource.authStateChanges().asyncMap((dto) async {
       if (dto == null) return null;
-      return await _getMergedUser(dto);
+      try {
+        return await _getMergedUser(dto);
+      } catch (_) {
+        // 프로필 조회 실패 시 Auth 데이터만으로 반환 (로그아웃 등)
+        return dto.toDomain();
+      }
     });
   }
 
@@ -67,7 +72,6 @@ class AuthRepositoryImpl implements AuthRepository {
     if (user == null) throw Exception('로그인된 사용자가 없습니다.');
 
     final dto = ProfileRegistrationDto(
-      userId: user.id,
       persona: persona,
       termsAgreedAt: DateTime.now().toIso8601String(),
     );
@@ -77,11 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> updatePersona(PersonaType persona) async {
-    final user = await _dataSource.getCurrentUser();
-    if (user == null) throw Exception('로그인된 사용자가 없습니다.');
-
     final dto = PersonaUpdateDto(
-      userId: user.id,
       persona: persona,
     );
 

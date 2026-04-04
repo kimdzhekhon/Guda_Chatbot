@@ -29,4 +29,10 @@ abstract class Hexagram with _$Hexagram {
 
   /// 각 효의 리스트 반환 (밑에서부터)
   List<int> get lines => binary.split('').map(int.parse).toList();
+
+  /// 그리드 표시용 축약 이름 (중/천/지 접두사 제거)
+  String get shortName => name
+      .replaceAll('중', '')
+      .replaceAll('천', '')
+      .replaceAll('지', '');
 }

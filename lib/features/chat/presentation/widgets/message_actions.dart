@@ -5,7 +5,7 @@ import 'package:guda_chatbot/features/bookmarks/domain/entities/bookmark.dart';
 import 'package:guda_chatbot/features/bookmarks/presentation/viewmodels/bookmark_providers.dart';
 import 'package:guda_chatbot/features/chat/domain/entities/message.dart';
 import 'package:guda_chatbot/core/utils/guda_context_extensions.dart';
-import 'package:uuid/uuid.dart';
+import 'dart:math';
 
 import 'package:guda_chatbot/features/chat/presentation/widgets/share_preview_dialog.dart';
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/home_viewmodel.dart';
@@ -23,9 +23,9 @@ class GudaMessageActions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bookmarksAsync = ref.watch(bookmarksProvider);
-    final isBookmarked =
-        bookmarksAsync.value?.any((b) => b.referenceId == message.id.toString()) ?? false;
+    final isBookmarked = ref.watch(bookmarksProvider.select(
+      (state) => state.value?.any((b) => b.referenceId == message.id.toString()) ?? false,
+    ));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -47,7 +47,7 @@ class GudaMessageActions extends ConsumerWidget {
               final topicCode = ref.read(homeViewModelProvider.select((s) => s.selectedClassicType));
               ref.read(bookmarksProvider.notifier).addBookmark(
                     Bookmark(
-                      id: const Uuid().v4(),
+                      id: _generateId(),
                       userId: 'user-1',
                       title: message.content.length > 20
                           ? '${message.content.substring(0, 20)}...'
@@ -73,6 +73,12 @@ class GudaMessageActions extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  static String _generateId() {
+    final random = Random.secure();
+    final bytes = List.generate(16, (_) => random.nextInt(256));
+    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
 
   void _showShareDialog(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:guda_chatbot/core/ui/widgets/guda_section.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_tile.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_app_bar.dart';
+import 'package:guda_chatbot/core/ui/widgets/guda_button.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_dialog.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
@@ -44,7 +45,6 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final usage = ref.watch(chatUsageViewModelProvider);
-    // totalLimit이 0이더라도 planName이 있으면 로딩이 된 것으로 간주 (무료 플랜 0회 등 케이스 대응)
     final isUsageLoaded = usage.totalLimit > 0 || usage.planName.isNotEmpty;
     final totalQuota = usage.usedCount + usage.remainingCount;
     final progress = (isUsageLoaded && totalQuota > 0)
@@ -79,20 +79,14 @@ class SettingsScreen extends ConsumerWidget {
               GudaTile(
                 leading: const Icon(Icons.receipt_long_rounded),
                 title: AppStrings.purchaseHistoryLabel,
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                ),
+                showChevron: true,
                 onTap: () => context.push(RoutePaths.purchaseHistory),
               ),
               const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.history_rounded),
                 title: AppStrings.usageHistoryLabel,
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                ),
+                showChevron: true,
                 onTap: () => context.push(RoutePaths.usageHistory),
               ),
             ],
@@ -108,10 +102,7 @@ class SettingsScreen extends ConsumerWidget {
               GudaTile(
                 leading: const Icon(Icons.text_format_rounded),
                 title: AppStrings.fontSizeLabel,
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                ),
+                showChevron: true,
                 onTap: () => context.push(RoutePaths.fontSize),
               ),
               const GudaDivider(alpha: 1.0),
@@ -119,11 +110,8 @@ class SettingsScreen extends ConsumerWidget {
               const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.bookmark_outline_rounded),
-                title: '보관함',
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                ),
+                title: AppStrings.bookmarksTitle,
+                showChevron: true,
                 onTap: () => context.push(RoutePaths.bookmarks),
               ),
               const GudaDivider(alpha: 1.0),
@@ -140,35 +128,21 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               GudaTile(
                 leading: const Icon(Icons.campaign_outlined),
-                title: '공지사항',
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                ),
+                title: AppStrings.noticeTitle,
+                showChevron: true,
                 onTap: () => context.push(RoutePaths.notice),
               ),
               const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: AppStrings.appVersionLabel,
-                trailing: Padding(
-                  padding: const EdgeInsets.only(top: 3.0),
-                  child: Text(
-                    AppStrings.version.split(' ').last,
-                    style: GudaTypography.caption(
-                      color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                    ).copyWith(height: 1.2),
-                  ),
-                ),
+                trailingLabel: AppStrings.version.split(' ').last,
               ),
               const GudaDivider(alpha: 1.0),
               GudaTile(
                 leading: const Icon(Icons.description_outlined),
                 title: AppStrings.licenseLabel,
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                ),
+                showChevron: true,
                 onTap: () => context.push(RoutePaths.license),
               ),
             ],
@@ -202,37 +176,144 @@ class SettingsScreen extends ConsumerWidget {
                 leading: Icon(Icons.person_remove_outlined, color: context.colorScheme.error),
                 title: AppStrings.deleteAccountConfirmTitle,
                 color: context.colorScheme.error,
-                onTap: () async {
-                  final confirm = await GudaDialog.show(
-                    context,
-                    title: AppStrings.deleteAccountConfirmTitle,
-                    content: AppStrings.deleteAccountConfirmMessage,
-                    confirmLabel: AppStrings.deleteAccountConfirmTitle,
-                    isDestructive: true,
-                  );
-                  if (confirm == true && context.mounted) {
-                    // 전체 화면 로딩 오버레이 표시
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      barrierColor: Colors.black.withValues(alpha: 0.8),
-                      builder: (_) => const PopScope(
-                        canPop: false,
-                        child: Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      ),
-                    );
-                    await ref.read(authViewModelProvider.notifier).deleteAccount();
-                    // 탈퇴 성공 시 라우터가 auth로 리다이렉트하므로 다이얼로그 수동 닫기 불필요
-                  }
-                },
+                onTap: () => _showDeleteAccountDialog(context, ref),
               ),
             ],
           ),
         ),
         const SizedBox(height: GudaSpacing.xxl),
       ],
+    );
+  }
+}
+
+void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
+  showDialog(
+    context: context,
+    builder: (dialogContext) => _DeleteAccountDialog(
+      onConfirm: () async {
+        // 로딩 다이얼로그 표시
+        showDialog(
+          context: dialogContext,
+          barrierDismissible: false,
+          barrierColor: Colors.black.withValues(alpha: 0.8),
+          builder: (_) => const PopScope(
+            canPop: false,
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
+          ),
+        );
+        try {
+          await ref.read(authViewModelProvider.notifier).deleteAccount();
+        } catch (_) {
+          if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+        }
+      },
+    ),
+  );
+}
+
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog({required this.onConfirm});
+
+  final VoidCallback onConfirm;
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  bool _isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Dialog(
+      shape: const RoundedRectangleBorder(borderRadius: GudaRadius.lgAll),
+      backgroundColor: colorScheme.surface,
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: GudaSpacing.xl),
+      child: Padding(
+        padding: const EdgeInsets.all(GudaSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              AppStrings.deleteAccountConfirmTitle,
+              style: GudaTypography.heading3(color: colorScheme.onSurface),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: GudaSpacing.lg),
+            Container(
+              padding: const EdgeInsets.all(GudaSpacing.lg),
+              decoration: BoxDecoration(
+                color: colorScheme.error.withValues(alpha: 0.08),
+                borderRadius: GudaRadius.mdAll,
+              ),
+              child: Text(
+                AppStrings.deleteAccountWarning,
+                style: GudaTypography.body2(color: colorScheme.error),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: GudaSpacing.lg),
+            GestureDetector(
+              onTap: () => setState(() => _isChecked = !_isChecked),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Checkbox(
+                      value: _isChecked,
+                      onChanged: (v) => setState(() => _isChecked = v ?? false),
+                      activeColor: colorScheme.error,
+                    ),
+                  ),
+                  const SizedBox(width: GudaSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      AppStrings.deleteAccountCheckbox,
+                      style: GudaTypography.caption(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: GudaSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: GudaButton.outlined(
+                    label: AppStrings.cancel,
+                    onPressed: () => Navigator.pop(context, false),
+                  ),
+                ),
+                const SizedBox(width: GudaSpacing.md),
+                Expanded(
+                  child: GudaButton.filled(
+                    label: AppStrings.deleteAccountConfirmTitle,
+                    onPressed: _isChecked
+                        ? () {
+                            Navigator.pop(context, true);
+                            widget.onConfirm();
+                          }
+                        : null,
+                    backgroundColor: colorScheme.error,
+                    foregroundColor: colorScheme.onError,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -253,26 +334,8 @@ class _PersonaSelectionTile extends ConsumerWidget {
     return GudaTile(
       leading: const Icon(Icons.psychology_outlined),
       title: AppStrings.personaSettingTitle,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 3.0),
-            child: Text(
-              persona.name.split(' ').first, // '기본' 또는 '친절한' 등 앞단어만 표시
-              style: GudaTypography.caption(
-                color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-              ).copyWith(height: 1.2),
-            ),
-          ),
-          const SizedBox(width: GudaSpacing.xs),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-          ),
-        ],
-      ),
+      trailingLabel: persona.name.split(' ').first,
+      showChevron: true,
       onTap: () => context.push(RoutePaths.persona),
     );
   }
@@ -301,26 +364,8 @@ class _ThemeSelectionTile extends ConsumerWidget {
             : Icons.light_mode_rounded,
       ),
       title: AppStrings.themeLabel,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 3.0),
-            child: Text(
-              modeLabel,
-              style: GudaTypography.caption(
-                color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-              ).copyWith(height: 1.2),
-            ),
-          ),
-          const SizedBox(width: GudaSpacing.xs),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-          ),
-        ],
-      ),
+      trailingLabel: modeLabel,
+      showChevron: true,
       onTap: () => _showThemeSelectionDialog(context, ref, currentMode),
     );
   }

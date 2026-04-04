@@ -38,7 +38,7 @@ class GudaPageIndicator extends StatelessWidget {
       children: List.generate(count, (index) {
         final isActive = currentIndex == index;
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: GudaDuration.normal,
           margin: EdgeInsets.symmetric(horizontal: spacing / 2),
           width: isActive ? activeWidth : inactiveWidth,
           height: height,
