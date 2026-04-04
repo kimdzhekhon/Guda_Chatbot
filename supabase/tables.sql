@@ -48,6 +48,10 @@ CREATE TABLE IF NOT EXISTS public.user_subscriptions (
 );
 ALTER TABLE public.user_subscriptions ENABLE ROW LEVEL SECURITY;
 
+CREATE INDEX IF NOT EXISTS idx_user_subscriptions_user_active
+  ON user_subscriptions (user_id, status, updated_at DESC)
+  WHERE status = 'active';
+
 -- 4. Chat Rooms (채팅방)
 CREATE TABLE IF NOT EXISTS public.chat_rooms (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -61,6 +65,9 @@ CREATE TABLE IF NOT EXISTS public.chat_rooms (
 );
 ALTER TABLE public.chat_rooms ENABLE ROW LEVEL SECURITY;
 
+CREATE INDEX IF NOT EXISTS idx_chat_rooms_user_last_msg
+  ON chat_rooms (user_id, last_message_at DESC);
+
 -- 5. Messages (메시지)
 CREATE TABLE IF NOT EXISTS public.messages (
     id BIGSERIAL PRIMARY KEY,
@@ -70,6 +77,9 @@ CREATE TABLE IF NOT EXISTS public.messages (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS idx_messages_chat_room_id
+  ON messages (chat_rooms_id);
 
 -- 6. Chat Usage Logs (채팅 사용 로그 — 크레딧 차감/충전 이력)
 CREATE TABLE IF NOT EXISTS public.chat_usage_logs (
@@ -83,6 +93,11 @@ CREATE TABLE IF NOT EXISTS public.chat_usage_logs (
 );
 ALTER TABLE public.chat_usage_logs ENABLE ROW LEVEL SECURITY;
 
+CREATE INDEX IF NOT EXISTS idx_chat_usage_logs_user_created
+  ON chat_usage_logs (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_chat_usage_logs_room_id
+  ON chat_usage_logs (chat_room_id);
+
 -- 7. Transaction Logs (구매/결제 내역)
 CREATE TABLE IF NOT EXISTS public.transaction_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -93,6 +108,9 @@ CREATE TABLE IF NOT EXISTS public.transaction_logs (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.transaction_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS idx_transaction_logs_user_created
+  ON transaction_logs (user_id, created_at DESC);
 
 -- 8. System Config (시스템 설정 — 앱 공지 및 점검 정보)
 CREATE TABLE IF NOT EXISTS public.system_config (
@@ -124,6 +142,9 @@ ALTER TABLE public.i_ching_documents ENABLE ROW LEVEL SECURITY;
 
 CREATE INDEX IF NOT EXISTS idx_i_ching_content_gin
   ON i_ching_documents USING gin (to_tsvector('simple', content));
+CREATE INDEX IF NOT EXISTS idx_i_ching_embedding_ivfflat
+  ON i_ching_documents USING ivfflat (embedding vector_cosine_ops)
+  WITH (lists = 10);
 
 -- 10. Tripitaka Documents (팔만대장경 + 구사론)
 CREATE TABLE IF NOT EXISTS public.tripitaka_documents (
@@ -153,6 +174,9 @@ CREATE TABLE IF NOT EXISTS public.i_ching_cache (
     UNIQUE(query_hash)
 );
 ALTER TABLE public.i_ching_cache ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS idx_i_ching_cache_created
+  ON i_ching_cache (created_at);
 
 -- 12. Deleted Accounts (탈퇴 계정 기록 — 30일 재가입 방지)
 CREATE TABLE IF NOT EXISTS public.deleted_accounts (

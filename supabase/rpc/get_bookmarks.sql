@@ -6,7 +6,8 @@ BEGIN
     RETURN QUERY
     SELECT * FROM bookmarks
     WHERE user_id = auth.uid()
-    ORDER BY created_at DESC;
+    ORDER BY created_at DESC
+    LIMIT 200;
 END;
 $$ LANGUAGE plpgsql SECURITY INVOKER;
 

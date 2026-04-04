@@ -2,174 +2,194 @@ import 'package:flutter/material.dart';
 
 /// Guda 앱 타이포그래피 토큰
 /// 로컬 폰트 사용 (Noto Serif KR, Inter)
+///
+/// 최적화: 색상 없는 base TextStyle을 static final로 캐싱하고,
+/// color가 필요할 때만 copyWith()로 복제합니다.
 abstract final class GudaTypography {
-  // ── 한국어 세리프 스타일 (경전 본문용) ──────────────
-  /// 대제목 — 화면 타이틀
-  static TextStyle heading1({Color? color}) => TextStyle(
+  // ── 캐시된 Base TextStyle ─────────────────────────
+  static const _heading1 = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 31,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
     height: 1.3,
-    color: color,
   );
 
-  /// 홈 화면 앱바 타이틀 (특수 스타일)
-  static TextStyle homeTitle({Color? color}) => TextStyle(
+  static const _homeTitle = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 25,
     fontWeight: FontWeight.w700,
     letterSpacing: 2.0,
     height: 1.35,
-    color: color,
   );
 
-  /// 중제목 — 섹션 헤더
-  static TextStyle heading2({Color? color}) => TextStyle(
+  static const _heading2 = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 25,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.3,
     height: 1.35,
-    color: color,
   );
 
-  /// 소제목 — 카드 타이틀, 대화 제목
-  static TextStyle heading3({Color? color}) => TextStyle(
+  static const _heading3 = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 21,
     fontWeight: FontWeight.w600,
     height: 1.4,
-    color: color,
   );
 
-  // ── 본문 스타일 ─────────────────────────────────
-  /// 기본 본문 — AI 응답 텍스트
-  static TextStyle body1({Color? color}) => TextStyle(
+  static const _body1 = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 19,
     fontWeight: FontWeight.w400,
     height: 1.75,
-    color: color,
   );
 
-  /// 기본 본문 강조
-  static TextStyle body1Bold({Color? color}) => TextStyle(
+  static const _body1Bold = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 19,
     fontWeight: FontWeight.w700,
     height: 1.75,
-    color: color,
   );
 
-  /// 보조 본문 — 메타 정보
-  static TextStyle body2({Color? color}) => TextStyle(
+  static const _body2 = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 17,
     fontWeight: FontWeight.w400,
     height: 1.6,
-    color: color,
   );
 
-  /// 보조 본문 강조
-  static TextStyle body2Bold({Color? color}) => TextStyle(
+  static const _body2Bold = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 17,
     fontWeight: FontWeight.w700,
     height: 1.6,
-    color: color,
   );
 
-  // ── UI 인터랙션 스타일 ─────────────────────────────
-  /// 버튼 텍스트
-  static TextStyle button({Color? color}) => TextStyle(
+  static const _button = TextStyle(
     fontFamily: 'Inter',
     fontSize: 18,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.3,
-    color: color,
   );
 
-  /// 입력 필드 텍스트
-  static TextStyle input({Color? color}) => TextStyle(
+  static const _input = TextStyle(
     fontFamily: 'Inter',
     fontSize: 18,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    color: color,
   );
 
-  /// 캡션 1 — 날짜, 시간, 태그
-  static TextStyle caption({Color? color}) => TextStyle(
+  static const _caption = TextStyle(
     fontFamily: 'Inter',
     fontSize: 15,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.2,
     height: 1.3,
-    color: color,
   );
 
-  /// 캡션 1 강조 — 섹션 헤더 등
-  static TextStyle captionBold({Color? color}) => TextStyle(
+  static const _captionBold = TextStyle(
     fontFamily: 'Inter',
     fontSize: 15,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.2,
     height: 1.3,
-    color: color,
   );
 
-  /// 캡션 1 중간 강조
-  static TextStyle captionSemiBold({Color? color}) => TextStyle(
+  static const _captionSemiBold = TextStyle(
     fontFamily: 'Inter',
     fontSize: 15,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.2,
-    color: color,
   );
 
-  /// 캡션 2 — 버전 정보, 부가 설명
-  static TextStyle caption2({Color? color}) => TextStyle(
+  static const _caption2 = TextStyle(
     fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.1,
-    color: color,
   );
 
-  /// 최소 캡션 — 매우 작은 텍스트 (한자 등)
-  static TextStyle tiny({Color? color}) => TextStyle(
+  static const _tiny = TextStyle(
     fontFamily: 'Inter',
     fontSize: 10,
     fontWeight: FontWeight.w400,
-    color: color,
   );
 
-  /// 소형 라벨 — 작은 브랜드 타이틀, 소제목
-  static TextStyle labelSmall({Color? color}) => TextStyle(
+  static const _labelSmall = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    color: color,
   );
 
-  /// 앱 브랜드 타이틀 "Guda"
-  static TextStyle brand({Color? color}) => TextStyle(
+  static const _brand = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 35,
     fontWeight: FontWeight.w700,
     letterSpacing: 6,
-    color: color,
   );
 
-  /// 한문 원문 인용 스타일 (경전 원문 렌더링용)
-  static TextStyle classicQuote({Color? color}) => TextStyle(
+  static const _classicQuote = TextStyle(
     fontFamily: 'NotoSerifKR',
     fontSize: 18,
     fontWeight: FontWeight.w500,
     height: 2.0,
     letterSpacing: 1.5,
     fontStyle: FontStyle.italic,
-    color: color,
   );
+
+  // ── Public API (color 적용 시에만 copyWith) ─────────
+  static TextStyle heading1({Color? color}) =>
+      color == null ? _heading1 : _heading1.copyWith(color: color);
+
+  static TextStyle homeTitle({Color? color}) =>
+      color == null ? _homeTitle : _homeTitle.copyWith(color: color);
+
+  static TextStyle heading2({Color? color}) =>
+      color == null ? _heading2 : _heading2.copyWith(color: color);
+
+  static TextStyle heading3({Color? color}) =>
+      color == null ? _heading3 : _heading3.copyWith(color: color);
+
+  static TextStyle body1({Color? color}) =>
+      color == null ? _body1 : _body1.copyWith(color: color);
+
+  static TextStyle body1Bold({Color? color}) =>
+      color == null ? _body1Bold : _body1Bold.copyWith(color: color);
+
+  static TextStyle body2({Color? color}) =>
+      color == null ? _body2 : _body2.copyWith(color: color);
+
+  static TextStyle body2Bold({Color? color}) =>
+      color == null ? _body2Bold : _body2Bold.copyWith(color: color);
+
+  static TextStyle button({Color? color}) =>
+      color == null ? _button : _button.copyWith(color: color);
+
+  static TextStyle input({Color? color}) =>
+      color == null ? _input : _input.copyWith(color: color);
+
+  static TextStyle caption({Color? color}) =>
+      color == null ? _caption : _caption.copyWith(color: color);
+
+  static TextStyle captionBold({Color? color}) =>
+      color == null ? _captionBold : _captionBold.copyWith(color: color);
+
+  static TextStyle captionSemiBold({Color? color}) =>
+      color == null ? _captionSemiBold : _captionSemiBold.copyWith(color: color);
+
+  static TextStyle caption2({Color? color}) =>
+      color == null ? _caption2 : _caption2.copyWith(color: color);
+
+  static TextStyle tiny({Color? color}) =>
+      color == null ? _tiny : _tiny.copyWith(color: color);
+
+  static TextStyle labelSmall({Color? color}) =>
+      color == null ? _labelSmall : _labelSmall.copyWith(color: color);
+
+  static TextStyle brand({Color? color}) =>
+      color == null ? _brand : _brand.copyWith(color: color);
+
+  static TextStyle classicQuote({Color? color}) =>
+      color == null ? _classicQuote : _classicQuote.copyWith(color: color);
 }

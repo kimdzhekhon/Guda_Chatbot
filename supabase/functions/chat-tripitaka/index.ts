@@ -26,16 +26,21 @@ interface DocumentResult {
 
 // ─── CORS ────────────────────────────────────────────
 
+// CORS 허용 오리진을 모듈 레벨에서 1회 파싱
+const _allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
+const _validRoles = new Set(['system', 'user', 'assistant'])
+
 function corsHeaders(req?: Request) {
-  const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
   const origin = req?.headers.get('Origin') ?? ''
-  const isAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin)
+  const isAllowed = _allowedOrigins.includes(origin)
   return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0] || '',
+    'Access-Control-Allow-Origin': isAllowed ? origin : _allowedOrigins[0] || '',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
   }
 }
 
@@ -82,7 +87,7 @@ async function searchDocuments(
 ): Promise<DocumentResult[]> {
   const { data, error } = await supabase.rpc('search_tripitaka_documents', {
     query_text: query,
-    match_count: 10,
+    match_count: 4,
   })
 
   if (error) {
@@ -91,7 +96,7 @@ async function searchDocuments(
   }
 
   console.log(`[Search] 불경 검색 ${data?.length ?? 0}건 히트`)
-  return (data ?? []).slice(0, 4)
+  return data ?? []
 }
 
 // ─── SSE 변환 ────────────────────────────────────────
@@ -194,10 +199,13 @@ serve(async (req) => {
 
     // 요청 파싱
     const { messages, persona_id, search_context } = await req.json() as ChatRequest
-    const safeSearchContext = search_context ? search_context.slice(0, 20000) : undefined
+    const safeSearchContext = search_context ? (search_context.length > 20000 ? search_context.slice(0, 20000) : search_context) : undefined
     if (!messages?.length) throw new Error('messages 배열이 필요합니다.')
     if (messages.length > 50) throw new Error('messages는 최대 50개까지 허용됩니다.')
     for (const m of messages) {
+      if (!_validRoles.has(m.role)) {
+        throw new Error('유효하지 않은 메시지 형식입니다.')
+      }
       if (typeof m.content !== 'string' || m.content.length > 10000) {
         throw new Error('유효하지 않은 메시지 형식입니다.')
       }
@@ -259,7 +267,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('[Error]', error)
-    const clientMsg = error.message?.startsWith('messages')
+    const clientMsg = error.message?.startsWith('messages') || error.message?.startsWith('유효하지')
       ? error.message
       : '요청을 처리할 수 없습니다.'
     return new Response(JSON.stringify({ error: clientMsg }), {

@@ -20,8 +20,9 @@ class PersonaSelectionScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final personaState = ref.watch(personaProvider);
     final personaNotifier = ref.read(personaProvider.notifier);
-    
+
     final currentPersonaId = personaState.dataOrNull ?? PersonaType.basic;
+    final personas = personaNotifier.personas;
 
     return GudaScaffold(
       appBar: const GudaAppBar(title: AppStrings.personaSettingTitle),
@@ -30,34 +31,29 @@ class PersonaSelectionScreen extends ConsumerWidget {
           GudaSection(
             title: AppStrings.personaSettingDesc,
             contentPadding: EdgeInsets.zero,
+            // ListView.builder 대신 Column 유지 (항목 수가 적으므로)
+            // 단, .map() 체인을 직접 인덱스 접근으로 변환하여 중간 객체 생성 방지
             child: Column(
-              children: personaNotifier.personas.asMap().entries.map((entry) {
-                final index = entry.key;
-                final persona = entry.value;
-                final isSelected = persona.id == currentPersonaId;
-                final isLast = index == personaNotifier.personas.length - 1;
-
-                return Column(
-                  children: [
-                    GudaTile(
-                      title: persona.name,
-                      subtitle: persona.description,
-                      isSelected: isSelected,
-                      onTap: () => personaNotifier.updatePersona(persona.id),
-                      trailing: isSelected
-                          ? Icon(
-                              Icons.check_circle_rounded,
-                              color: context.colorScheme.primary,
-                            )
-                          : Icon(
-                              Icons.radio_button_unchecked_rounded,
-                              color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                            ),
-                    ),
-                    if (!isLast) const GudaDivider(alpha: 0.5),
-                  ],
-                );
-              }).toList(),
+              children: [
+                for (int i = 0; i < personas.length; i++) ...[
+                  GudaTile(
+                    title: personas[i].name,
+                    subtitle: personas[i].description,
+                    isSelected: personas[i].id == currentPersonaId,
+                    onTap: () => personaNotifier.updatePersona(personas[i].id),
+                    trailing: personas[i].id == currentPersonaId
+                        ? Icon(
+                            Icons.check_circle_rounded,
+                            color: context.colorScheme.primary,
+                          )
+                        : Icon(
+                            Icons.radio_button_unchecked_rounded,
+                            color: context.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                          ),
+                  ),
+                  if (i < personas.length - 1) const GudaDivider(),
+                ],
+              ],
             ),
           ),
           Padding(

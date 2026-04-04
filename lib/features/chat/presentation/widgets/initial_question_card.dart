@@ -28,6 +28,7 @@ class InitialQuestionCard extends ConsumerStatefulWidget {
 }
 
 class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
+  static final _random = Random();
   final _controller = TextEditingController();
 
   @override
@@ -54,8 +55,7 @@ class _InitialQuestionCardState extends ConsumerState<InitialQuestionCard> {
     // 애니메이션 종료 후 입력 단계로 전환
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (mounted) {
-        final random = Random();
-        final pickedHexagram = hexagramData[random.nextInt(hexagramData.length)];
+        final pickedHexagram = hexagramData[_random.nextInt(hexagramData.length)];
         ref.read(homeViewModelProvider.notifier).selectHexagram(pickedHexagram);
       }
     });

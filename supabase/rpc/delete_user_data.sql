@@ -4,6 +4,7 @@ CREATE OR REPLACE FUNCTION delete_user_data(target_user_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
   -- 자식 → 부모 순서로 삭제 (FK 제약 충돌 방지)

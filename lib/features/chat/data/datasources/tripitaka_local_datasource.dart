@@ -30,8 +30,9 @@ class TripitakaLocalDataSource {
       final stopwatch = Stopwatch()..start();
 
       final String jsonString = await rootBundle.loadString('assets/data/tripitaka/tripitaka-chunks.json');
-      final List<dynamic> jsonList = json.decode(jsonString);
-      _cachedChunks = jsonList.map((e) => TripitakaChunkDto.fromJson(e)).toList();
+
+      // JSON 파싱을 별도 Isolate에서 수행 (15MB 파싱이 UI 스레드를 차단하지 않도록)
+      _cachedChunks = await compute(_parseChunks, jsonString);
 
       // 역인덱스 구축
       _buildInvertedIndex();
@@ -49,16 +50,25 @@ class TripitakaLocalDataSource {
     }
   }
 
+  /// Isolate에서 실행되는 JSON 파싱 함수
+  static List<TripitakaChunkDto> _parseChunks(String jsonString) {
+    final List<dynamic> jsonList = json.decode(jsonString);
+    return jsonList.map((e) => TripitakaChunkDto.fromJson(e)).toList();
+  }
+
   /// 역인덱스 구축: 2글자 이상 토큰 → 청크 인덱스 매핑
   void _buildInvertedIndex() {
-    _invertedIndex = {};
+    final index = <String, List<int>>{};
+    final splitter = RegExp(r'\s+');
+
     for (var i = 0; i < _cachedChunks!.length; i++) {
-      final words = _cachedChunks![i].content.toLowerCase().split(RegExp(r'\s+'));
+      final words = _cachedChunks![i].content.toLowerCase().split(splitter);
       for (final word in words) {
         if (word.length < 2) continue;
-        (_invertedIndex![word] ??= []).add(i);
+        (index[word] ??= []).add(i);
       }
     }
+    _invertedIndex = index;
   }
 
   Future<List<TripitakaChunkDto>> search(String query) async {
@@ -76,29 +86,40 @@ class TripitakaLocalDataSource {
 
       for (final word in queryWords) {
         if (word.length < 2) continue;
-        // 정확한 단어 매칭 + 부분 매칭 (접두사)
-        for (final entry in _invertedIndex!.entries) {
-          if (entry.key.contains(word)) {
-            for (final idx in entry.value) {
-              hitCounts[idx] = (hitCounts[idx] ?? 0) + 1;
+
+        // 1단계: 정확한 키 매칭 (O(1))
+        final exactHits = _invertedIndex![word];
+        if (exactHits != null) {
+          for (final idx in exactHits) {
+            hitCounts[idx] = (hitCounts[idx] ?? 0) + 2; // 정확 매칭 가중치
+          }
+        }
+
+        // 2단계: 접두사 매칭 (정확 매칭이 부족할 때만)
+        if ((exactHits?.length ?? 0) < 3) {
+          for (final entry in _invertedIndex!.entries) {
+            if (entry.key != word && entry.key.startsWith(word)) {
+              for (final idx in entry.value) {
+                hitCounts[idx] = (hitCounts[idx] ?? 0) + 1;
+              }
             }
           }
         }
       }
 
       if (hitCounts.isNotEmpty) {
-        // 매칭 수 기준 정렬
+        // 매칭 수 기준 정렬, 최대 50개로 제한 (메모리 + 전송량 절약)
         final sorted = hitCounts.entries.toList()
           ..sort((a, b) => b.value.compareTo(a.value));
 
-        return sorted.map((e) => _cachedChunks![e.key]).toList();
+        return sorted.take(50).map((e) => _cachedChunks![e.key]).toList();
       }
     }
 
-    // 폴백: 전체 문자열 매칭
+    // 폴백: 전체 문자열 매칭 (최대 50개)
     return _cachedChunks!.where((chunk) {
       return chunk.content.toLowerCase().contains(normalizedQuery);
-    }).toList();
+    }).take(50).toList();
   }
 }
 

@@ -13,7 +13,7 @@ Copyright 2017 The Noto Project Authors (https://github.com/googlefonts/noto-cjk
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-http://scripts.sil.org/OFL
+https://scripts.sil.org/OFL
 ''',
       );
     });
@@ -27,7 +27,7 @@ Copyright (c) 2016-2024 The Inter Project Authors (https://github.com/rsms/inter
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-http://scripts.sil.org/OFL
+https://scripts.sil.org/OFL
 ''',
       );
     });

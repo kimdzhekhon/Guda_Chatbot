@@ -111,7 +111,6 @@ class GudaTile extends StatelessWidget {
               const SizedBox(width: GudaSpacing.sm),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (trailingLabel != null) ...[
                     Padding(

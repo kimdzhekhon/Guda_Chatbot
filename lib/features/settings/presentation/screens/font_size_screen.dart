@@ -105,7 +105,6 @@ class FontSizeScreen extends ConsumerWidget {
                   ),
                   child: Slider(
                     value: sliderValue,
-                    min: 0,
                     max: 2,
                     divisions: 2,
                     onChanged: (value) {

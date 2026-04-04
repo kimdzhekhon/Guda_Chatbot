@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:guda_chatbot/core/design_system/design_system.dart';
 import 'package:guda_chatbot/core/ui/widgets/guda_divider.dart';
@@ -26,30 +28,41 @@ class _HexagramSelectionBottomSheetState
     extends State<HexagramSelectionBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text.trim();
-      });
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    // 200ms 디바운싱: 빠른 타이핑 시 불필요한 필터링/리빌드 방지
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        setState(() {
+          _searchQuery = _searchController.text.trim();
+        });
+      }
     });
   }
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredHexagrams = hexagramData.where((hexagram) {
-      if (_searchQuery.isEmpty) return true;
-      return hexagram.name.contains(_searchQuery) ||
-          hexagram.hanja.contains(_searchQuery);
-    }).toList();
+    final filteredHexagrams = _searchQuery.isEmpty
+        ? hexagramData
+        : hexagramData.where((hexagram) {
+            return hexagram.name.contains(_searchQuery) ||
+                hexagram.hanja.contains(_searchQuery);
+          }).toList();
 
     return GudaBottomSheet(
       child: Column(

@@ -30,7 +30,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return GudaScaffold(
-      useSafeArea: true,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +51,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               style: GudaTypography.body2(
                 color: context.onSurfaceVariantColor,
               ),
-            ).gudaFadeIn(delay: GudaDuration.slow, duration: GudaDuration.slow),
+            ).gudaFadeIn(delay: GudaDuration.slow),
           ],
         ),
       ),

@@ -80,7 +80,6 @@ class HomeViewModel extends _$HomeViewModel {
       selectedClassicType: type,
       clearActiveChatRoom: clearActiveChatRoom,
       phase: config['phase'] == 'input' ? CardPhase.input : CardPhase.selection,
-      selectedHexagram: null,
     );
   }
 
@@ -108,7 +107,6 @@ class HomeViewModel extends _$HomeViewModel {
     // 여기서는 클라이언트 상태만 Pending 모드로 전환합니다.
     _initializeByClassicType(type);
     state = state.copyWith(
-      activeChatRoomId: null,
       isPendingNewChat: true,
     );
   }

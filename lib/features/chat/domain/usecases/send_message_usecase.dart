@@ -40,7 +40,7 @@ class SendMessageUseCase {
 
     final searchFuture = topicCode == 'tripitaka'
         ? _searchTripitakaLocal(content)
-        : Future.value(null);
+        : Future.value();
 
     final results = await Future.wait([saveFuture, searchFuture]);
     final saveResult = results[0] as SaveMessageResult;

@@ -1,16 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
+const _allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
+
 function getCorsHeaders(req?: Request) {
-  const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map(s => s.trim()).filter(Boolean)
   const origin = req?.headers.get('Origin') ?? ''
-  const isAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin)
+  const isAllowed = _allowedOrigins.includes(origin)
   return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0] || '',
+    'Access-Control-Allow-Origin': isAllowed ? origin : _allowedOrigins[0] || '',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
   }
 }
 
@@ -19,6 +22,15 @@ serve(async (req) => {
 
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'POST 메서드만 허용됩니다.' }),
+      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+  const contentLength = parseInt(req.headers.get('content-length') || '0')
+  if (contentLength > 10000) {
+    return new Response(JSON.stringify({ error: '요청이 너무 큽니다.' }),
+      { status: 413, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   try {
@@ -58,7 +70,7 @@ serve(async (req) => {
     const { error: recordErr } = await adminClient
       .from('deleted_accounts')
       .insert({ email: userEmail, provider, user_id: userId })
-    if (recordErr) console.error('[DeleteAccount] 탈퇴 기록 저장 실패:', recordErr)
+    if (recordErr) console.error('[DeleteAccount] 탈퇴 기록 저장 실패:', recordErr?.message ?? 'unknown')
 
     // 5. SECURITY DEFINER RPC로 사용자 데이터 일괄 삭제
     //    (messages, chat_usage_logs, chat_rooms, user_subscriptions, profiles)
@@ -67,7 +79,7 @@ serve(async (req) => {
       target_user_id: userId,
     })
     if (rpcErr) {
-      console.error('[DeleteAccount] delete_user_data RPC 실패:', rpcErr)
+      console.error('[DeleteAccount] delete_user_data RPC 실패:', rpcErr?.message ?? 'unknown')
       return new Response(
         JSON.stringify({ error: '사용자 데이터 삭제에 실패했습니다.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
@@ -77,7 +89,7 @@ serve(async (req) => {
     // 6. auth.users 삭제
     const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId)
     if (deleteError) {
-      console.error('[DeleteAccount] auth.users 삭제 실패:', deleteError)
+      console.error('[DeleteAccount] auth.users 삭제 실패:', deleteError?.message ?? 'unknown')
       return new Response(
         JSON.stringify({ error: '계정 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

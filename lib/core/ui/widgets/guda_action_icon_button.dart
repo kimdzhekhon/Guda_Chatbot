@@ -28,7 +28,7 @@ class GudaActionIconButton extends StatelessWidget {
         foregroundColor: isDark
             ? GudaColors.onSurfaceVariantDark
             : GudaColors.onSurfaceVariantLight,
-        shape: RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
+        shape: const RoundedRectangleBorder(borderRadius: GudaRadius.mdAll),
       ),
     );
   }

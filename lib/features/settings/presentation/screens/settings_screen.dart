@@ -263,7 +263,6 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
             GestureDetector(
               onTap: () => setState(() => _isChecked = !_isChecked),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
                     width: 24,
