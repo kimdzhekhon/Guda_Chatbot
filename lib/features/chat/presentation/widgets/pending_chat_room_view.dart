@@ -51,14 +51,13 @@ class _PendingChatRoomViewState extends ConsumerState<PendingChatRoomView> {
       );
       final personaId = personaType.name;
 
-      // 2. 주역 괘 이름 캡처
+      // 2. 주역 괘 번호 캡처
       String finalContent = text;
       String? hexagramId;
       if (widget.topicCode == ClassicType.iching) {
         final hexagram = ref.read(homeViewModelProvider).selectedHexagram;
         if (hexagram != null) {
-          // 괘 정보(이름+한자)를 DB 전용 컬럼에 저장
-          hexagramId = '${hexagram.name}(${hexagram.hanja})'; 
+          hexagramId = hexagram.id.toString();
         }
       }
 
