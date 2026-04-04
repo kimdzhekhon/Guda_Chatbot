@@ -29,15 +29,7 @@ class GudaMessageItem extends StatelessWidget {
       child: GudaChatBubble(
         isUser: isUser,
         child: isStreaming
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  child,
-                  const SizedBox(height: GudaSpacing.xs),
-                  const RepaintBoundary(child: GudaStreamingDots()),
-                ],
-              )
+            ? const RepaintBoundary(child: GudaStreamingDots())
             : child,
       ),
     ).gudaFadeIn(
