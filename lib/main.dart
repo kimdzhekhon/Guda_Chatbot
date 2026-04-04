@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,9 +6,7 @@ import 'package:guda_chatbot/app/config/app_config.dart';
 import 'package:guda_chatbot/app/router/app_router.dart';
 import 'package:guda_chatbot/app/theme/app_theme.dart';
 import 'package:guda_chatbot/core/network/dio_client.dart';
-import 'package:guda_chatbot/core/network/rpc_invoker.dart';
 import 'package:guda_chatbot/core/utils/license_registry_util.dart';
-import 'package:guda_chatbot/features/chat/data/datasources/supabase_chat_datasource.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/font_size_viewmodel.dart';
 import 'package:guda_chatbot/app/theme/theme_viewmodel.dart';
 
@@ -28,18 +25,6 @@ Future<void> main() async {
 
   // 2. Dio 클라이언트 초기화
   DioClient.instance.initialize(baseUrl: AppConfig.supabaseUrl);
-
-  // 3. [임시] 임베딩 디버그 테스트 — 로그인 상태일 때 자동 실행
-  if (kDebugMode) {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user != null) {
-      SupabaseChatDataSource(SupabaseRpcInvoker())
-          .debugTestEmbedding('건괘의 의미를 알려주세요')
-          .catchError((e) => debugPrint('[Embedding Debug Error] $e'));
-    } else {
-      debugPrint('[Embedding Debug] 로그인 필요 — 로그인 후 앱 재시작하면 테스트 실행됨');
-    }
-  }
 
   // 3. ProviderScope로 앱 실행
   runApp(const ProviderScope(child: GudaApp()));
