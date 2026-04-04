@@ -59,7 +59,7 @@ GoRouter appRouter(Ref ref) {
           if (isOnboarding) return null;
           return RoutePaths.onboarding;
         }
-        
+
         // 인증/스플래시/온보딩 화면에서 로그인 된 상태면 홈(채팅 목록)으로 이동
         // 그 외의 화면(설정, 다이얼로그 등)에서는 현재 위치를 절대 바꾸지 않음
         if (isAuth || isSplash || isOnboarding) {

@@ -30,10 +30,10 @@ class StorageService {
     await _storage.write(key: _themeModeKey, value: mode);
   }
 
-  /// 테마 모드 불러오기 (기본값 'system')
+  /// 테마 모드 불러오기 (기본값 'light' — 첫 설치 시 라이트 모드)
   Future<String> getThemeMode() async {
     final value = await _storage.read(key: _themeModeKey);
-    return value ?? 'system';
+    return value ?? 'light';
   }
 
   /// 페르소나 ID 저장

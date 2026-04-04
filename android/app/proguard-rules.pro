@@ -15,6 +15,11 @@
 ## Google Sign-In
 -keep class com.google.android.gms.** { *; }
 
+## Play Core (deferred components)
+-dontwarn com.google.android.play.core.splitcompat.SplitCompatApplication
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+
 ## JSON serialization
 -keepattributes *Annotation*
 -keepclassmembers class * {

@@ -27,7 +27,7 @@ class ThemeViewModel extends _$ThemeViewModel {
   ThemeMode _mapStringToThemeMode(String mode) {
     return ThemeMode.values.firstWhere(
       (e) => e.name == mode,
-      orElse: () => ThemeMode.system,
+      orElse: () => ThemeMode.light,
     );
   }
 }

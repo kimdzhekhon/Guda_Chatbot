@@ -14,6 +14,9 @@ class SupabaseAuthDataSource {
     : _supabase = Supabase.instance.client,
       _googleSignIn = GoogleSignIn(
         clientId: Platform.isIOS ? AppConfig.googleIosClientId : null,
+        serverClientId: Platform.isAndroid && AppConfig.googleWebClientId.isNotEmpty
+            ? AppConfig.googleWebClientId
+            : null,
       );
 
   final SupabaseClient _supabase;
