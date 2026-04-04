@@ -55,7 +55,7 @@ final class BookmarkRepositoryProvider
 }
 
 String _$bookmarkRepositoryHash() =>
-    r'bff62110cd5f3714609a182289cfa34bc0f8701c';
+    r'ef603868217e7fcd922fa7afd8f8412fc631b0d0';
 
 @ProviderFor(BookmarksNotifier)
 final bookmarksProvider = BookmarksNotifierProvider._();

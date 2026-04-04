@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:guda_chatbot/core/design_system/tokens/animation_tokens.dart';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:guda_chatbot/core/ui/ui_state.dart';
@@ -20,6 +20,7 @@ import 'package:guda_chatbot/features/chat/domain/usecases/search_tripitaka_loca
 import 'package:guda_chatbot/features/chat/presentation/viewmodels/chat_usage_viewmodel.dart';
 import 'package:guda_chatbot/features/settings/presentation/viewmodels/persona_viewmodel.dart';
 import 'package:guda_chatbot/core/constants/app_strings.dart';
+import 'package:guda_chatbot/features/chat/data/models/chat_request_dtos.dart';
 
 part 'chat_viewmodels.g.dart';
 
@@ -244,26 +245,56 @@ class ChatRoomViewModel extends _$ChatRoomViewModel {
       }
 
       String accumulatedContent = '';
-      Timer? batchTimer;
+      int displayedLength = 0;
+      bool streamDone = false;
+      final revealCompleter = Completer<void>();
+
+      // 타자기 효과: 35ms마다 1글자씩 점진적으로 표시
+      final revealTimer = Timer.periodic(const Duration(milliseconds: 35), (_) {
+        if (!ref.mounted) {
+          if (!revealCompleter.isCompleted) revealCompleter.complete();
+          return;
+        }
+        if (displayedLength >= accumulatedContent.length) {
+          if (streamDone && !revealCompleter.isCompleted) revealCompleter.complete();
+          return;
+        }
+
+        displayedLength = min(displayedLength + 1, accumulatedContent.length);
+        state = UiSuccess([
+          ...currentMessages,
+          tempUserMsg,
+          aiStreamingMsg.copyWith(
+            content: accumulatedContent.substring(0, displayedLength),
+            isStreaming: false, // dots 숨기고 실제 텍스트 표시
+          ),
+        ]);
+      });
 
       await for (final chunk in response.stream) {
         if (!ref.mounted) break;
         accumulatedContent += chunk;
-
-        // 배치 업데이트: 100ms마다 한 번만 UI 갱신 (리빌드 횟수 대폭 감소)
-        batchTimer?.cancel();
-        batchTimer = Timer(GudaDuration.fastest, () {
-          if (!ref.mounted) return;
-          state = UiSuccess([
-            ...currentMessages,
-            tempUserMsg,
-            aiStreamingMsg.copyWith(content: accumulatedContent),
-          ]);
-        });
       }
 
-      batchTimer?.cancel();
+      streamDone = true;
+      await revealCompleter.future;
+      revealTimer.cancel();
       if (!ref.mounted) return;
+
+      // 스트리밍 종료 후 AI 응답을 DB에 저장
+      if (accumulatedContent.isNotEmpty) {
+        try {
+          await ref.read(chatRepositoryProvider).saveMessage(
+            SaveMessageRequestDto(
+              chatRoomId: chatRoomId,
+              content: accumulatedContent,
+              senderRole: 'assistant',
+            ),
+          );
+        } catch (e) {
+          debugPrint('[AI Save Error] $e');
+        }
+      }
 
       // 스트리밍 종료 후 상태 확정
       state = UiSuccess([
