@@ -2,7 +2,7 @@
 
 > Guda — 동양 고전(팔만대장경, 주역, 구사론 등) 특화 AI 챗봇 앱
 
-Guda Chatbot은 동양 고전의 지혜를 바탕으로 사용자와 대화하며 통찰을 제공하는 AI 챗봇 애플리케이션입니다. Flutter 안티 그래비티 아키텍처 지침을 엄격하게 준수하여 안전하고 확장성 있게 설계되었습니다.
+Guda Chatbot은 동양 고전의 지혜를 바탕으로 사용자와 대화하며 통찰을 제공하는 AI 챗봇 애플리케이션입니다. CA 준수하여 안전하고 확장성 있게 설계되었습니다.
 
 > [!IMPORTANT]
 > **보안 및 아키텍처 가이드**: 신규 기능 추가 및 데이터 통신 시 반드시 [DOCS_SECURITY.md](file:///Users/kimjaehyun/Desktop/Guda_Chatbot/DOCS_SECURITY.md)를 참고하십시오.
