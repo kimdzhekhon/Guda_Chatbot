@@ -104,3 +104,84 @@ CREATE TABLE IF NOT EXISTS public.system_config (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE public.system_config ENABLE ROW LEVEL SECURITY;
+
+-- ==========================================
+-- RAG 파이프라인 테이블
+-- ==========================================
+
+-- pgvector 확장
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 9. I Ching Documents (주역 문서 — 벡터 임베딩 포함)
+CREATE TABLE IF NOT EXISTS public.i_ching_documents (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    metadata JSONB,
+    embedding vector(768),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.i_ching_documents ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS idx_i_ching_content_gin
+  ON i_ching_documents USING gin (to_tsvector('simple', content));
+
+-- 10. Tripitaka Documents (팔만대장경 + 구사론)
+CREATE TABLE IF NOT EXISTS public.tripitaka_documents (
+    id BIGSERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    source TEXT,
+    source_lang TEXT DEFAULT 'ko',
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.tripitaka_documents ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS idx_tripitaka_source ON tripitaka_documents (source);
+CREATE INDEX IF NOT EXISTS idx_tripitaka_lang ON tripitaka_documents (source_lang);
+CREATE INDEX IF NOT EXISTS idx_tripitaka_content_gin
+  ON tripitaka_documents USING gin (to_tsvector('simple', content));
+
+-- 11. I Ching Cache (주역 응답 캐시)
+CREATE TABLE IF NOT EXISTS public.i_ching_cache (
+    id SERIAL PRIMARY KEY,
+    hexagram_number INTEGER NOT NULL,
+    line_number INTEGER,
+    query_hash VARCHAR(64) NOT NULL,
+    interpretation TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    hit_count INTEGER DEFAULT 0,
+    UNIQUE(query_hash)
+);
+ALTER TABLE public.i_ching_cache ENABLE ROW LEVEL SECURITY;
+
+-- 12. Deleted Accounts (탈퇴 계정 기록 — 30일 재가입 방지)
+CREATE TABLE IF NOT EXISTS public.deleted_accounts (
+    id BIGSERIAL PRIMARY KEY,
+    email TEXT NOT NULL,
+    provider TEXT NOT NULL DEFAULT 'unknown',
+    user_id UUID NOT NULL,
+    deleted_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.deleted_accounts ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS idx_deleted_accounts_email ON deleted_accounts (email);
+CREATE INDEX IF NOT EXISTS idx_deleted_accounts_deleted_at ON deleted_accounts (deleted_at);
+
+-- 13. Bookmarks (북마크)
+CREATE TABLE IF NOT EXISTS public.bookmarks (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    type TEXT NOT NULL DEFAULT 'message' CHECK (type IN ('message', 'hexagram')),
+    reference_id TEXT NOT NULL,
+    chat_room_id UUID REFERENCES public.chat_rooms ON DELETE SET NULL,
+    topic_code TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_bookmarks_user_reference
+    ON bookmarks (user_id, reference_id);
+CREATE INDEX IF NOT EXISTS idx_bookmarks_user_id
+    ON bookmarks (user_id, created_at DESC);

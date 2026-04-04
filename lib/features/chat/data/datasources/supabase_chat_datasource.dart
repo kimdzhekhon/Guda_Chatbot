@@ -126,6 +126,8 @@ class SupabaseChatDataSource {
 
   /// Gemini 임베딩 API 동작 검증용 (디버그 빌드 전용)
   Future<void> debugTestEmbedding(String text) async {
+    if (!kDebugMode) return;
+
     final session = _supabase.auth.currentSession;
     final accessToken = session?.accessToken;
     final anonKey = AppConfig.supabaseAnonKey;
@@ -152,12 +154,7 @@ class SupabaseChatDataSource {
     );
 
     final data = response.data!;
-    debugPrint('════════════════════════════════════════');
-    debugPrint('[Embedding Debug] input: "${data['input_text']}"');
-    debugPrint('[Embedding Debug] embedding: ${data['embedding']}');
-    debugPrint('[Embedding Debug] search_results: ${data['search_results']}');
-    debugPrint('[Embedding Debug] cached: ${data['cached']}');
-    debugPrint('════════════════════════════════════════');
+    debugPrint('[Embedding Debug] search_results: ${data['search_results']}, cached: ${data['cached']}');
   }
 
   // ── AI 응답 스트리밍 ───────────────────────────────

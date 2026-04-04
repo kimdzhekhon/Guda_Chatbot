@@ -1,4 +1,5 @@
 -- 메시지 저장 + 크레딧 차감 + 사용 로그 기록 (현재 로그인 유저 세션 기반)
+-- 주역(iching): user 메시지 100자 제한 / 불경(tripitaka): 500자 제한
 -- Usage: select * from save_chat_message('방ID', '내용', 'user/assistant');
 CREATE OR REPLACE FUNCTION save_chat_message(
     p_chat_room_id UUID,
@@ -10,6 +11,8 @@ DECLARE
     v_msg messages;
     v_user_id UUID := auth.uid();
     v_room_owner_id UUID;
+    v_topic_code TEXT;
+    v_max_length INT;
     v_remaining INT;
     v_limit INT;
     v_name TEXT;
@@ -26,12 +29,28 @@ BEGIN
             USING HINT = 'sender_role은 user 또는 assistant만 허용됩니다.';
     END IF;
 
-    -- 채팅방 소유자 확인
-    SELECT user_id INTO v_room_owner_id
+    -- 채팅방 소유자 + topic_code 확인
+    SELECT user_id, topic_code INTO v_room_owner_id, v_topic_code
     FROM chat_rooms WHERE id = p_chat_room_id;
 
     IF v_room_owner_id IS NULL OR v_room_owner_id != v_user_id THEN
         RAISE EXCEPTION 'ACCESS_DENIED' USING HINT = '해당 채팅방에 대한 권한이 없습니다.';
+    END IF;
+
+    -- 메시지 내용 검증 (user 메시지만 길이 제한, assistant 응답은 제한 없음)
+    IF p_content IS NULL OR LENGTH(TRIM(p_content)) = 0 THEN
+        RAISE EXCEPTION 'EMPTY_CONTENT' USING HINT = '메시지 내용이 비어있습니다.';
+    END IF;
+    IF p_sender_role = 'user' THEN
+        v_max_length := CASE v_topic_code
+            WHEN 'iching'    THEN 100
+            WHEN 'tripitaka'  THEN 500
+            ELSE 500
+        END;
+        IF LENGTH(p_content) > v_max_length THEN
+            RAISE EXCEPTION 'CONTENT_TOO_LONG'
+                USING HINT = format('메시지는 %s자 이하여야 합니다.', v_max_length);
+        END IF;
     END IF;
 
     -- 1. 메시지 테이블 삽입
@@ -56,7 +75,7 @@ BEGIN
               AND remaining_count > 0
             ORDER BY updated_at DESC
             LIMIT 1
-            FOR UPDATE SKIP LOCKED
+            FOR UPDATE
         )
         UPDATE user_subscriptions
         SET remaining_count = remaining_count - 1,
@@ -106,4 +125,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
-COMMENT ON FUNCTION save_chat_message IS '메시지를 저장하며, 유저 본인 소유의 방인지 검증 후 크레딧을 차감합니다. (SECURITY DEFINER 적용)';
+COMMENT ON FUNCTION save_chat_message IS '메시지를 저장하며, 유저 본인 소유의 방인지 검증 후 크레딧을 차감합니다. 주역 100자, 불경 500자 제한.';

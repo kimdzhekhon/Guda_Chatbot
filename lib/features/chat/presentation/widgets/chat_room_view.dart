@@ -83,6 +83,7 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
           ChatInputBar(
             isLoading: isStreaming,
             onSend: _handleSendMessage,
+            maxLength: selectedType == ClassicType.iching ? 100 : 500,
           ),
       ],
     );

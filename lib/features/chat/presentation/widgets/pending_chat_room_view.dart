@@ -115,6 +115,7 @@ class _PendingChatRoomViewState extends ConsumerState<PendingChatRoomView> {
           ChatInputBar(
             isLoading: _isSending,
             onSend: _handleFirstMessage,
+            maxLength: widget.topicCode == ClassicType.iching ? 100 : 500,
           ),
       ],
     );

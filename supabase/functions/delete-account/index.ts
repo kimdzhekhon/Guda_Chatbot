@@ -1,22 +1,15 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-const ALLOWED_ORIGINS = [
-  'http://localhost',
-  'https://guda-chatbot.vercel.app',
-]
-
-function getCorsHeaders(req: Request) {
-  const origin = req.headers.get('Origin') || ''
-  const allowedOrigin = ALLOWED_ORIGINS.find(o => origin.startsWith(o)) || ALLOWED_ORIGINS[0]
+function getCorsHeaders() {
   return {
-    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   }
 }
 
 serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req)
+  const corsHeaders = getCorsHeaders()
 
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -53,7 +46,7 @@ serve(async (req) => {
     const userId = user.id
     const userEmail = user.email || ''
     const provider = user.app_metadata?.provider || 'unknown'
-    console.log(`[DeleteAccount] 시작: ${userId} (${userEmail})`)
+    console.log(`[DeleteAccount] 시작: ${userId.substring(0, 8)}***`)
 
     // 4. 탈퇴 기록 저장 (30일 재가입 방지용)
     const { error: recordErr } = await adminClient
@@ -85,7 +78,7 @@ serve(async (req) => {
       )
     }
 
-    console.log(`[DeleteAccount] 완료: ${userId}`)
+    console.log(`[DeleteAccount] 완료: ${userId.substring(0, 8)}***`)
     return new Response(
       JSON.stringify({ success: true }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

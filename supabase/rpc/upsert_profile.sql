@@ -12,9 +12,14 @@ DECLARE
     v_free_product_name TEXT;
     v_free_product_limit INT;
 BEGIN
-    if v_user_id IS NULL THEN
+    IF v_user_id IS NULL THEN
         RAISE EXCEPTION 'NOT_AUTHENTICATED'
             USING HINT = '로그인이 필요합니다.';
+    END IF;
+
+    IF p_persona NOT IN ('basic', 'friendly', 'strict') THEN
+        RAISE EXCEPTION 'INVALID_PERSONA'
+            USING HINT = '유효하지 않은 페르소나입니다. (basic, friendly, strict)';
     END IF;
 
     -- 무료 구독이 없는 유저인지 확인 (handle_new_user trigger가 profiles를 먼저 생성하므로)
