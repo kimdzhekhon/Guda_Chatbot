@@ -143,6 +143,7 @@ class AuthViewModel extends _$AuthViewModel {
       state = const UiSuccess(null);
     } catch (e) {
       state = previousState;
+      rethrow;
     }
   }
 
