@@ -72,7 +72,7 @@ ${contextBlock ? `다음은 이 괘와 관련된 주역 원전 내용입니다:\
 
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
