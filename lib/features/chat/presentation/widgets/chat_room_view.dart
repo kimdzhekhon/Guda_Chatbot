@@ -49,12 +49,17 @@ class _ChatRoomViewState extends ConsumerState<ChatRoomView> {
     );
     final chatState = ref.watch(chatRoomViewModelProvider(widget.activeChatRoomId));
 
-    // Listen for new messages to scroll to bottom
-    ref.listen(chatRoomViewModelProvider(widget.activeChatRoomId), (_, next) {
-      if (next.isSuccess) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-      }
-    });
+    // 메시지 수 변경 시에만 스크롤 (기존: 모든 상태 변경마다 addPostFrameCallback 호출)
+    ref.listen(
+      chatRoomViewModelProvider(widget.activeChatRoomId).select(
+        (s) => s.dataOrNull?.length ?? 0,
+      ),
+      (prev, next) {
+        if (prev != next) {
+          WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+        }
+      },
+    );
 
     final isStreaming = ref.watch(
       chatRoomViewModelProvider(widget.activeChatRoomId).select(

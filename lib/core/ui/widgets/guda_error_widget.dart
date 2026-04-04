@@ -61,6 +61,6 @@ class GudaErrorWidget extends StatelessWidget {
           ],
         ),
       ),
-    ).gudaFadeIn(duration: GudaDuration.normal).gudaSlideIn(begin: const Offset(0, 0.05));
+    ).gudaFadeSlideIn(duration: GudaDuration.normal, begin: const Offset(0, 0.05));
   }
 }

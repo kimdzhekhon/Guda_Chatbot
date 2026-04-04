@@ -21,10 +21,11 @@ class ConversationHistoryItem extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
-  String _typeIcon(ClassicType type) => switch (type) {
-        ClassicType.tripitaka => AppAssets.tripitakaImage,
-        ClassicType.iching => AppAssets.ichingImage,
-      };
+  // 타입별 아이콘을 static const Map으로 캐싱 (build마다 switch 평가 방지)
+  static const _typeIcons = {
+    ClassicType.tripitaka: AppAssets.tripitakaImage,
+    ClassicType.iching: AppAssets.ichingImage,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +35,12 @@ class ConversationHistoryItem extends StatelessWidget {
       leading: ClipRRect(
         borderRadius: GudaRadius.smAll,
         child: Image.asset(
-          _typeIcon(conversation.topicCode),
+          _typeIcons[conversation.topicCode]!,
           width: 28,
           height: 28,
           fit: BoxFit.cover,
+          // 이미지 프레임 캐시를 유지하여 스크롤 시 디코딩 반복 방지
+          cacheWidth: 56, // 28 * 2 (device pixel ratio 2x)
         ),
       ),
       title: conversation.title,

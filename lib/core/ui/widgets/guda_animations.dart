@@ -204,6 +204,57 @@ class _GudaFadeScaleInState extends State<GudaFadeScaleIn>
   }
 }
 
+/// Fade + Slide를 단일 AnimationController로 처리하는 통합 위젯
+/// 기존: 2개의 AnimationController (GudaFadeIn + GudaSlideIn) → 개선: 1개의 AnimationController
+class GudaFadeSlideIn extends StatefulWidget {
+  const GudaFadeSlideIn({
+    super.key,
+    required this.child,
+    this.beginOffset = const Offset(0, 0.1),
+    this.delay = Duration.zero,
+    this.duration = GudaDuration.slow,
+    this.curve = Curves.easeOut,
+  });
+
+  final Widget child;
+  final Offset beginOffset;
+  final Duration delay;
+  final Duration duration;
+  final Curve curve;
+
+  @override
+  State<GudaFadeSlideIn> createState() => _GudaFadeSlideInState();
+}
+
+class _GudaFadeSlideInState extends State<GudaFadeSlideIn>
+    with SingleTickerProviderStateMixin, GudaAnimationMixin {
+  late Animation<double> _opacity;
+  late Animation<Offset> _offset;
+
+  @override
+  void initState() {
+    super.initState();
+    initAnimation(duration: widget.duration, delay: widget.delay);
+    final curved = CurvedAnimation(parent: animController, curve: widget.curve);
+    _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(curved);
+    _offset = Tween<Offset>(begin: widget.beginOffset, end: Offset.zero).animate(curved);
+  }
+
+  @override
+  void dispose() {
+    disposeAnimation();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(position: _offset, child: widget.child),
+    );
+  }
+}
+
 /// Extension to make it as easy as flutter_animate
 extension GudaAnimateExtension on Widget {
   Widget gudaFadeIn({
@@ -244,5 +295,21 @@ extension GudaAnimateExtension on Widget {
     Curve curve = Curves.easeOut,
   }) {
     return GudaSlideIn(beginOffset: begin, delay: delay, duration: duration, curve: curve, child: this);
+  }
+
+  /// Fade + Slide를 단일 AnimationController로 처리 (gudaFadeIn + gudaSlideIn 대체)
+  Widget gudaFadeSlideIn({
+    Offset begin = const Offset(0, 0.1),
+    Duration delay = Duration.zero,
+    Duration duration = GudaDuration.slow,
+    Curve curve = Curves.easeOut,
+  }) {
+    return GudaFadeSlideIn(
+      beginOffset: begin,
+      delay: delay,
+      duration: duration,
+      curve: curve,
+      child: this,
+    );
   }
 }

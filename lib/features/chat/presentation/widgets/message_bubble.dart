@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/message_avatar.dart';
 import 'package:guda_chatbot/features/chat/presentation/widgets/message_content.dart';
 
-class MessageBubble extends ConsumerWidget {
-  MessageBubble({
+class MessageBubble extends ConsumerStatefulWidget {
+  const MessageBubble({
     super.key,
     required this.message,
     this.showActions = true,
@@ -16,12 +16,19 @@ class MessageBubble extends ConsumerWidget {
 
   final Message message;
   final bool showActions;
-  final GlobalKey _shareKey = GlobalKey();
-
-  bool get isUser => message.senderRole == MessageRole.user;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MessageBubble> createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends ConsumerState<MessageBubble> {
+  // GlobalKey를 State에서 한 번만 생성 (기존: 매 build마다 새 GlobalKey 생성)
+  final GlobalKey _shareKey = GlobalKey();
+
+  bool get isUser => widget.message.senderRole == MessageRole.user;
+
+  @override
+  Widget build(BuildContext context) {
     return RepaintBoundary(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,11 +38,11 @@ class MessageBubble extends ConsumerWidget {
           Flexible(
             child: GudaMessageItem(
               isUser: isUser,
-              isStreaming: message.isStreaming,
+              isStreaming: widget.message.isStreaming,
               child: MessageContent(
-                message: message,
+                message: widget.message,
                 isUser: isUser,
-                showActions: showActions,
+                showActions: widget.showActions,
                 shareKey: _shareKey,
               ),
             ),
