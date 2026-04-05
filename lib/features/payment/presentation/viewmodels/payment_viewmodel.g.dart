@@ -56,6 +56,47 @@ final class ProductDataSourceProvider
 
 String _$productDataSourceHash() => r'245c1f77939cf202fec58dfa3e106f5ad2dea117';
 
+@ProviderFor(iapDatasource)
+final iapDatasourceProvider = IapDatasourceProvider._();
+
+final class IapDatasourceProvider
+    extends $FunctionalProvider<IapDatasource, IapDatasource, IapDatasource>
+    with $Provider<IapDatasource> {
+  IapDatasourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'iapDatasourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$iapDatasourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<IapDatasource> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  IapDatasource create(Ref ref) {
+    return iapDatasource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(IapDatasource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<IapDatasource>(value),
+    );
+  }
+}
+
+String _$iapDatasourceHash() => r'329a7a9c729e6c25f3fa708924fe824975de8f33';
+
 @ProviderFor(productRepository)
 final productRepositoryProvider = ProductRepositoryProvider._();
 
@@ -101,7 +142,7 @@ final class ProductRepositoryProvider
   }
 }
 
-String _$productRepositoryHash() => r'86e34057e303fb0208dcec15f8116d85b598fa26';
+String _$productRepositoryHash() => r'd4f3b3f858002be83cd812168fb5f11720e3ed56';
 
 @ProviderFor(getPaymentPlansUseCase)
 final getPaymentPlansUseCaseProvider = GetPaymentPlansUseCaseProvider._();
@@ -223,7 +264,7 @@ final class PaymentViewModelProvider
   PaymentViewModel create() => PaymentViewModel();
 }
 
-String _$paymentViewModelHash() => r'1e3161ee3bd381c13585c386eb139396d4649f73';
+String _$paymentViewModelHash() => r'ec5409d08eef47002d2927f099ed27828fec4864';
 
 abstract class _$PaymentViewModel extends $AsyncNotifier<PaymentState> {
   FutureOr<PaymentState> build();
