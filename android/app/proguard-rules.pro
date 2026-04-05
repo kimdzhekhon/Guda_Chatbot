@@ -20,6 +20,11 @@
 -dontwarn com.google.android.play.core.splitinstall.**
 -dontwarn com.google.android.play.core.tasks.**
 
+## Google Play Billing (In-App Purchase)
+-keep class com.android.vending.billing.** { *; }
+-keep class com.google.android.play.billingclient.** { *; }
+-dontwarn com.google.android.play.billingclient.**
+
 ## JSON serialization
 -keepattributes *Annotation*
 -keepclassmembers class * {

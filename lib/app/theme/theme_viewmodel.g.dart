@@ -36,7 +36,7 @@ final class ThemeViewModelProvider
   ThemeViewModel create() => ThemeViewModel();
 }
 
-String _$themeViewModelHash() => r'87924432911c12f2610dbad8843d6a8163501dd7';
+String _$themeViewModelHash() => r'896b03d9fce0736c85b7a8e59c5bc2f585365343';
 
 /// ThemeViewModel — 앱 테마 모드 관리 (System, Light, Dark)
 

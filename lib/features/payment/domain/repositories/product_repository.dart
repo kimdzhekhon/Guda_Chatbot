@@ -5,4 +5,5 @@ import 'package:guda_chatbot/features/payment/domain/entities/transaction_log.da
 abstract class ProductRepository {
   Future<List<PaymentPlan>> getPaymentPlans();
   Future<List<TransactionLog>> getTransactionLogs();
+  Future<bool> purchasePlan(PaymentPlan plan);
 }

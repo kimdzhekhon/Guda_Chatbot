@@ -459,7 +459,7 @@ final class ChatListViewModelProvider
   }
 }
 
-String _$chatListViewModelHash() => r'327d49d790e2e6a7cb1247280c44a675e6de03a7';
+String _$chatListViewModelHash() => r'5679564e7407a0e7de5d8b9dfa639453d6975a14';
 
 abstract class _$ChatListViewModel
     extends $Notifier<UiState<List<Conversation>>> {
@@ -582,7 +582,7 @@ final class ChatRoomViewModelProvider
   }
 }
 
-String _$chatRoomViewModelHash() => r'25b35e77c5ea3c7a70ae1a24df02e9698ba094ce';
+String _$chatRoomViewModelHash() => r'33850b8875ea88c400809dc52837bd01eb1cf1eb';
 
 final class ChatRoomViewModelFamily extends $Family
     with

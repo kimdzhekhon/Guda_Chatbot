@@ -11,6 +11,7 @@ class ProductDto {
   final double? pricePerChat;
   final String? description;
   final String? iconName;
+  final String? googleProductId;
 
   const ProductDto({
     required this.id,
@@ -21,6 +22,7 @@ class ProductDto {
     this.pricePerChat,
     this.description,
     this.iconName,
+    this.googleProductId,
   });
 
   factory ProductDto.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class ProductDto {
       pricePerChat: (json['price_per_chat'] as num?)?.toDouble(),
       description: json['description'] as String?,
       iconName: json['icon_name'] as String?,
+      googleProductId: json['google_product_id'] as String?,
     );
   }
 
@@ -49,6 +52,7 @@ class ProductDto {
           ? PaymentType.subscription
           : PaymentType.charge,
       icon: _getIconData(iconName),
+      googleProductId: googleProductId,
     );
   }
 

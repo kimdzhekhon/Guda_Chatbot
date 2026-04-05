@@ -21,6 +21,36 @@ class PaymentSelectionModal extends ConsumerWidget {
     final usage = ref.watch(chatUsageViewModelProvider);
     final currentProductId = usage.productId;
 
+    // 구매 결과 리스닝
+    ref.listen(paymentViewModelProvider, (prev, next) {
+      final prevStatus = prev?.value?.purchaseStatus;
+      final nextStatus = next.value?.purchaseStatus;
+      final message = next.value?.purchaseMessage;
+
+      if (prevStatus == nextStatus || nextStatus == null) return;
+
+      switch (nextStatus) {
+        case PurchaseResultStatus.success:
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message ?? '구매가 완료되었습니다!')),
+          );
+          ref.read(paymentViewModelProvider.notifier).clearPurchaseStatus();
+          break;
+        case PurchaseResultStatus.error:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message ?? '구매에 실패했습니다.')),
+          );
+          ref.read(paymentViewModelProvider.notifier).clearPurchaseStatus();
+          break;
+        case PurchaseResultStatus.cancelled:
+          ref.read(paymentViewModelProvider.notifier).clearPurchaseStatus();
+          break;
+        default:
+          break;
+      }
+    });
+
     return GudaBottomSheet(
       heightFactor: 0.8,
       child: Column(
@@ -93,12 +123,16 @@ class PaymentSelectionModal extends ConsumerWidget {
                         remainingCount: usage.remainingCount,
                         totalLimit: usage.totalLimit,
                         onPlanSelected: (plan) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    '${plan.name} ${AppStrings.planSelectionSuffix}')),
-                          );
+                          if (plan.googleProductId == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('해당 상품은 구매할 수 없습니다.')),
+                            );
+                            return;
+                          }
+                          ref
+                              .read(paymentViewModelProvider.notifier)
+                              .purchase(plan);
                         },
                       ),
                     ),

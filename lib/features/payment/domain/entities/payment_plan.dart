@@ -12,6 +12,7 @@ class PaymentPlan {
   final String description;
   final PaymentType type;
   final IconData icon;
+  final String? googleProductId;
 
   const PaymentPlan({
     required this.id,
@@ -22,5 +23,6 @@ class PaymentPlan {
     required this.description,
     required this.type,
     required this.icon,
+    this.googleProductId,
   });
 }
